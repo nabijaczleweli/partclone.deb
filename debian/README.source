@@ -1,0 +1,12 @@
+partclone for Debian
+--------------------
+
+The source has been retrieved from 
+http://sourceforge.net/projects/partclone/files/testing/partclone_0.2.22.tar.gz/download,
+and the upstream's debian subdirectory has been removed to make the debian
+orig.tar.gz archive
+
+Modifications are managed by quilt, see /usr/share/doc/quilt/README.source
+
+
+ -- Georges Khaznadar <georgesk@ofset.org>, Wed, 20 Apr 2011 14:22:15 +0200

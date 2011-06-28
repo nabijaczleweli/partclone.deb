@@ -1,0 +1,45 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@ 
+
+override_dh_auto_configure:
+	# Add here commands to configure the package.
+	cp /usr/share/misc/config.sub .
+	cp /usr/share/misc/config.guess .
+	autoreconf
+	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs" --enable-ncursesw --enable-all
+
+override_dh_auto_clean:
+	[ ! -f Makefile ] || make distclean
+	rm -f get_lib_version
+	rm -f config.sub configure Makefile.in aclocal.m4 config.guess 
+	rm -f src/Makefile.in docs/Makefile.in
+	dh_clean
+
+MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8
+
+override_dh_auto_install:
+	dh_auto_install
+	install -d $(MAN8DIR)
+	cd $(MAN8DIR); \
+	  ln -s partclone.fat.8.gz partclone.vfat.8.gz; \
+	  ln -s partclone.fat.8.gz partclone.fat12.8.gz; \
+	  ln -s partclone.fat.8.gz partclone.fat16.8.gz; \
+	  ln -s partclone.fat.8.gz partclone.fat32.8.gz; \
+	  ln -s partclone.hfsp.8.gz partclone.hfs+.8.gz; \
+	  ln -s partclone.hfsp.8.gz partclone.hfsplus.8.gz; \
+	  ln -s partclone.extfs.8.gz partclone.ext2.8.gz; \
+	  ln -s partclone.extfs.8.gz partclone.ext3.8.gz; \
+	  ln -s partclone.extfs.8.gz partclone.ext4.8.gz; \
+	  ln -s partclone.extfs.8.gz partclone.ext4dev.8.gz
+
