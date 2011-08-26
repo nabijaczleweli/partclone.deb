@@ -5,6 +5,7 @@ Maintainer: Georges Khaznadar <georgesk@ofset.org>
 Build-Depends: debhelper (>= 7.0.50~), quilt,
  autotools-dev, autoconf (>=2.67), automake (>= 1:1.11.1),
  e2fslibs-dev (>= 1.41.3), xfslibs-dev, libreiser4-dev,
+ libreadline-gplv2-dev|libreadline5-dev,
  libbsd-dev, libncursesw5-dev, libntfs-dev, vmfs-tools,
  pkg-config
 Standards-Version: 3.9.2

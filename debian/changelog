@@ -1,3 +1,20 @@
+partclone (0.2.26-1) unstable; urgency=low
+
+  * upgraded to the newer upstream version
+  * fixed a few typos in the source of manpages
+  * applied the patch sent by Nameless <thenamelessnumerologist@gmail.com>
+    Closes: #636927
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Fri, 26 Aug 2011 09:30:46 +0200
+
+partclone (0.2.22-3) unstable; urgency=low
+
+  * Closes: #623452 (the already fixed ITP)
+  * added a build-dependency on libreadline-gplv2-dev|libreadline5-dev,
+    which Closes: #634543
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Tue, 19 Jul 2011 10:49:11 +0200
+
 partclone (0.2.22-2) unstable; urgency=low
 
   * fixed debian/copyright, thanks to Luca Falavigna

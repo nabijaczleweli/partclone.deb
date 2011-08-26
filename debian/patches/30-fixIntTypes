@@ -1,0 +1,35 @@
+Index: partclone-0.2.26/src/hfsplusclone.c
+===================================================================
+--- partclone-0.2.26.orig/src/hfsplusclone.c
++++ partclone-0.2.26/src/hfsplusclone.c
+@@ -128,8 +128,8 @@ extern void readbitmap(char* device, ima
+     UInt32 bused = 0, bfree = 0, mused = 0;
+     UInt32 block = 0, extent_block = 0, tb = 0, i = 0;
+     int allocation_exten = 0;
+-    long int allocation_start_block;
+-    long int allocation_block_size;
++    UInt32 allocation_start_block;
++    UInt32 allocation_block_size;
+     int start = 0;
+     int bit_size = 1;
+ 
+Index: partclone-0.2.26/src/hfsplusclone.h
+===================================================================
+--- partclone-0.2.26.orig/src/hfsplusclone.h
++++ partclone-0.2.26/src/hfsplusclone.h
+@@ -11,11 +11,10 @@
+  * (at your option) any later version.
+  */
+ 
+-
+-typedef unsigned char      UInt8;
+-typedef unsigned short int UInt16;
+-typedef unsigned long int       UInt32;
+-typedef unsigned long long int  UInt64;
++typedef uint8_t  UInt8;
++typedef uint16_t UInt16;
++typedef uint32_t UInt32;
++typedef uint64_t UInt64;
+ 
+ typedef UInt32 HFSCatalogNodeID;
+ 

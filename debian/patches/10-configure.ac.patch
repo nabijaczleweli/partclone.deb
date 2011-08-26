@@ -29,8 +29,10 @@ Forwarded: <no|not-needed|url proving that it has been forwarded>
 Reviewed-By: <name and email of someone who approved the patch>
 Last-Update: <YYYY-MM-DD>
 
---- partclone-0.2.22.orig/configure.ac
-+++ partclone-0.2.22/configure.ac
+Index: partclone-0.2.26/configure.ac
+===================================================================
+--- partclone-0.2.26.orig/configure.ac
++++ partclone-0.2.26/configure.ac
 @@ -22,16 +22,16 @@ AC_ARG_ENABLE(all,
  )
  AM_CONDITIONAL(ENABLE_ALL, test "$enable_all" = yes)
@@ -81,12 +83,12 @@ Last-Update: <YYYY-MM-DD>
  reiser4_version=`$srcdir/get_lib_version reiser4 | cut -d'.' -f1`
  reiser4_version_major=`$srcdir/get_lib_version reiser4 | cut -d'.' -f2`
  reiser4_version_minor=`$srcdir/get_lib_version reiser4 | cut -d'.' -f3`
-@@ -259,7 +259,7 @@ AC_CHECK_HEADERS([ntfs/version.h], ,
- AC_CHECK_LIB([ntfs], [ntfs_mount], true,
-    AC_MSG_ERROR([*** ntfs depend library (libntfs) not found]))
- AC_MSG_CHECKING(version of libntfs)
--ntfs_version=`gcc -static  $srcdir/src/deplib_version.c -o $srcdir/get_lib_version -lntfs -DNTFS`
-+ntfs_version=`gcc  $srcdir/src/deplib_version.c -o $srcdir/get_lib_version -lntfs -DNTFS`
- ntfs_version=`$srcdir/get_lib_version ntfs | cut -d':' -f1`
- ntfs_version_major=`$srcdir/get_lib_version ntfs | cut -d':' -f2`
- ntfs_version_minor=`$srcdir/get_lib_version ntfs | cut -d':' -f3`
+@@ -276,7 +276,7 @@ if test "$ntfs_3g_h" = 1 -a "$ntfs_3g_l"
+     ntfs_version="ntfs-3g"
+ elif test "$ntfsprogs_h" = 1 -a "$ntfsprogs_l" = 1; then
+     AC_MSG_CHECKING(version of libntfs)
+-    ntfs_version=`gcc -static  $srcdir/src/deplib_version.c -o $srcdir/get_lib_version -lntfs -DNTFS`
++    ntfs_version=`gcc $srcdir/src/deplib_version.c -o $srcdir/get_lib_version -lntfs -DNTFS`
+     ntfs_version=`$srcdir/get_lib_version ntfs | cut -d':' -f1`
+     ntfs_version_major=`$srcdir/get_lib_version ntfs | cut -d':' -f2`
+     ntfs_version_minor=`$srcdir/get_lib_version ntfs | cut -d':' -f3`

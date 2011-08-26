@@ -1,0 +1,259 @@
+#!/bin/bash
+set -e
+
+##default_value
+test_data_path=""
+row_file_path=""
+logfile_path=""
+image_path=""
+keep_row=1
+partition_size=384
+
+## file system
+normal_fs="ext2 ext3 ext4 vfat"
+featured_fs="$normal_fs jfs xfs reiserfs hfsplus"
+extra_fs="$featured_fs ntfs btrfs"
+read_only_fs="ufs reiser4 vmfs"
+
+mkfs_option_for_reiserfs='-f'
+mkfs_option_for_ntfs='-f -F'
+mkfs_option_for_jfs='-f'
+
+test_fs=$extra_fs
+
+if [ ! "$UID" = "0" ]; then
+    echo
+    echo "You need to run this script \"`basename $0`\" as root."
+    echo
+    exit 1
+fi
+
+USAGE() {
+    cat << EOF
+        $0 is DANGEROUS script to test partclone with root permission. This 
+	script will create and format loop device for clone, restore and some 
+	basic test. It's only for developer used.
+
+	recognized flags are:
+	-t, --test_data_path        file in this path will be copy to generated
+	                            loop device and prepare md5 file.
+	-s, --partition_size        if -t option enabled, use dd to create row 
+	                            file with this MB size
+	-r, --row_file_path         path to collect all generated row files
+	-i, --image_path            path to collect all generated partclone 
+	                            image files
+	-l, --logfile_path          path to collect all log files
+	-f, --file-system           what file system you want to test 
+	-k, --keep_row_files        Don't delete all generated row file
+	-h, --help                  show this help
+EOF
+    
+}
+
+prefix_name(){
+    echo `date +%F-%H-%M`
+}
+
+abs_path(){
+    dy_path=$1
+    if [ -d $dy_path ]; then
+	echo `cd $1;pwd`
+    else
+	echo 2 "directory($dy_path) not exist"
+	exit 2
+    fi
+}
+
+check_option(){
+    while [ $# -gt 0 ]; do
+	case "$1" in
+	    -t|--test_data_path)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    # skip the -xx option, in case 
+		    test_data_path=$(abs_path $1)
+		    shift
+		fi
+		;;
+	    -s|--partition_size)
+		shift
+		if [ -z "$(echo $1 | grep ^-.)" ]; then
+		    partition_size="$1"
+		    shift
+		fi
+		;;
+	    -r|--row_file_path)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    row_file_path=$(abs_path $1)
+		    shift
+		fi
+		;;
+	    -k|--keep_row_files)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    keep_row=1
+		fi
+		;;
+	    -i|--image_path)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    image_path=$(abs_path $1)
+		    shift
+		fi
+		;;
+	    -l|--logfile_path)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    logfile_path=$(abs_path $1)
+		    shift
+		fi
+		;;
+	    -f|--file-system)
+		shift
+		if [ -z "$(echo $1 |grep ^-.)" ]; then
+		    manual_fs="$1"
+		    shift
+		fi
+		;;
+	    -h|--help)
+		USAGE >& 2
+		exit 2 
+		;;
+	    -*)     
+		echo "${0}: ${1}: invalid option" >&2
+		USAGE >& 2
+		exit 2 
+		;;
+	    *)      
+		break 
+		;;
+	esac
+    done
+}
+
+generate_test_data_md5(){
+
+    cur_path=`pwd`
+    target_md5=$row_file_path/test_data.md5
+    echo "create md5 file"
+    cd $test_data_path
+    find $test_data_path -type f -exec md5sum '{}' \; > $target_md5
+    cd $cur_path
+
+    if [ -f $target_md5 ]; then
+	echo "done"
+    else
+	echo "generate md5 file error"
+	exit 2
+    fi
+}
+
+prepare_data(){
+    fs=$1
+    target_file=$row_file_path/source_row_device.$fs
+    target_mpt=$row_file_path/mpt.$fs
+
+    target_device=`losetup -f`
+    echo "generate $target_file as loop device($target_device) for $fs test"
+    dd if=/dev/zero of=$target_file bs=1M count=$partition_size
+    losetup $target_device $target_file
+
+    echo "format $target_device as $fs row partition"
+    mkfs.$fs `eval echo "$"mkfs_option_for_$fs""` $target_device
+
+    echo "copy data to $target_mpt"
+    mkdir -p $target_mpt
+    mount $target_device $target_mpt
+    rsync -avrl --delete $test_data_path $target_mpt
+    umount $target_mpt
+    losetup -d $target_device
+    echo "prepare data done"
+
+}
+
+check_source(){
+    fs=$1
+    target_file=$row_file_path/source_row_device.$fs
+    if [ -f $target_file ]; then
+	target_device=`losetup -f`
+	losetup $target_device  $target_file
+	echo $target_device
+    else
+	echo "can't find $target_file"
+	exit 2
+    fi
+}
+
+check_image(){
+    fs=$1
+    img=$image_path/$fs-$(prefix_name).img
+    [ -f $img ] && rm $img
+    echo $img
+}
+
+check_target(){
+    fs=$1
+    img=$row_file_path/$fs-$(prefix_name).restore.row
+    [ -f $img ] && rm $img
+    echo $img
+}
+
+restore_data_check() {
+ 
+    fs=$1
+    target_md5=$row_file_path/test_data.md5
+    target_mpt=$row_file_path/mpt.restore
+    [ -f $target_md5 ] || exit 2
+    [ -d $target_mpt ] || exit 2
+    cur_path=`pwd`
+    mkdir -p $target_mpt
+    mount -o loop $target_device $target_mpt
+    cd $target_mpt
+    ret=`md5sum --quiet -c $target_md5`
+    cd $cur_path
+    umount $target_device
+
+    if [ -z "$ret" ]; then
+	echo "$fs test ok"
+    else
+	echo "$fs test fail"
+	echo $ret
+    fi
+   
+}
+
+#main
+
+check_option $@
+
+[ -z "$manual_fs" ] || test_fs=$manual_fs
+[ -z "$source_data_path" ] || generate_test_data_md5
+
+for fs in $test_fs; do
+    if [ ! -z "$source_data_path" ]; then
+	echo "prepare test data for $fs"
+	prepare_data $fs
+    fi
+
+    source_device=$(check_source $fs)
+    partclone_img=$(check_image $fs)
+    target_device=$(check_target $fs)
+    logfile=$logfile_path/$fs-$(prefix_name).log
+    ncurses="-N"
+    debug="-d"
+
+    echo "clone $source_device to $partclone_img"
+    partclone.$fs $debug $ncurses -c -s $source_device -O $partclone_img -L $logfile.clone
+
+    echo "do image checking"
+    partclone.chkimg -s $partclone_img -L $logfile.imgchk
+
+    echo "restore $partclone_img to $target_device"
+    partclone.restore -s $partclone_img -o $target_device --restore_row_file -L $logfile.restore
+
+    echo "md5 check"
+    restore_data_check $fs
+    losetup -d $source_device
+
+done
