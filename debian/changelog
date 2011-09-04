@@ -1,3 +1,12 @@
+partclone (0.2.27-1) unstable; urgency=low
+
+  * upgraded to the newer upstream version
+  * tested the compilation in a Sid chroot, which works, due to the 
+    availability of libreiser4-dev since the last NMU. Closes: #634543
+  * defined a versioned build-dependency on libreiser4-dev
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Sun, 04 Sep 2011 16:32:35 +0200
+
 partclone (0.2.26-1) unstable; urgency=low
 
   * upgraded to the newer upstream version

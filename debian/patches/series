@@ -1,3 +1,2 @@
 10-configure.ac.patch
-20-manpages
-30-fixIntTypes
+20-reiserfsclone.patch
