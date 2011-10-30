@@ -352,7 +352,7 @@ extern int open_ncurses(){
     getmaxyx(stdscr, terminal_y, terminal_x);
 
     // set window position
-    int log_line = 10;
+    int log_line = 12;
     int log_row = 60;
     int log_y_pos = (terminal_y-24)/2+2;
     int log_x_pos = (terminal_x-log_row)/2;
@@ -408,7 +408,6 @@ extern int open_ncurses(){
     /// init log window
     log_win = subwin(stdscr, log_line, log_row, log_y_pos, log_x_pos);
     wbkgd(log_win, COLOR_PAIR(3));
-    //wprintw(log_win, "Calculating bitmap...\nPlease wait...\n");
 
     // init progress window
     p_win = subwin(stdscr, p_line, p_row, p_y_pos, p_x_pos);
@@ -545,7 +544,7 @@ extern void restore_image_hdr(int* ret, cmd_opt* opt, image_head* image_hdr){
     int debug = opt->debug;
 
     buffer = (char*)malloc(sizeof(image_head));
-    //r_size = read(*ret, buffer, sizeof(image_head));
+    memset(buffer, 0, sizeof(image_head));
     r_size = read_all(ret, buffer, sizeof(image_head), opt);
     if (r_size == -1)
         log_mesg(0, 1, 1, debug, "read image_hdr error\n");
@@ -562,7 +561,7 @@ extern void restore_image_hdr_sp(int* ret, cmd_opt* opt, image_head* image_hdr, 
     int debug = opt->debug;
 
     buffer = (char*)malloc(sizeof(image_head));
-    //r_size = read(*ret, buffer, sizeof(image_head));
+    memset(buffer, 0, sizeof(image_head));
     memcpy(buffer, first_sec, 512);
     r_size = read_all(ret, (buffer+512), (sizeof(image_head)-512), opt);
     if (r_size == -1)
@@ -666,9 +665,10 @@ extern int check_mem_size(image_head image_hdr, cmd_opt opt, unsigned long long 
     void *test_mem;
 
     image_head_size = sizeof(image_head);
-    bitmap_size = (sizeof(char)*image_hdr.totalblock);
-    crc_io_size = sizeof(unsigned long)+image_hdr.block_size;
+    bitmap_size = sizeof(unsigned long)*LONGS(image_hdr.totalblock);
+    crc_io_size = CRC_SIZE+image_hdr.block_size;
     *mem_size = image_head_size + bitmap_size + crc_io_size;
+    log_mesg(0, 0, 0, 1, "we need memory: %lld bytes\nimage head %lld, bitmap %lld, crc %i bytes\n", *mem_size, image_head_size, bitmap_size, crc_io_size);
 
     test_mem = malloc(*mem_size);
     if (test_mem == NULL){
@@ -681,27 +681,35 @@ extern int check_mem_size(image_head image_hdr, cmd_opt opt, unsigned long long 
 }
 
 /// get bitmap from image file to restore data
-extern void get_image_bitmap(int* ret, cmd_opt opt, image_head image_hdr, char* bitmap){
-    unsigned long long size, r_size;
-    int do_write = 0;
-    char* buffer;
-    unsigned long long block_id;
+extern void get_image_bitmap(int* ret, cmd_opt opt, image_head image_hdr, unsigned long* bitmap){
+    unsigned long long size, r_size, r_need;
+    char buffer[4096];
+    unsigned long long offset = 0;
     unsigned long long bused = 0, bfree = 0;
-    int debug = opt.debug;
+    int i, debug = opt.debug;
     int err_exit = 1;
 
     size = sizeof(char)*image_hdr.totalblock;
-    r_size = read_all(ret, bitmap, size, &opt);
 
-    for (block_id = 0; block_id < image_hdr.totalblock; block_id++){
-        if(bitmap[block_id] == 1){
-            //printf("u = %i\n",block_id);
-            bused++;
-        } else {
-            //printf("n = %i\n",block_id);
-            bfree++;
-        }
+    while (size > 0){
+	r_need = size > sizeof(buffer) ? sizeof(buffer) : size;
+	r_size = read_all(ret, buffer, r_need, &opt);
+	if (r_size < r_need){
+	    log_mesg(0, 1, 1, debug, "Unable to read bitmap.\n");
+	}
+	for (i = 0; i < r_need; i++){
+	    if(buffer[i] == 1){
+		pc_set_bit(offset + i, bitmap);
+		bused++;
+	    } else {
+		pc_clear_bit(offset + i, bitmap);
+		bfree++;
+	    }
+	}
+	offset += r_need;
+	size -= r_need;
     }
+
     if (debug >= 2) {
         if(image_hdr.usedblocks != bused){
             if (opt.force)
@@ -828,13 +836,13 @@ extern int open_target(char* target, cmd_opt* opt){
             flags |= O_CREAT | O_TRUNC;	    /// new file
             if (!opt->overwrite)	    /// overwrite
                 flags |= O_EXCL;
-            ret = open (target, flags, S_IRUSR);
+            ret = open (target, flags, S_IRUSR|S_IWUSR);
 
             if (ret == -1){
                 if (errno == EEXIST){
                     log_mesg(0, 0, 1, debug, "Output file '%s' already exists.\nUse option --overwrite if you want to replace its content.\n", target);
                 }
-                log_mesg(0, 0, 1, debug, "%s,%s,%i: open %s error(%i)\n", __FILE__, __func__, __LINE__, target, errno);
+                log_mesg(0, 0, 1, debug, "open target fail %s: %s (%i)\n", target, strerror(errno), errno);
             }
         }
     } else if((opt->restore) || (opt->dd)){		    /// always is device, restore to device=target
@@ -1094,13 +1102,12 @@ extern void initial_dd_hdr(int ret, image_head* image_hdr){
 }
 
 /// initial bitmap
-extern void dd_bitmap(image_head image_hdr, char* bitmap){
+extern void dd_bitmap(image_head image_hdr, unsigned long* bitmap){
 
     int block;
 
     /// initial image bitmap as 1 (all block are used)
-    for(block = 0; block < image_hdr.totalblock; block++)
-        bitmap[block] = 1; 
+    memset(bitmap, 0xFF, sizeof(unsigned long)*LONGS(image_hdr.totalblock));
 
 }
 
