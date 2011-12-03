@@ -1,3 +1,89 @@
+2011-11-25  Thomas Tsai  <thomas@nchc.org.tw>
+
+	0.2.38
+
+	update for progress
+
+2011-11-23  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update for makefile for ncursesw
+
+	release 0.2.37
+
+	add -I/usr/include/ncursesw/
+
+2011-11-09  Thomas Tsai  <thomas@nchc.org.tw>
+
+	0.2.36
+
+	update ncurses size
+
+2011-11-02  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update toolbox
+
+	update toolbox
+
+	update toolbox
+
+	update toolbox
+
+	update
+
+2011-11-01  Thomas Tsai  <thomas@nchc.org.tw>
+
+	move partclone.spec to README.Packages/partclone.spec
+
+	remove debian
+
+	add debian
+
+	update TODO
+
+	re remove debian
+
+	add debian
+
+	update version script
+
+	save last changelog ($version)
+
+	update control for debian-sid
+
+	move debian folder to README.Packages as sample
+
+2011-10-31  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update autoconf and automake for squeeze
+
+2011-10-27  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update script folder done
+
+	update debain/control
+
+	re release 0.2.33
+
+	update test script
+
+2011-10-27  root  <root@debian.(none)>
+
+	update memory mangment
+
+	update memory managment
+
+2011-10-26  root  <root@debian.(none)>
+
+	update ncurses
+
+2011-10-26  Thomas Tsai  <thomas@nchc.org.tw>
+
+	test ncurses progress bar
+
+2011-10-25  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update 0.2.33
+
 2011-10-19  Thomas Tsai  <thomas@nchc.org.tw>
 
 	release 0.2.32

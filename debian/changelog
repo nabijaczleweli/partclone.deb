@@ -1,7 +1,12 @@
+partclone (0.2.38-1) unstable; urgency=low
+
+  * upgraded to the newer upstream version
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Sun, 04 Dec 2011 00:00:04 +0100
+
 partclone (0.2.33-1) unstable; urgency=low
 
   * upgraded to the newer upstream version
-  * 
 
  -- Georges Khaznadar <georgesk@ofset.org>  Sun, 30 Oct 2011 02:27:44 +0200
 
