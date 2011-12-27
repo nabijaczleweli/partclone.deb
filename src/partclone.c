@@ -1,4 +1,4 @@
-/**
+    /**
  * partclone.c - Part of Partclone project.
  *
  * Copyright (c) 2007~ Thomas Tsai <thomas at nchc org tw>
@@ -54,6 +54,7 @@ WINDOW *log_win;
 WINDOW *p_win;
 WINDOW *box_win;
 WINDOW *bar_win;
+WINDOW *tbar_win;
 int log_y_line = 0;
 #endif
 
@@ -100,7 +101,7 @@ extern void usage(void)
             "\n"
             "    -o,  --output FILE      Output FILE\n"
             "    -O   --overwrite FILE   Output FILE, overwriting if exists\n"
-            "         --restore_row_file create special row file for loop device\n"
+            "    -W   --restore_row_file create special row file for loop device\n"
             "    -s,  --source FILE      Source FILE\n"
             "    -L,  --logfile FILE     Log FILE\n"
 #ifndef	RESTORE
@@ -116,13 +117,13 @@ extern void usage(void)
 #ifdef HAVE_LIBNCURSESW
             "    -N,  --ncurses          Using Ncurses User Interface\n"
 #endif
-            "    -X,  --dialog           Output message as Dialog Format\n"
             "    -I,  --ignore_fschk     Ignore filesystem check\n"
-	    "         --ignore_crc       Ignore crc check error\n"
+	    "    -i,  --ignore_crc       Ignore crc check error\n"
             "    -F,  --force            Force progress\n"
             "    -f,  --UI-fresh         Fresh times of progress\n"
             "    -m,  --max_block_cache  The used block will be cache until max number\n"
             "    -q,  --quiet		 Disable progress message\n"
+            "    -B,  --no_block_detail  Show progress message without block detail\n"
             "    -v,  --version          Display partclone version\n"
             "    -h,  --help             Display this help\n"
             , EXECNAME, VERSION, EXECNAME);
@@ -140,7 +141,7 @@ enum {
 
 extern void parse_options(int argc, char **argv, cmd_opt* opt)
 {
-    static const char *sopt = "-hvd::L:cbrDo:O:s:f:m:RCXFINiql";
+    static const char *sopt = "-hvd::L:cbrDo:O:s:f:m:RCXFINiqWB";
     static const struct option lopt[] = {
         { "help",		no_argument,	    NULL,   'h' },
         { "print_version",	no_argument,	    NULL,   'v' },
@@ -148,7 +149,7 @@ extern void parse_options(int argc, char **argv, cmd_opt* opt)
         { "overwrite",		required_argument,  NULL,   'O' },
         { "source",		required_argument,  NULL,   's' },
         { "restore-image",	no_argument,	    NULL,   'r' },
-        { "restore_row_file",	no_argument,	    NULL,   'l' },
+        { "restore_row_file",	no_argument,	    NULL,   'W' },
         { "clone-image",	no_argument,	    NULL,   'c' },
         { "dev-to-dev",		no_argument,	    NULL,   'b' },
         { "domain",		no_argument,	    NULL,   'D' },
@@ -159,11 +160,11 @@ extern void parse_options(int argc, char **argv, cmd_opt* opt)
         { "UI-fresh",		required_argument,  NULL,   'f' },
         { "max_block_cache",	required_argument,  NULL,   'm' },
         { "check",		no_argument,	    NULL,   'C' },
-        { "dialog",		no_argument,	    NULL,   'X' },
         { "ignore_fschk",	no_argument,	    NULL,   'I' },
 	{ "ignore_crc",		no_argument,	    NULL,   'i' },
         { "force",		no_argument,	    NULL,   'F' },
         { "quiet",		no_argument,	    NULL,   'q' },
+        { "no_block_detail",	no_argument,	    NULL,   'B' },
 #ifdef HAVE_LIBNCURSESW
         { "ncurses",		no_argument,	    NULL,   'N' },
 #endif
@@ -179,6 +180,7 @@ extern void parse_options(int argc, char **argv, cmd_opt* opt)
     opt->check = 1;
     opt->ignore_crc = 0;
     opt->quiet = 0;
+    opt->no_block_detail = 0;
     opt->logfile = "/var/log/partclone.log";
 
 #ifdef RESTORE
@@ -244,20 +246,17 @@ extern void parse_options(int argc, char **argv, cmd_opt* opt)
             case 'i':
                 opt->ignore_crc = 1;
                 break;
-            case 'l':
+            case 'W':
                 opt->restore_row_file = 1;
                 break;
             case 'q':
                 opt->quiet = 1;
                 break;
+            case 'B':
+                opt->no_block_detail = 1;
+                break;
             case 'R':
                 opt->rescue++;
-                break;
-            case 'X':
-                /// output message as dialog format, reference
-                /// dialog --guage is text height width percent
-                ///    A guage box displays a meter along the bottom of the box. The meter indicates the percentage. New percentages are read from standard input, one integer per line. The meter is updated to reflect each new percentage. If stdin is XXX, then the first line following is taken as an integer percentage, then subsequent lines up to another XXX are used for a new prompt. The guage exits when EOF is reached on stdin. 
-                opt->dialog = 1;
                 break;
 #ifdef HAVE_LIBNCURSESW
             case 'N':
@@ -412,11 +411,14 @@ extern int open_ncurses(){
     // init progress window
     p_win = subwin(stdscr, p_line, p_row, p_y_pos, p_x_pos);
     wbkgd(p_win, COLOR_PAIR(3));
-    mvwprintw(p_win, 5, 52, "  0.00%%\n");
 
     // init progress window
-    bar_win = subwin(stdscr, 1, p_row-10, p_y_pos+5, p_x_pos);
+    bar_win = subwin(stdscr, 1, p_row-10, p_y_pos+4, p_x_pos);
     wbkgd(bar_win, COLOR_PAIR(1));
+
+    // init total block progress window
+    tbar_win = subwin(stdscr, 1, p_row-10, p_y_pos+7, p_x_pos);
+    //wbkgd(tbar_win, COLOR_PAIR(1));
 
     scrollok(log_win, TRUE);
 
@@ -467,7 +469,6 @@ extern void log_mesg(int log_level, int log_exit, int log_stderr, int debug, con
     va_list args;
     va_start(args, fmt);
     extern cmd_opt opt;
-    extern p_dialog_mesg m_dialog;
     char tmp_str[512];
 
     vsprintf(tmp_str, fmt, args);
@@ -492,13 +493,6 @@ extern void log_mesg(int log_level, int log_exit, int log_stderr, int debug, con
             log_y_line++;
         }
 #endif
-    } else if (opt.dialog) {
-        /// write log to stderr if log_stderr is true
-        if((log_stderr) && (log_level <= debug)){
-            //vsprintf(tmp_str, fmt, args);
-            strncat(m_dialog.data, tmp_str, strlen(tmp_str));
-            fprintf(stderr, "XXX\n%i\n%s\nXXX\n", m_dialog.percent, m_dialog.data);
-        }
     } else {
         /// write log to stderr if log_stderr is true
         if((log_stderr == 1) && (log_level <= debug)){
@@ -999,7 +993,6 @@ extern void print_opt(cmd_opt opt){
 #ifdef HAVE_LIBNCURSESW
     log_mesg(1, 0, 0, debug, "NCURSES: %i\n", opt.ncurses);
 #endif
-    log_mesg(1, 0, 0, debug, "DIALOG: %i\n", opt.dialog);
     log_mesg(1, 0, 0, debug, "OFFSET DOMAIN: 0x%llX\n", opt.offset_domain);
 
 }
