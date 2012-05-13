@@ -177,7 +177,6 @@ int main(int argc, char **argv){
     unsigned long	crc_ck = 0xffffffffL;	/// CRC32 check code for checking
     unsigned long	crc_ck2 = 0xffffffffL;	/// CRC32 check code for checking
     int			c_size;			/// CRC32 code size
-    char*		crc_buffer;		/// buffer data for malloc crc code
     //int			done = 0;
     int			s_count = 0;
     int			rescue_num = 0;
@@ -263,8 +262,7 @@ int main(int argc, char **argv){
         log_mesg(0, 1, 1, debug, "The Image magic error. This file is NOT partclone Image\n");
 
     /// alloc a memory to restore bitmap
-    //bitmap = (unsigned long*)malloc(sizeof(unsigned long)*LONGS(image_hdr.totalblock));
-    bitmap = (unsigned long*)calloc(sizeof(unsigned long), sizeof(unsigned long)*LONGS(image_hdr.totalblock));
+    bitmap = (unsigned long*)calloc(sizeof(unsigned long), LONGS(image_hdr.totalblock));
     if(bitmap == NULL){
         log_mesg(0, 1, 1, debug, "%s, %i, ERROR:%s", __func__, __LINE__, strerror(errno));
     }
@@ -343,18 +341,14 @@ int main(int argc, char **argv){
 
             /// read crc32 code and check it.
             crc_ck = crc32(crc_ck, buffer, r_size);
-            crc_buffer = (char*)malloc(CRC_SIZE); ///alloc a memory to copy data
-            if(crc_buffer == NULL){
-                log_mesg(0, 1, 1, debug, "%s, %i, ERROR:%s", __func__, __LINE__, strerror(errno));
-            }
+            char crc_buffer[CRC_SIZE];
             c_size = read_all(&dfr, crc_buffer, CRC_SIZE, &opt);
             if (c_size < CRC_SIZE){
                 log_mesg(0, 0, 1, debug, "read CRC error, please check your image file. \n");
                 log_mesg(0, 0, 1, debug, "read CRC size (%i), %s. \n", c_size, strerror(errno));
 		lseek(dfr, (int)(CRC_SIZE-c_size), SEEK_CUR);
 		}
-            memcpy(&crc, crc_buffer, CRC_SIZE);
-            if ((memcmp(&crc, &crc_ck, CRC_SIZE) != 0) && (!opt.ignore_crc)){
+            if ((memcmp(crc_buffer, &crc_ck, CRC_SIZE) != 0) && (!opt.ignore_crc)){
 		log_mesg(1, 0, 0, debug, "Ignore_crc 2 %i\n ", opt.ignore_crc);
 
                 log_mesg(1, 0, 0, debug, "CRC Check error. 64bit bug before v0.1.0 (Rev:250M), enlarge crc size and recheck again....\n ");
@@ -385,7 +379,6 @@ int main(int argc, char **argv){
 
             /// free buffer
             free(buffer);
-            free(crc_buffer);
             copied++;					/// count copied block
             log_mesg(1, 0, 0, debug, "end\n");
         }
@@ -409,8 +402,10 @@ int main(int argc, char **argv){
 void *thread_update_pui(void *arg){
 
     while (done == 0) {
-	if(!opt.quiet)
+	if(!opt.quiet){
 	    update_pui(&prog, copied, block_id, done);
+	    sleep(opt.fresh);
+	}
     }
     pthread_exit("exit");
 }

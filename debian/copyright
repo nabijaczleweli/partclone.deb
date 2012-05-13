@@ -6,7 +6,6 @@ Files: *
 Copyright: 2007-2011 Thomas Tsai <thomas@nchc.org.tw>
            2007-2011 Steven Shiau <steven@nchc.org.tw>
            2007-2011 Jazz Wang <jazz@nchc.org.tw>
-
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -52,7 +51,7 @@ License: FreeBSD-like
  4. Neither the name of the University nor the names of its contributors
     may be used to endorse or promote products derived from this software
     without specific prior written permission.
-
+ .
  THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE

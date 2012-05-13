@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 7.0.50~), quilt,
  libreadline-gplv2-dev|libreadline5-dev,
  libbsd-dev, libncursesw5-dev, libntfs-dev, vmfs-tools,
  pkg-config
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Homepage: http://partclone.org/
 
 Package: partclone
