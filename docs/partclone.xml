@@ -11,6 +11,9 @@
           /usr/share/xml/docbook/stylesheet/docbook-xsl/manpages/docbook.xsl \
           manpage.xml'
 
+# comment by thomas
+install 'docbook-xsl' to access style
+
 A manual page <package>.<section> will be generated. You may view the
 manual page with: nroff -man <package>.<section> | less'. A typical entry
 in a Makefile or Makefile.am is:
@@ -59,8 +62,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   <!-- TITLE should be something like "User commands" or similar (see
        http://www.tldp.org/HOWTO/Man-Page/q2.html). -->
   <!ENTITY dhtitle     "Partclone User Manual">
-  <!ENTITY dhucpackage "PARTCLONE.EXTFS">
-  <!ENTITY dhpackage   "partclone.extfs">
+  <!ENTITY dhucpackage "PARTCLONE">
+  <!ENTITY dhpackage   "partclone">
 ]>
 
 <refentry>
@@ -99,11 +102,11 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose> The utility for clone and restore an etx2/ext3 partition.</refpurpose>
+    <refpurpose> The utility for clone and restore a partition.</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
-      <command>&dhpackage;</command>
+      <command>&dhpackage;.[fstype]</command>
       <!-- These are several examples, how syntaxes could look -->
 	<arg choice="req">
 	<group choice="opt">
@@ -147,6 +150,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
 	<group choice="opt">
 	    <arg choice="plain"><option>--restore_row_file</option></arg>
 	</group>
+      </arg> 	
+      <arg choice="opt">
 	<group choice="opt">
 	    <arg choice="plain"><option>-M</option></arg>
 	    <arg choice="plain"><option>--max_block_cache</option></arg>
@@ -155,6 +160,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
 	    <arg choice="plain"><option>-N</option></arg>
 	    <arg choice="plain"><option>--ncurses</option></arg>
 	</group>
+      </arg> 	
+      <arg choice="opt">
 	<group choice="opt">
 	    <arg choice="plain"><option>-q</option></arg>
 	    <arg choice="plain"><option>--quiet</option></arg>
@@ -163,6 +170,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
 	    <arg choice="plain"><option>-f</option></arg>
 	    <arg choice="plain"><option>--UI-fresh</option></arg>
 	</group>
+      </arg> 	
+      <arg choice="opt">
 	<group choice="opt">
 	    <arg choice="plain"><option>-F</option></arg>
 	    <arg choice="plain"><option>--force</option></arg>
@@ -171,6 +180,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
 	    <arg choice="plain"><option>-I</option></arg>
 	    <arg choice="plain"><option>--ignore_fschk</option></arg>
 	</group>
+      </arg> 	
+      <arg choice="opt">
 	<group choice="opt">
 	<arg choice="plain"><option>--ignore_crc</option></arg>
 	</group>
@@ -182,6 +193,8 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
 	    <arg choice="plain"><option>-C</option></arg>
 	    <arg choice="plain"><option>--nocheck</option></arg>
 	</group>
+      </arg> 	
+      <arg choice="opt">
 	<group choice="opt">
 	    <arg choice="plain"><option>-R</option></arg>
 	    <arg choice="plain"><option>--rescue</option></arg>
@@ -198,68 +211,26 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refsynopsisdiv>
   <refsect1 id="description">
     <title>DESCRIPTION</title>
-    <para><command>&dhpackage;</command> is a part of <command>Partclone</command> project for ext2/3 file system. Partclone provide utilities to backup used blocks and design for higher compatibility of the file system by using existing library, e.g. e2fslibs is used to read the used block of ext2 partition.</para>
+    <para><command>&dhpackage;</command>.[fstype] is a part of <command>Partclone</command> project. Partclone provide utilities to backup used blocks and design for higher compatibility of the file system by using existing library, e.g. e2fslibs is used to read the used block of ext2 partition.</para>
     <para><command>Partclone</command> supported file system include btrfs, ext2, ext3, ext4, reiserfs, reiser4, xfs and jfs for LINUX. Also  support some non-linux operation system, ex: NTFS and  FAT (for Windows), HFS plus(APPLE MAC OS), UFS2(FreeBSD), VMFS(VMWare Vsphere).
     </para>
-    <para>All partclone utils could be run like partclone.xxx is very smiliar fsck or mkfs. For example, for backup/restore hfsplus, just run partclone.hfsp.
-    <segmentedlist>
-      <segtitle>File System</segtitle>
-      <segtitle>partclone.xxx</segtitle>
-      <seglistitem>
-        <seg>btrfs</seg>
-        <seg>partclone.btrfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>ext2 | ext3 | ext4</seg>
-        <seg>partclone.ext2 | partclone.ext3 | partclone.ext4</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg></seg>
-        <seg>partclone.extfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>reiserfs 3.5</seg>
-        <seg>partclone.reiserfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>reiser 4</seg>
-        <seg>partclone.reiser4</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>xfs</seg>
-        <seg>partclone.xfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>ufs | ufs2</seg>
-        <seg>partclone.ufs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>jfs</seg>
-        <seg>partclone.jfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>hfs plusfs</seg>
-        <seg>partclone.hfs+ | partclone.hfsplus</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>vmfs</seg>
-        <seg>partclone.vmfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>ntfs</seg>
-        <seg>partclone.ntfs</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg>fat12 | fat16 | fat32</seg>
-        <seg>partclone.fat12 | partclone.fat16 | partclone.fat32</seg>
-      </seglistitem>
-      <seglistitem>
-        <seg></seg>
-        <seg>partclone.vfat</seg>
-      </seglistitem>
-    </segmentedlist>
-
+    <para>All partclone utils could be run like partclone.[fstype] is very smiliar fsck or mkfs. For example, for backup/restore hfsplus, just run partclone.hfsp
     </para>
+    <screen>
+       File System             partclone.[fstype]
+
+       btrfs                   partclone.btrfs
+       ext2, ext3, ext4        partclone.[ext2|ext3|ext4]
+       reiserfs 3.5            partclone.reiserfs
+       reiser 4                partclone.reiser4
+       xfs                     partclone.xfs
+       ufs | ufs2              partclone.ufs
+       jfs                     partclone.jfs
+       hfs plusfs              partclone.[hfs+|hfsplus]
+       vmfs                    partclone.vmfs
+       ntfs                    partclone.ntfs
+       fat12, fat16, fat32     partclone.[fat12|fat16|fat32]
+    </screen>
   </refsect1>
   <refsect1 id="options">
     <title>OPTIONS</title>
@@ -480,7 +451,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   <refsect1 id="bugs">
     <!-- Or use this section to tell about upstream BTS. -->
     <title>BUGS</title>
-    <para>Report bugs to &dhemail; or <ulink url="http://sourceforge.net/projects/partclone"/>.</para>
+    <para>Report bugs to &dhemail; or <ulink url="http://partclone.org"/>.</para>
     <para>You can get support at http://partclone.org</para>
 
   </refsect1>
@@ -489,6 +460,9 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
     <!-- In alpabetical order. -->
     <para>
     <citerefentry>
+        <refentrytitle>partclone</refentrytitle>
+        <manvolnum>8</manvolnum>
+      </citerefentry>, <citerefentry>
         <refentrytitle>partclone.chkimg</refentrytitle>
         <manvolnum>8</manvolnum>
       </citerefentry>, <citerefentry>

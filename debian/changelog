@@ -1,11 +1,10 @@
-partclone (0.2.48-1+deb7u1) wheezy-security; urgency=high
+partclone (0.2.49-1) unstable; urgency=low
 
-  * Non-maintainer upload by the LTS Team.
-  * CVE-2017-6596: heap-based buffer overflow vulnerability due to
-    insufficient validation of the partclone image header
-    (Closes: #857966).
+  * upgraded to the new upstream version
+  * restored the build-dependencies xsltproc, docbook-xsl
+  * activated dpkg-buildflags in debian/rules
 
- -- Hugo Lefeuvre <hle@debian.org>  Tue, 25 Apr 2017 16:11:13 +0200
+ -- Georges Khaznadar <georgesk@ofset.org>  Sun, 01 Jul 2012 12:11:06 +0200
 
 partclone (0.2.48-1) unstable; urgency=low
 

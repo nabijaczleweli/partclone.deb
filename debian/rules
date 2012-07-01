@@ -12,12 +12,17 @@
 %:
 	dh $@ 
 
+CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
+CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
+LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
+
 override_dh_auto_configure:
 	# Add here commands to configure the package.
 	cp /usr/share/misc/config.sub .
 	cp /usr/share/misc/config.guess .
 	autoreconf
-	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs" --enable-ncursesw --enable-all
+	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CPPFLAGS='$(CPPFLAGS)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' --enable-ncursesw --enable-all
 
 override_dh_auto_clean:
 	[ ! -f Makefile ] || make distclean
