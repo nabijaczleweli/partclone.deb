@@ -29,11 +29,9 @@ Forwarded: <no|not-needed|url proving that it has been forwarded>
 Reviewed-By: <name and email of someone who approved the patch>
 Last-Update: <YYYY-MM-DD>
 
-Index: partclone-0.2.27/configure.ac
-===================================================================
---- partclone-0.2.27.orig/configure.ac
-+++ partclone-0.2.27/configure.ac
-@@ -22,16 +22,16 @@ AC_ARG_ENABLE(all,
+--- a/configure.ac
++++ b/configure.ac
+@@ -22,17 +22,17 @@
  )
  AM_CONDITIONAL(ENABLE_ALL, test "$enable_all" = yes)
  if test "$enable_all" = "yes"; then
@@ -45,6 +43,7 @@ Index: partclone-0.2.27/configure.ac
  enable_reiser4="yes"
  enable_hfsp="yes"
  enable_fat="yes"
+ enable_exfat="yes"
  enable_ntfs="yes"
 -enable_ufs="yes"
 -enable_vmfs="yes"

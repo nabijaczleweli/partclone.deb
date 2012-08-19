@@ -1,3 +1,37 @@
+2012-07-31  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update some docs
+
+2012-07-30  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update version to 0.2.51
+
+	update process for elapsed time over 24hr
+
+2012-07-25  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update supported list
+
+2012-07-13  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update makefile
+
+2012-07-10  Thomas Tsai  <thomas@nchc.org.tw>
+
+	version 0.2.50
+
+	update test and size information
+
+	add test for exfat
+
+	update exfat and add exfat man docs
+
+	add exfat
+
+2012-06-27  Thomas Tsai  <thomas@nchc.org.tw>
+
+	add more detail message in image head output
+
 2012-06-15  Thomas Tsai  <thomas@nchc.org.tw>
 
 	add partclone.btrfs.8
