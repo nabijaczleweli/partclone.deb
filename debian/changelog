@@ -1,3 +1,24 @@
+partclone (0.2.62-1) unstable; urgency=low
+
+  * changed my DEBEMAIL
+  * upgraded to the newest upstream version
+  * upgraded Standards-Version to 3.9.4
+  * upgraded debhelper level to 9
+  * added a build-depedency on the last gettext package. Ran "gettextize -f"
+    and adjusted configurations files so the source can be built in an
+    up-to-date environment. Closes: #713329
+  * modified fail-mbr/Makefile to define a path for included headers and
+    to fix a bug with the installation directory
+
+ -- Georges Khaznadar <georgesk@debian.org>  Mon, 24 Jun 2013 14:40:46 +0200
+
+partclone (0.2.56-1) unstable; urgency=low
+
+  * enabled xfs support.
+  * upgraded to the new upstream version
+
+ -- Georges Khaznadar <georgesk@ofset.org>  Mon, 20 Aug 2012 12:02:55 +0200
+
 partclone (0.2.51-1) unstable; urgency=low
 
   * upgraded to the new upstream version

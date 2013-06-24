@@ -1,2 +1,5 @@
-10-configure.ac.patch
-20-reiserfsclone.patch
+config-stuff.patch
+reiserfsclone.patch
+xfsclone.patch
+remove-some-fs-support.patch
+build-fail-mbr

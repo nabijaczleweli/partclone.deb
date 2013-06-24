@@ -19,16 +19,15 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 override_dh_auto_configure:
 	# Add here commands to configure the package.
-	cp /usr/share/misc/config.sub .
-	cp /usr/share/misc/config.guess .
 	autoreconf
 	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CPPFLAGS='$(CPPFLAGS)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' --enable-ncursesw --enable-all
 
 override_dh_auto_clean:
 	[ ! -f Makefile ] || make distclean
-	rm -f get_lib_version
-	rm -f config.sub configure Makefile.in aclocal.m4 config.guess 
-	rm -f src/Makefile.in docs/Makefile.in
+	rm -f get_lib_version config.h.in config.log
+	rm -f configure Makefile.in aclocal.m4
+	rm -f src/Makefile.in docs/Makefile.in tests/Makefile.in
+	rm -f tests/dd.log tests/dd.trs tests/test-suite.log
 	dh_clean
 
 MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8

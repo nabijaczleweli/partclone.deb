@@ -41,11 +41,13 @@
 #define vmfs_MAGIC "VMFS"
 #define jfs_MAGIC "JFS"
 #define btrfs_MAGIC "BTRFS"
+#define minix_MAGIC "MINIX"
 #define raw_MAGIC "raw"
 
 #define IMAGE_VERSION "0001"
 #define VERSION_SIZE 4
-#define SECTOR_SIZE 512
+#define DEFAULT_BUFFER_SIZE 1048576
+#define PART_SECTOR_SIZE 512
 #define CRC_SIZE 4
 
 // Reference: ntfsclone.c
@@ -87,7 +89,6 @@ struct cmd_opt
     int overwrite;
     int rescue;
     int check;
-    int max_block_cache;
     int ncurses;
     int force;
     int ignore_fschk;
@@ -95,6 +96,9 @@ struct cmd_opt
     int quiet;
     int no_block_detail;
     int restore_raw_file;
+    int skip_write_error;
+    int buffer_size;
+    unsigned long offset;
     unsigned long fresh;
     unsigned long long offset_domain;
 };
@@ -142,8 +146,8 @@ struct image_head
 typedef struct image_head image_head;
 
 extern void restore_image_hdr(int* ret, cmd_opt* opt, image_head* image_hdr);
-extern void restore_image_hdr_sp(int* ret, cmd_opt* opt, image_head* image_hdr, char* first_sec);
 extern void get_image_hdr(int* ret, cmd_opt opt, image_head image_hdr, unsigned long* bitmap);
+extern void get_image_bitmap(int* ret, cmd_opt opt, image_head image_hdr, unsigned long* bitmap);
 
 /**
  * for open and close
@@ -180,8 +184,5 @@ extern void print_opt(cmd_opt opt);
 /// print finish mesg
 extern void print_finish_info(cmd_opt opt);
 
-/// initial dd hdr
-extern void initial_dd_hdr(int ret, image_head* image_hdr);
-
-/// initial bitmap
-extern void dd_bitmap(image_head image_hdr, unsigned long* bitmap);
+/// get partition size
+extern unsigned long long get_partition_size(int* ret);
