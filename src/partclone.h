@@ -67,6 +67,7 @@
 #define NO_BLOCK_DETAIL 3
 
 char *EXECNAME;
+unsigned long long rescue_write_size;
 
 /**
  * option
@@ -79,6 +80,7 @@ struct cmd_opt
     int clone;
     int restore;
     int dd;
+    int ddd;
     int domain;
     int chkimg;
     int info;

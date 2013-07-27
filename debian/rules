@@ -30,10 +30,12 @@ override_dh_auto_clean:
 	rm -f tests/dd.log tests/dd.trs tests/test-suite.log
 	dh_clean
 
+DESTDIR = $(CURDIR)/debian/partclone
 MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8
 
 override_dh_auto_install:
 	dh_auto_install
+	$(MAKE) -C fail-mbr install DESTDIR=$(DESTDIR)
 	install -d $(MAN8DIR)
 	cd $(MAN8DIR); \
 	  ln -s partclone.fat.8.gz partclone.vfat.8.gz; \

@@ -1,3 +1,12 @@
+partclone (0.2.66-1) unstable; urgency=low
+
+  * upgraded to the newest upstream version
+  * modified Makefile.am to prevent building fail-mbr's binaries
+  * mentioned fail-mbr's binaries in debian/source/include-binaries
+  * modified debian/rules to install fail-mbr.bin
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sat, 27 Jul 2013 16:53:50 +0200
+
 partclone (0.2.62-1) unstable; urgency=low
 
   * changed my DEBEMAIL

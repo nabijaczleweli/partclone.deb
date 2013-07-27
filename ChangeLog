@@ -1,3 +1,31 @@
+2013-07-03  Thomas Tsai  <thomas@nchc.org.tw>
+
+	0.2.66
+
+	fix read stdin size smaller than buffer size for partclone.dd
+
+2013-07-02  Thomas Tsai  <thomas@nchc.org.tw>
+
+	0.2.65
+
+	update open error for ddd
+
+2013-07-01  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update dd_bs to 1024
+
+	0.2.64
+
+	update ignore
+
+	dix dd issue
+
+2013-06-30  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update version and update manual for partclone.dd and partclone.imager
+
+	add imager and fix dd
+
 2013-06-18  Thomas Tsai  <thomas@nchc.org.tw>
 
 	add version.h
