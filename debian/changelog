@@ -1,3 +1,9 @@
+partclone (0.2.66-2) unstable; urgency=low
+
+  * definitely prevented rebuild of fail-mbr's binaries by automatic means
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sat, 27 Jul 2013 21:41:01 +0200
+
 partclone (0.2.66-1) unstable; urgency=low
 
   * upgraded to the newest upstream version
