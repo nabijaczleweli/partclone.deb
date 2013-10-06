@@ -9,11 +9,13 @@ Description: migration to automake 1.13
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2,7 +2,7 @@
+@@ -1,8 +1,8 @@
+ AC_INIT([Partclone], [0.2.66], [thomas@nchc.org.tw])
  #AC_CONFIG_AUX_DIR([build-aux])
  #AC CONFIG SRCDIR([src/main.c])
- AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 -AM_GNU_GETTEXT_VERSION([0.16.1])
++AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 +AM_GNU_GETTEXT_VERSION([0.18.2])
  AM_GNU_GETTEXT([external])
  AC_PROG_CC
