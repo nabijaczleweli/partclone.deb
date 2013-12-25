@@ -58,24 +58,23 @@ sbin_PROGRAMS = partclone.info$(EXEEXT) partclone.dd$(EXEEXT) \
 	$(am__EXEEXT_6) $(am__EXEEXT_7) partclone.ntfsfixboot$(EXEEXT) \
 	$(am__EXEEXT_8) $(am__EXEEXT_9) $(am__EXEEXT_10) \
 	$(am__EXEEXT_11) $(am__EXEEXT_12) $(am__EXEEXT_13)
-@ENABLE_STATIC_TRUE@am__append_1 = -static
-@ENABLE_TINFO_TRUE@am__append_2 = -ltinfo
-@ENABLE_MEMTRACE_TRUE@am__append_3 = -DMEMTRACE -DMEMWATCH -DMW_STDIO
-@ENABLE_NCURSESW_TRUE@am__append_4 = -I/usr/include/ncursesw
-@ENABLE_EXTFS_TRUE@am__append_5 = partclone.extfs
-@ENABLE_REISERFS_TRUE@am__append_6 = partclone.reiserfs
-@ENABLE_REISER4_TRUE@am__append_7 = partclone.reiser4
-@ENABLE_HFSP_TRUE@am__append_8 = partclone.hfsp
-@ENABLE_XFS_TRUE@am__append_9 = partclone.xfs
-@ENABLE_EXFAT_TRUE@am__append_10 = partclone.exfat
-@ENABLE_FAT_TRUE@am__append_11 = partclone.fat
-@ENABLE_NTFS_TRUE@am__append_12 = partclone.ntfs
-@ENABLE_UFS_TRUE@am__append_13 = partclone.ufs
-@ENABLE_VMFS_TRUE@am__append_14 = partclone.vmfs partclone.vmfs5 \
+@ENABLE_TINFO_TRUE@am__append_1 = -ltinfo
+@ENABLE_MEMTRACE_TRUE@am__append_2 = -DMEMTRACE -DMEMWATCH -DMW_STDIO
+@ENABLE_NCURSESW_TRUE@am__append_3 = -I/usr/include/ncursesw
+@ENABLE_EXTFS_TRUE@am__append_4 = partclone.extfs
+@ENABLE_REISERFS_TRUE@am__append_5 = partclone.reiserfs
+@ENABLE_REISER4_TRUE@am__append_6 = partclone.reiser4
+@ENABLE_HFSP_TRUE@am__append_7 = partclone.hfsp
+@ENABLE_XFS_TRUE@am__append_8 = partclone.xfs
+@ENABLE_EXFAT_TRUE@am__append_9 = partclone.exfat
+@ENABLE_FAT_TRUE@am__append_10 = partclone.fat
+@ENABLE_NTFS_TRUE@am__append_11 = partclone.ntfs
+@ENABLE_UFS_TRUE@am__append_12 = partclone.ufs
+@ENABLE_VMFS_TRUE@am__append_13 = partclone.vmfs partclone.vmfs5 \
 @ENABLE_VMFS_TRUE@	partclone.fstype
-@ENABLE_JFS_TRUE@am__append_15 = partclone.jfs
-@ENABLE_BTRFS_TRUE@am__append_16 = partclone.btrfs
-@ENABLE_MINIX_TRUE@am__append_17 = partclone.minix
+@ENABLE_JFS_TRUE@am__append_14 = partclone.jfs
+@ENABLE_BTRFS_TRUE@am__append_15 = partclone.btrfs
+@ENABLE_MINIX_TRUE@am__append_16 = partclone.minix
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -119,7 +118,7 @@ am__partclone_btrfs_SOURCES_DIST = main.c partclone.c progress.c \
 	btrfs/ctree.h btrfs/extent_io.h btrfs/kerncompat.h \
 	btrfs/radix-tree.h btrfs/utils.h btrfs/disk-io.h btrfs/hash.h \
 	btrfs/list.h btrfs/rbtree.h btrfs/version.h btrfs/repair.h \
-	btrfs/repair.c
+	btrfs/repair.c btrfs/raid6.c
 am__objects_1 = partclone_btrfs-crc32c.$(OBJEXT) \
 	partclone_btrfs-disk-io.$(OBJEXT) \
 	partclone_btrfs-extent-tree.$(OBJEXT) \
@@ -136,7 +135,8 @@ am__objects_1 = partclone_btrfs-crc32c.$(OBJEXT) \
 	partclone_btrfs-inode-item.$(OBJEXT) \
 	partclone_btrfs-radix-tree.$(OBJEXT) \
 	partclone_btrfs-utils.$(OBJEXT) \
-	partclone_btrfs-repair.$(OBJEXT)
+	partclone_btrfs-repair.$(OBJEXT) \
+	partclone_btrfs-raid6.$(OBJEXT)
 @ENABLE_BTRFS_TRUE@am_partclone_btrfs_OBJECTS =  \
 @ENABLE_BTRFS_TRUE@	partclone_btrfs-main.$(OBJEXT) \
 @ENABLE_BTRFS_TRUE@	partclone_btrfs-partclone.$(OBJEXT) \
@@ -356,7 +356,7 @@ am__partclone_xfs_SOURCES_DIST = main.c partclone.c progress.c \
 partclone_xfs_OBJECTS = $(am_partclone_xfs_OBJECTS)
 partclone_xfs_DEPENDENCIES =
 partclone_xfs_LINK = $(CCLD) $(partclone_xfs_CFLAGS) $(CFLAGS) \
-	$(partclone_xfs_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -409,8 +409,7 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
-CFLAGS = @CFLAGS@ $(am__append_3) $(am__append_4) \
-	-D_FILE_OFFSET_BITS=64
+CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
@@ -431,11 +430,11 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
-LDFLAGS = @LDFLAGS@ $(am__append_1)
+LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@ $(am__append_2)
+LIBS = @LIBS@ $(am__append_1)
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
@@ -519,12 +518,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\"
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -D_FILE_OFFSET_BITS=64
 LDADD = $(LIBINTL)
 TOOLBOX = srcdir=$(top_srcdir) builddir=$(top_builddir) $(top_srcdir)/toolbox
-BTRFS_SOURCE = btrfs/crc32c.c btrfs/disk-io.c btrfs/extent-tree.c btrfs/inode-map.c btrfs/rbtree.c btrfs/volumes.c btrfs/ctree.c btrfs/extent-cache.c btrfs/file-item.c btrfs/print-tree.c btrfs/root-tree.c btrfs/dir-item.c btrfs/extent_io.c btrfs/inode-item.c btrfs/radix-tree.c btrfs/utils.c btrfs/crc32c.h btrfs/extent-cache.h btrfs/ioctl.h btrfs/print-tree.h btrfs/transaction.h btrfs/volumes.h btrfs/ctree.h btrfs/extent_io.h btrfs/kerncompat.h btrfs/radix-tree.h btrfs/utils.h btrfs/disk-io.h btrfs/hash.h btrfs/list.h btrfs/rbtree.h btrfs/version.h btrfs/repair.h btrfs/repair.c
+BTRFS_SOURCE = btrfs/crc32c.c btrfs/disk-io.c btrfs/extent-tree.c btrfs/inode-map.c btrfs/rbtree.c btrfs/volumes.c btrfs/ctree.c btrfs/extent-cache.c btrfs/file-item.c btrfs/print-tree.c btrfs/root-tree.c btrfs/dir-item.c btrfs/extent_io.c btrfs/inode-item.c btrfs/radix-tree.c btrfs/utils.c btrfs/crc32c.h btrfs/extent-cache.h btrfs/ioctl.h btrfs/print-tree.h btrfs/transaction.h btrfs/volumes.h btrfs/ctree.h btrfs/extent_io.h btrfs/kerncompat.h btrfs/radix-tree.h btrfs/utils.h btrfs/disk-io.h btrfs/hash.h btrfs/list.h btrfs/rbtree.h btrfs/version.h btrfs/repair.h btrfs/repair.c btrfs/raid6.c
 #BTRFS_SOURCE= btrfs/*
 EXFATFS_SOURCE = exfat/byteorder.h exfat/cluster.c exfat/exfatfs.h exfat/exfat.h exfat/io.c exfat/libexfat.a exfat/log.c exfat/lookup.c exfat/mount.c exfat/node.c exfat/time.c exfat/utf.c exfat/utils.c exfat/version.h
+@ENABLE_STATIC_TRUE@AM_LDFLAGS = -static
+AM_CFLAGS = -D_FILE_OFFSET_BITS=64 $(am__append_2) $(am__append_3)
 partclone_info_SOURCES = info.c partclone.c partclone.h fs_common.h
 partclone_restore_SOURCES = main.c partclone.c progress.c ddclone.c ddclone.h partclone.h progress.h gettext.h
 partclone_restore_CFLAGS = -DRESTORE -DDD
@@ -547,7 +548,6 @@ partclone_imager_CFLAGS = -DIMG
 @ENABLE_HFSP_TRUE@partclone_hfsp_CFLAGS = -DHFSPLUS
 @ENABLE_XFS_TRUE@partclone_xfs_SOURCES = main.c partclone.c progress.c xfsclone.c xfsclone.h partclone.h progress.h gettext.h
 @ENABLE_XFS_TRUE@partclone_xfs_CFLAGS = -DXFS
-@ENABLE_XFS_TRUE@partclone_xfs_LDFLAGS = 
 @ENABLE_XFS_TRUE@partclone_xfs_LDADD = -lxfs -lrt -lpthread
 @ENABLE_EXFAT_TRUE@partclone_exfat_SOURCES = main.c partclone.c progress.c exfatclone.c exfatclone.h partclone.h progress.h gettext.h $(EXFATFS_SOURCE)
 @ENABLE_EXFAT_TRUE@partclone_exfat_CFLAGS = -DEXFAT
@@ -743,6 +743,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-print-tree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-progress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-radix-tree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-raid6.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-rbtree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-repair.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/partclone_btrfs-root-tree.Po@am__quote@
@@ -1134,6 +1135,20 @@ partclone_btrfs-repair.obj: btrfs/repair.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='btrfs/repair.c' object='partclone_btrfs-repair.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_btrfs_CFLAGS) $(CFLAGS) -c -o partclone_btrfs-repair.obj `if test -f 'btrfs/repair.c'; then $(CYGPATH_W) 'btrfs/repair.c'; else $(CYGPATH_W) '$(srcdir)/btrfs/repair.c'; fi`
+
+partclone_btrfs-raid6.o: btrfs/raid6.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_btrfs_CFLAGS) $(CFLAGS) -MT partclone_btrfs-raid6.o -MD -MP -MF $(DEPDIR)/partclone_btrfs-raid6.Tpo -c -o partclone_btrfs-raid6.o `test -f 'btrfs/raid6.c' || echo '$(srcdir)/'`btrfs/raid6.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/partclone_btrfs-raid6.Tpo $(DEPDIR)/partclone_btrfs-raid6.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='btrfs/raid6.c' object='partclone_btrfs-raid6.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_btrfs_CFLAGS) $(CFLAGS) -c -o partclone_btrfs-raid6.o `test -f 'btrfs/raid6.c' || echo '$(srcdir)/'`btrfs/raid6.c
+
+partclone_btrfs-raid6.obj: btrfs/raid6.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_btrfs_CFLAGS) $(CFLAGS) -MT partclone_btrfs-raid6.obj -MD -MP -MF $(DEPDIR)/partclone_btrfs-raid6.Tpo -c -o partclone_btrfs-raid6.obj `if test -f 'btrfs/raid6.c'; then $(CYGPATH_W) 'btrfs/raid6.c'; else $(CYGPATH_W) '$(srcdir)/btrfs/raid6.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/partclone_btrfs-raid6.Tpo $(DEPDIR)/partclone_btrfs-raid6.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='btrfs/raid6.c' object='partclone_btrfs-raid6.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_btrfs_CFLAGS) $(CFLAGS) -c -o partclone_btrfs-raid6.obj `if test -f 'btrfs/raid6.c'; then $(CYGPATH_W) 'btrfs/raid6.c'; else $(CYGPATH_W) '$(srcdir)/btrfs/raid6.c'; fi`
 
 partclone_chkimg-main.o: main.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(partclone_chkimg_CFLAGS) $(CFLAGS) -MT partclone_chkimg-main.o -MD -MP -MF $(DEPDIR)/partclone_chkimg-main.Tpo -c -o partclone_chkimg-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c

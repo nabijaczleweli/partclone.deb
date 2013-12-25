@@ -1,6 +1,6 @@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -25,17 +25,17 @@
+@@ -24,17 +24,17 @@
  )
  AM_CONDITIONAL(ENABLE_ALL, test "$enable_all" = yes)
  if test "$enable_all" = "yes"; then

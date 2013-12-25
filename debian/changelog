@@ -1,8 +1,8 @@
-partclone (0.2.66-3) unstable; urgency=low
+partclone (0.2.68-1) unstable; urgency=low
 
-  * added a 'subdir-objects' option in configure.ac. Closes: #725562
+  * upgraded to the newest upstream release
 
- -- Georges Khaznadar <georgesk@debian.org>  Mon, 07 Oct 2013 00:45:14 +0200
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 25 Dec 2013 18:14:58 +0100
 
 partclone (0.2.66-2) unstable; urgency=low
 
