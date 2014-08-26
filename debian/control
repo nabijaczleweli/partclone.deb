@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 9.0.0), quilt,
  e2fslibs-dev (>= 1.41.3), xfslibs-dev, libreiser4-dev (>=1.0.7-6.2),
  libreadline-gplv2-dev|libreadline5-dev,
  libbsd-dev, libncursesw5-dev, libntfs-dev, vmfs-tools,
- pkg-config, xsltproc, docbook-xsl
+ libblkid-dev, pkg-config, xsltproc, docbook-xsl
 Standards-Version: 3.9.5
 Homepage: http://partclone.org/
 

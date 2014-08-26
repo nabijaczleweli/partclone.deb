@@ -7,17 +7,19 @@ Description: migration to automake 1.13
  This patch contains all the modifications which make the package buildable in
  a recent environment.
 
---- a/configure.ac
-+++ b/configure.ac
+Index: partclone-0.2.72/configure.ac
+===================================================================
+--- partclone-0.2.72.orig/configure.ac
++++ partclone-0.2.72/configure.ac
 @@ -1,6 +1,6 @@
- AC_INIT([Partclone], [0.2.70], [thomas@nchc.org.tw])
+ AC_INIT([Partclone], [0.2.72], [thomas@nchc.org.tw])
  AM_INIT_AUTOMAKE([-Wall foreign])
 -AM_GNU_GETTEXT_VERSION([0.16.1])
 +AM_GNU_GETTEXT_VERSION([0.18.2])
  AM_GNU_GETTEXT([external])
  AC_PROG_CC
  AM_PROG_CC_C_O
-@@ -11,6 +11,9 @@
+@@ -11,6 +11,9 @@ AC_PROG_LN_S
  # Enable large file support.
  AC_SYS_LARGEFILE
  
@@ -27,7 +29,7 @@ Description: migration to automake 1.13
  # default value##
  supported_fs=""
  
-@@ -125,8 +128,8 @@
+@@ -125,8 +128,8 @@ AC_CHECK_LIB([rt], [aio_init], true,
  
  dnl Check for XFS 
  AC_CHECKING([ for XFS Library and Header files ... ])
@@ -38,8 +40,10 @@ Description: migration to automake 1.13
  )
  supported_fs=$supported_fs" xfs"
  fi
+Index: partclone-0.2.72/test-driver
+===================================================================
 --- /dev/null
-+++ b/test-driver
++++ partclone-0.2.72/test-driver
 @@ -0,0 +1,127 @@
 +#! /bin/sh
 +# test-driver - basic testsuite driver script.
@@ -168,8 +172,10 @@ Description: migration to automake 1.13
 +# time-stamp-time-zone: "UTC"
 +# time-stamp-end: "; # UTC"
 +# End:
---- a/config.rpath
-+++ b/config.rpath
+Index: partclone-0.2.72/config.rpath
+===================================================================
+--- partclone-0.2.72.orig/config.rpath
++++ partclone-0.2.72/config.rpath
 @@ -2,7 +2,7 @@
  # Output a system dependent set of variables, describing how to set the
  # run time search path of shared libraries in an executable.
@@ -188,7 +194,7 @@ Description: migration to automake 1.13
  # which needs '.lib').
  libext=a
  shrext=.so
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ for cc_temp in $CC""; do
  done
  cc_basename=`echo "$cc_temp" | sed -e 's%^.*/%%'`
  
@@ -197,7 +203,7 @@ Description: migration to automake 1.13
  
  wl=
  if test "$GCC" = yes; then
-@@ -57,14 +57,7 @@
+@@ -57,14 +57,7 @@ else
      aix*)
        wl='-Wl,'
        ;;
@@ -213,7 +219,7 @@ Description: migration to automake 1.13
        ;;
      hpux9* | hpux10* | hpux11*)
        wl='-Wl,'
-@@ -72,24 +65,37 @@
+@@ -72,24 +65,37 @@ else
      irix5* | irix6* | nonstopux*)
        wl='-Wl,'
        ;;
@@ -256,7 +262,7 @@ Description: migration to automake 1.13
              *Sun\ C*)
                wl='-Wl,'
                ;;
-@@ -97,22 +103,36 @@
+@@ -97,22 +103,36 @@ else
            ;;
        esac
        ;;
@@ -296,7 +302,7 @@ Description: migration to automake 1.13
      unicos*)
        wl='-Wl,'
        ;;
-@@ -121,7 +141,7 @@
+@@ -121,7 +141,7 @@ else
    esac
  fi
  
@@ -305,7 +311,7 @@ Description: migration to automake 1.13
  
  hardcode_libdir_flag_spec=
  hardcode_libdir_separator=
-@@ -129,7 +149,7 @@
+@@ -129,7 +149,7 @@ hardcode_direct=no
  hardcode_minus_L=no
  
  case "$host_os" in
@@ -314,7 +320,7 @@ Description: migration to automake 1.13
      # FIXME: the MSVC++ port hasn't been tested in a loooong time
      # When not using gcc, we currently assume that we are using
      # Microsoft Visual C++.
-@@ -155,22 +175,21 @@
+@@ -155,22 +175,21 @@ if test "$with_gnu_ld" = yes; then
    # option of GNU ld is called -rpath, not --rpath.
    hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
    case "$host_os" in
@@ -346,7 +352,7 @@ Description: migration to automake 1.13
        ;;
      beos*)
        if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
-@@ -179,7 +198,7 @@
+@@ -179,7 +198,7 @@ if test "$with_gnu_ld" = yes; then
          ld_shlibs=no
        fi
        ;;
@@ -355,7 +361,7 @@ Description: migration to automake 1.13
        # hardcode_libdir_flag_spec is actually meaningless, as there is
        # no search path for DLLs.
        hardcode_libdir_flag_spec='-L$libdir'
-@@ -189,11 +208,13 @@
+@@ -189,11 +208,13 @@ if test "$with_gnu_ld" = yes; then
          ld_shlibs=no
        fi
        ;;
@@ -371,7 +377,7 @@ Description: migration to automake 1.13
        if $LD --help 2>&1 | grep ': supported targets:.* elf' > /dev/null; then
          :
        else
-@@ -251,7 +272,7 @@
+@@ -251,7 +272,7 @@ else
          hardcode_direct=unsupported
        fi
        ;;
@@ -380,7 +386,7 @@ Description: migration to automake 1.13
        if test "$host_cpu" = ia64; then
          # On IA64, the linker does run time linking by default, so we don't
          # have to do anything special.
-@@ -261,7 +282,7 @@
+@@ -261,7 +282,7 @@ else
          # Test if we are trying to use run time linking or normal
          # AIX style linking. If -brtl is somewhere in LDFLAGS, we
          # need to do runtime linking.
@@ -389,7 +395,7 @@ Description: migration to automake 1.13
            for ld_flag in $LDFLAGS; do
              if (test $ld_flag = "-brtl" || test $ld_flag = "-Wl,-brtl"); then
                aix_use_runtimelinking=yes
-@@ -280,7 +301,7 @@
+@@ -280,7 +301,7 @@ else
              strings "$collect2name" | grep resolve_lib_name >/dev/null
            then
              # We have reworked collect2
@@ -398,7 +404,7 @@ Description: migration to automake 1.13
            else
              # We have old collect2
              hardcode_direct=unsupported
-@@ -316,14 +337,18 @@
+@@ -316,14 +337,18 @@ else
        fi
        ;;
      amigaos*)
@@ -422,7 +428,7 @@ Description: migration to automake 1.13
        # When not using gcc, we currently assume that we are using
        # Microsoft Visual C++.
        # hardcode_libdir_flag_spec is actually meaningless, as there is
-@@ -333,24 +358,15 @@
+@@ -333,24 +358,15 @@ else
        ;;
      darwin* | rhapsody*)
        hardcode_direct=no
@@ -449,7 +455,7 @@ Description: migration to automake 1.13
      freebsd2.2*)
        hardcode_libdir_flag_spec='-R$libdir'
        hardcode_direct=yes
-@@ -359,7 +375,7 @@
+@@ -359,7 +375,7 @@ else
        hardcode_direct=yes
        hardcode_minus_L=yes
        ;;
@@ -458,7 +464,7 @@ Description: migration to automake 1.13
        hardcode_libdir_flag_spec='-R$libdir'
        hardcode_direct=yes
        ;;
-@@ -411,19 +427,25 @@
+@@ -411,19 +427,25 @@ else
        hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
        hardcode_libdir_separator=:
        ;;
@@ -495,7 +501,7 @@ Description: migration to automake 1.13
        fi
        ;;
      os2*)
-@@ -471,7 +493,7 @@
+@@ -471,7 +493,7 @@ else
          ld_shlibs=yes
        fi
        ;;
@@ -504,7 +510,7 @@ Description: migration to automake 1.13
        ;;
      sysv5* | sco3.2v5* | sco5v6*)
        hardcode_libdir_flag_spec='`test -z "$SCOABSPATH" && echo ${wl}-R,$libdir`'
-@@ -487,34 +509,58 @@
+@@ -487,34 +509,58 @@ else
  fi
  
  # Check dynamic linker characteristics
@@ -570,7 +576,7 @@ Description: migration to automake 1.13
      ;;
    hpux9* | hpux10* | hpux11*)
      case $host_cpu in
-@@ -528,10 +574,13 @@
+@@ -528,10 +574,13 @@ case "$host_os" in
          shrext=.sl
          ;;
      esac
@@ -585,7 +591,7 @@ Description: migration to automake 1.13
      case "$host_os" in
        irix5* | nonstopux*)
          libsuff= shlibsuff=
-@@ -548,41 +597,62 @@
+@@ -548,41 +597,62 @@ case "$host_os" in
      ;;
    linux*oldld* | linux*aout* | linux*coff*)
      ;;
@@ -650,7 +656,7 @@ Description: migration to automake 1.13
  escaped_hardcode_libdir_flag_spec=`echo "X$hardcode_libdir_flag_spec" | sed -e 's/^X//' -e "$sed_quote_subst"`
  
  LC_ALL=C sed -e 's/^\([a-zA-Z0-9_]*\)=/acl_cv_\1=/' <<EOF
-@@ -596,6 +666,12 @@
+@@ -596,6 +666,12 @@ libext="$libext"
  # Shared library suffix (normally "so").
  shlibext="$shlibext"
  
@@ -663,9 +669,11 @@ Description: migration to automake 1.13
  # Flag to hardcode \$libdir into a binary during linking.
  # This must work even if \$libdir does not exist.
  hardcode_libdir_flag_spec="$escaped_hardcode_libdir_flag_spec"
---- a/ABOUT-NLS
-+++ b/ABOUT-NLS
-@@ -18,35 +18,7 @@
+Index: partclone-0.2.72/ABOUT-NLS
+===================================================================
+--- partclone-0.2.72.orig/ABOUT-NLS
++++ partclone-0.2.72/ABOUT-NLS
+@@ -18,35 +18,7 @@ explain how users should proceed for get
  available translations.  They tell how people wanting to contribute and
  work on translations can contact the appropriate team.
  
@@ -702,7 +710,7 @@ Description: migration to automake 1.13
  ===================
  
  Some packages are "localizable" when properly installed; the programs
-@@ -56,36 +28,19 @@
+@@ -56,36 +28,19 @@ internationalization, predating GNU `get
  
     By default, this package will be installed to allow translation of
  messages.  It will automatically detect whether the system already
@@ -746,7 +754,7 @@ Description: migration to automake 1.13
  
     Internationalized packages usually have many `po/LL.po' files, where
  LL gives an ISO 639 two-letter code identifying the language.  Unless
-@@ -96,13 +51,16 @@
+@@ -96,13 +51,16 @@ may be set, prior to configuration, to l
  `LINGUAS' should then contain a space separated list of two-letter
  codes, stating which languages are allowed.
  
@@ -766,7 +774,7 @@ Description: migration to automake 1.13
  suppose that you speak German and live in Germany.  At the shell
  prompt, merely execute `setenv LANG de_DE' (in `csh'),
  `export LANG; LANG=de_DE' (in `sh') or `export LANG=de_DE' (in `bash').
-@@ -145,7 +103,7 @@
+@@ -145,7 +103,7 @@ to denote the language's main dialect.
  to `de_DE' (German as spoken in Germany), and `pt' to `pt_PT'
  (Portuguese as spoken in Portugal) in this context.
  
@@ -775,7 +783,7 @@ Description: migration to automake 1.13
  =====================
  
  For the Free Translation Project to be a success, we need interested
-@@ -153,8 +111,7 @@
+@@ -153,8 +111,7 @@ people who like their own language and w
  able to synergize with other translators speaking the same language.
  Each translation team has its own mailing list.  The up-to-date list of
  teams can be found at the Free Translation Project's homepage,
@@ -785,7 +793,7 @@ Description: migration to automake 1.13
  
     If you'd like to volunteer to _work_ at translating messages, you
  should become a member of the translating team for your own language.
-@@ -168,901 +125,1125 @@
+@@ -168,901 +125,1125 @@ message to `sv-request@li.org', having t
  _actively_ in translations, or at solving translational difficulties,
  rather than merely lurking around.  If your team does not exist yet and
  you want to start one, or if you are unsure about what to do or how to
@@ -2769,7 +2777,7 @@ Description: migration to automake 1.13
  
     Some counters in the preceding matrix are higher than the number of
  visible blocks let us expect.  This is because a few extra PO files are
-@@ -1075,12 +1256,12 @@
+@@ -1075,12 +1256,12 @@ distributed as such by its maintainer.
  lag between the mere existence a PO file and its wide availability in a
  distribution.
  
@@ -2785,7 +2793,7 @@ Description: migration to automake 1.13
  ===================================
  
  If you are writing a freely available program and want to
-@@ -1096,6 +1277,6 @@
+@@ -1096,6 +1277,6 @@ the use of `gettext' the only thing miss
  Free Translation Project is also available for packages which are not
  developed inside the GNU project.  Therefore the information given above
  applies also for every other Free Software Project.  Contact
@@ -2794,15 +2802,17 @@ Description: migration to automake 1.13
 +`coordinator@translationproject.org' to make the `.pot' files available
 +to the translation teams.
  
---- a/src/Makefile.am
-+++ b/src/Makefile.am
+Index: partclone-0.2.72/src/Makefile.am
+===================================================================
+--- partclone-0.2.72.orig/src/Makefile.am
++++ partclone-0.2.72/src/Makefile.am
 @@ -1,3 +1,5 @@
 +AM_CFLAGS =
 +AM_LDFLAGS =
  AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -D_FILE_OFFSET_BITS=64
  LDADD = $(LIBINTL)
  sbin_PROGRAMS=partclone.info partclone.dd partclone.restore partclone.chkimg partclone.imager
-@@ -79,7 +81,7 @@
+@@ -79,7 +81,7 @@ endif
  if ENABLE_EXFAT
  sbin_PROGRAMS += partclone.exfat
  partclone_exfat_SOURCES=main.c partclone.c progress.c exfatclone.c exfatclone.h partclone.h progress.h gettext.h $(EXFATFS_SOURCE)
@@ -2811,9 +2821,11 @@ Description: migration to automake 1.13
  endif
  
  if ENABLE_FAT
---- a/po/Makevars
-+++ b/po/Makevars
-@@ -39,3 +39,15 @@
+Index: partclone-0.2.72/po/Makevars
+===================================================================
+--- partclone-0.2.72.orig/po/Makevars
++++ partclone-0.2.72/po/Makevars
+@@ -39,3 +39,15 @@ MSGID_BUGS_ADDRESS = $(PACKAGE BUGREPORT
  # This is the list of locale categories, beyond LC_MESSAGES, for which the
  # message catalogs shall be used.  It is usually empty.
  EXTRA_LOCALE_CATEGORIES =
@@ -2829,9 +2841,11 @@ Description: migration to automake 1.13
 +#   --previous            to keep previous msgids of translated messages,
 +#   --quiet               to reduce the verbosity.
 +MSGMERGE_OPTIONS =
---- a/po/Rules-quot
-+++ b/po/Rules-quot
-@@ -14,13 +14,13 @@
+Index: partclone-0.2.72/po/Rules-quot
+===================================================================
+--- partclone-0.2.72.orig/po/Rules-quot
++++ partclone-0.2.72/po/Rules-quot
+@@ -14,13 +14,13 @@ en@boldquot.po-update: en@boldquot.po-up
  
  .insert-header.po-update-en:
  	@lang=`echo $@ | sed -e 's/\.po-update-en$$//'`; \
@@ -2847,8 +2861,10 @@ Description: migration to automake 1.13
  	  if cmp $$lang.po $$tmpdir/$$lang.new.po >/dev/null 2>&1; then \
  	    rm -f $$tmpdir/$$lang.new.po; \
  	  else \
---- a/po/Makefile.in.in
-+++ b/po/Makefile.in.in
+Index: partclone-0.2.72/po/Makefile.in.in
+===================================================================
+--- partclone-0.2.72.orig/po/Makefile.in.in
++++ partclone-0.2.72/po/Makefile.in.in
 @@ -1,5 +1,5 @@
  # Makefile for PO directory in any package using GNU gettext.
 -# Copyright (C) 1995-1997, 2000-2006 by Ulrich Drepper <drepper@gnu.ai.mit.edu>
@@ -2866,7 +2882,7 @@ Description: migration to automake 1.13
  
  PACKAGE = @PACKAGE@
  VERSION = @VERSION@
-@@ -87,8 +88,8 @@
+@@ -87,8 +88,8 @@ CATALOGS = @CATALOGS@
  .po.gmo:
  	@lang=`echo $* | sed -e 's,.*/,,'`; \
  	test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
@@ -2877,7 +2893,7 @@ Description: migration to automake 1.13
  
  .sin.sed:
  	sed -e '/^#/d' $< > t-$@
-@@ -100,6 +101,13 @@
+@@ -100,6 +101,13 @@ all: all-@USE_NLS@
  all-yes: stamp-po
  all-no:
  
@@ -2891,7 +2907,7 @@ Description: migration to automake 1.13
  # $(srcdir)/$(DOMAIN).pot is only created when needed. When xgettext finds no
  # internationalized messages, no $(srcdir)/$(DOMAIN).pot is created (because
  # we don't want to bother translators with empty POT files). We assume that
-@@ -115,6 +123,7 @@
+@@ -115,6 +123,7 @@ all-no:
  # $(POFILES) has been designed to not touch files that don't need to be
  # changed.
  stamp-po: $(srcdir)/$(DOMAIN).pot
@@ -2899,7 +2915,7 @@ Description: migration to automake 1.13
  	test ! -f $(srcdir)/$(DOMAIN).pot || \
  	  test -z "$(GMOFILES)" || $(MAKE) $(GMOFILES)
  	@test ! -f $(srcdir)/$(DOMAIN).pot || { \
-@@ -129,17 +138,43 @@
+@@ -129,17 +138,43 @@ stamp-po: $(srcdir)/$(DOMAIN).pot
  
  # This target rebuilds $(DOMAIN).pot; it is an expensive operation.
  # Note that $(DOMAIN).pot is not touched if it doesn't need to be changed.
@@ -2948,7 +2964,7 @@ Description: migration to automake 1.13
  	test ! -f $(DOMAIN).po || { \
  	  if test -f $(srcdir)/$(DOMAIN).pot; then \
  	    sed -f remove-potcdate.sed < $(srcdir)/$(DOMAIN).pot > $(DOMAIN).1po && \
-@@ -167,8 +202,15 @@
+@@ -167,8 +202,15 @@ $(POFILES): $(srcdir)/$(DOMAIN).pot
  	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
  	if test -f "$(srcdir)/$${lang}.po"; then \
  	  test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
@@ -2966,7 +2982,7 @@ Description: migration to automake 1.13
  	else \
  	  $(MAKE) $${lang}.po-create; \
  	fi
-@@ -191,7 +233,6 @@
+@@ -191,7 +233,6 @@ install-data: install-data-@USE_NLS@
  	fi
  install-data-no: all
  install-data-yes: all
@@ -2974,7 +2990,7 @@ Description: migration to automake 1.13
  	@catalogs='$(CATALOGS)'; \
  	for cat in $$catalogs; do \
  	  cat=`basename $$cat`; \
-@@ -243,7 +284,6 @@
+@@ -243,7 +284,6 @@ installdirs-data: installdirs-data-@USE_
  	fi
  installdirs-data-no:
  installdirs-data-yes:
@@ -2982,7 +2998,7 @@ Description: migration to automake 1.13
  	@catalogs='$(CATALOGS)'; \
  	for cat in $$catalogs; do \
  	  cat=`basename $$cat`; \
-@@ -369,9 +409,15 @@
+@@ -369,9 +409,15 @@ update-po: Makefile
  	tmpdir=`pwd`; \
  	echo "$$lang:"; \
  	test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
@@ -3000,7 +3016,7 @@ Description: migration to automake 1.13
  	  if cmp $$lang.po $$tmpdir/$$lang.new.po >/dev/null 2>&1; then \
  	    rm -f $$tmpdir/$$lang.new.po; \
  	  else \
-@@ -392,9 +438,13 @@
+@@ -392,9 +438,13 @@ $(DUMMYPOFILES):
  update-gmo: Makefile $(GMOFILES)
  	@:
  
@@ -3015,8 +3031,10 @@ Description: migration to automake 1.13
  
  force:
  
---- a/po/ChangeLog
-+++ b/po/ChangeLog
+Index: partclone-0.2.72/po/ChangeLog
+===================================================================
+--- partclone-0.2.72.orig/po/ChangeLog
++++ partclone-0.2.72/po/ChangeLog
 @@ -1,3 +1,8 @@
 +2013-06-24  gettextize  <bug-gnu-gettext@gnu.org>
 +
@@ -3026,8 +3044,10 @@ Description: migration to automake 1.13
  2007-11-01  gettextize  <bug-gnu-gettext@gnu.org>
  
  	* Makefile.in.in: New file, from gettext-0.16.1.
---- a/m4/nls.m4
-+++ b/m4/nls.m4
+Index: partclone-0.2.72/m4/nls.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/nls.m4
++++ partclone-0.2.72/m4/nls.m4
 @@ -1,5 +1,6 @@
 -# nls.m4 serial 3 (gettext-0.15)
 -dnl Copyright (C) 1995-2003, 2005-2006 Free Software Foundation, Inc.
@@ -3037,7 +3057,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -17,15 +18,15 @@
+@@ -17,15 +18,15 @@ dnl Authors:
  dnl   Ulrich Drepper <drepper@cygnus.com>, 1995-2000.
  dnl   Bruno Haible <haible@clisp.cons.org>, 2000-2003.
  
@@ -3057,8 +3077,10 @@ Description: migration to automake 1.13
 +  AC_MSG_RESULT([$USE_NLS])
 +  AC_SUBST([USE_NLS])
  ])
---- a/m4/gettext.m4
-+++ b/m4/gettext.m4
+Index: partclone-0.2.72/m4/gettext.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/gettext.m4
++++ partclone-0.2.72/m4/gettext.m4
 @@ -1,5 +1,5 @@
 -# gettext.m4 serial 59 (gettext-0.16.1)
 -dnl Copyright (C) 1995-2006 Free Software Foundation, Inc.
@@ -3067,7 +3089,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -15,7 +15,7 @@
+@@ -15,7 +15,7 @@ dnl They are *not* in the public domain.
  
  dnl Authors:
  dnl   Ulrich Drepper <drepper@cygnus.com>, 1995-2000.
@@ -3076,7 +3098,7 @@ Description: migration to automake 1.13
  
  dnl Macro to add for using GNU gettext.
  
-@@ -35,7 +35,7 @@
+@@ -35,7 +35,7 @@ dnl    will be ignored.  If NEEDSYMBOL i
  dnl    'need-formatstring-macros', then GNU gettext implementations that don't
  dnl    support the ISO C 99 <inttypes.h> formatstring macros will be ignored.
  dnl INTLDIR is used to find the intl libraries.  If empty,
@@ -3085,7 +3107,7 @@ Description: migration to automake 1.13
  dnl
  dnl The result of the configuration is one of three cases:
  dnl 1) GNU gettext, as included in the intl subdirectory, will be compiled
-@@ -60,6 +60,8 @@
+@@ -60,6 +60,8 @@ AC_DEFUN([AM_GNU_GETTEXT],
    ifelse([$1], [], , [ifelse([$1], [external], , [ifelse([$1], [no-libtool], , [ifelse([$1], [use-libtool], ,
      [errprint([ERROR: invalid first argument to AM_GNU_GETTEXT
  ])])])])])
@@ -3094,7 +3116,7 @@ Description: migration to automake 1.13
    ifelse([$2], [], , [ifelse([$2], [need-ngettext], , [ifelse([$2], [need-formatstring-macros], ,
      [errprint([ERROR: invalid second argument to AM_GNU_GETTEXT
  ])])])])
-@@ -95,7 +97,7 @@
+@@ -95,7 +97,7 @@ AC_DEFUN([AM_GNU_GETTEXT],
      AC_REQUIRE([AM_ICONV_LINKFLAGS_BODY])
    ])
  
@@ -3103,7 +3125,7 @@ Description: migration to automake 1.13
    gt_INTL_MACOSX
  
    dnl Set USE_NLS.
-@@ -123,11 +125,11 @@
+@@ -123,11 +125,11 @@ AC_DEFUN([AM_GNU_GETTEXT],
      gt_use_preinstalled_gnugettext=no
      ifelse(gt_included_intl, yes, [
        AC_MSG_CHECKING([whether included gettext is requested])
@@ -3117,7 +3139,7 @@ Description: migration to automake 1.13
  
        nls_cv_use_gnu_gettext="$nls_cv_force_use_gnu_gettext"
        if test "$nls_cv_force_use_gnu_gettext" != "yes"; then
-@@ -155,12 +157,18 @@
+@@ -155,12 +157,18 @@ changequote([,])dnl
          fi
  
          AC_CACHE_CHECK([for GNU gettext in libc], [$gt_func_gnugettext_libc],
@@ -3140,7 +3162,7 @@ Description: migration to automake 1.13
              [eval "$gt_func_gnugettext_libc=yes"],
              [eval "$gt_func_gnugettext_libc=no"])])
  
-@@ -181,35 +189,47 @@
+@@ -181,35 +189,47 @@ return * gettext ("")$gt_expression_test
              gt_save_LIBS="$LIBS"
              LIBS="$LIBS $LIBINTL"
              dnl Now see whether libintl exists and does not depend on libiconv.
@@ -3200,7 +3222,7 @@ Description: migration to automake 1.13
              fi
              CPPFLAGS="$gt_save_CPPFLAGS"
              LIBS="$gt_save_LIBS"])
-@@ -267,7 +287,7 @@
+@@ -267,7 +287,7 @@ return * gettext ("")$gt_expression_test
  
      if test "$gt_use_preinstalled_gnugettext" = "yes" \
         || test "$nls_cv_use_gnu_gettext" = "yes"; then
@@ -3209,7 +3231,7 @@ Description: migration to automake 1.13
          [Define to 1 if translation of program messages to the user's native language
     is requested.])
      else
-@@ -301,9 +321,9 @@
+@@ -301,9 +321,9 @@ return * gettext ("")$gt_expression_test
        fi
  
        dnl For backward compatibility. Some packages may be using this.
@@ -3221,7 +3243,7 @@ Description: migration to automake 1.13
         [Define if the GNU dcgettext() function is already present or preinstalled.])
      fi
  
-@@ -319,9 +339,9 @@
+@@ -319,9 +339,9 @@ return * gettext ("")$gt_expression_test
      fi
  
      dnl Make all variables we use known to autoconf.
@@ -3234,7 +3256,7 @@ Description: migration to automake 1.13
  
      dnl For backward compatibility. Some configure.ins may be using this.
      nls_cv_header_intl=
-@@ -329,74 +349,36 @@
+@@ -329,74 +349,36 @@ return * gettext ("")$gt_expression_test
  
      dnl For backward compatibility. Some Makefiles may be using this.
      DATADIRNAME=share
@@ -3318,8 +3340,10 @@ Description: migration to automake 1.13
  ])
  
  
---- a/m4/po.m4
-+++ b/m4/po.m4
+Index: partclone-0.2.72/m4/po.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/po.m4
++++ partclone-0.2.72/m4/po.m4
 @@ -1,5 +1,5 @@
 -# po.m4 serial 13 (gettext-0.15)
 -dnl Copyright (C) 1995-2006 Free Software Foundation, Inc.
@@ -3328,7 +3352,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -17,16 +17,20 @@
+@@ -17,16 +17,20 @@ dnl Authors:
  dnl   Ulrich Drepper <drepper@cygnus.com>, 1995-2000.
  dnl   Bruno Haible <haible@clisp.cons.org>, 2000-2003.
  
@@ -3351,7 +3375,7 @@ Description: migration to automake 1.13
    dnl Perform the following tests also if --disable-nls has been given,
    dnl because they are needed for "make dist" to work.
  
-@@ -37,7 +41,7 @@
+@@ -37,7 +41,7 @@ AC_DEFUN([AM_PO_SUBDIRS],
      [$ac_dir/$ac_word --statistics /dev/null >&]AS_MESSAGE_LOG_FD[ 2>&1 &&
       (if $ac_dir/$ac_word --statistics /dev/null 2>&1 >/dev/null | grep usage >/dev/null; then exit 1; else exit 0; fi)],
      :)
@@ -3360,7 +3384,7 @@ Description: migration to automake 1.13
  
    dnl Test whether it is GNU msgfmt >= 0.15.
  changequote(,)dnl
-@@ -84,6 +88,10 @@
+@@ -84,6 +88,10 @@ changequote([,])dnl
    test -n "$localedir" || localedir='${datadir}/locale'
    AC_SUBST([localedir])
  
@@ -3371,7 +3395,7 @@ Description: migration to automake 1.13
    AC_CONFIG_COMMANDS([po-directories], [[
      for ac_file in $CONFIG_FILES; do
        # Support "outfile[:infile[:infile...]]"
-@@ -94,7 +102,7 @@
+@@ -94,7 +102,7 @@ changequote([,])dnl
        case "$ac_file" in */Makefile.in)
          # Adjust a relative srcdir.
          ac_dir=`echo "$ac_file"|sed 's%/[^/][^/]*$%%'`
@@ -3380,7 +3404,7 @@ Description: migration to automake 1.13
          ac_dots=`echo "$ac_dir_suffix"|sed 's%/[^/]*%../%g'`
          # In autoconf-2.13 it is called $ac_given_srcdir.
          # In autoconf-2.50 it is called $srcdir.
-@@ -110,7 +118,8 @@
+@@ -110,7 +118,8 @@ changequote([,])dnl
          if test -f "$ac_given_srcdir/$ac_dir/POTFILES.in"; then
            rm -f "$ac_dir/POTFILES"
            test -n "$as_me" && echo "$as_me: creating $ac_dir/POTFILES" || echo "creating $ac_dir/POTFILES"
@@ -3390,7 +3414,7 @@ Description: migration to automake 1.13
            POMAKEFILEDEPS="POTFILES.in"
            # ALL_LINGUAS, POFILES, UPDATEPOFILES, DUMMYPOFILES, GMOFILES depend
            # on $ac_dir but don't depend on user-specified configuration
-@@ -121,12 +130,12 @@
+@@ -121,12 +130,12 @@ changequote([,])dnl
                test -n "$as_me" && echo "$as_me: setting ALL_LINGUAS in configure.in is obsolete" || echo "setting ALL_LINGUAS in configure.in is obsolete"
              fi
              ALL_LINGUAS_=`sed -e "/^#/d" -e "s/#.*//" "$ac_given_srcdir/$ac_dir/LINGUAS"`
@@ -3405,7 +3429,7 @@ Description: migration to automake 1.13
              eval 'ALL_LINGUAS''=$OBSOLETE_ALL_LINGUAS'
            fi
            # Compute POFILES
-@@ -218,7 +227,7 @@
+@@ -218,7 +227,7 @@ AC_DEFUN([AM_POSTPROCESS_PO_MAKEFILE],
  changequote(,)dnl
    # Adjust a relative srcdir.
    ac_dir=`echo "$ac_file"|sed 's%/[^/][^/]*$%%'`
@@ -3414,7 +3438,7 @@ Description: migration to automake 1.13
    ac_dots=`echo "$ac_dir_suffix"|sed 's%/[^/]*%../%g'`
    # In autoconf-2.13 it is called $ac_given_srcdir.
    # In autoconf-2.50 it is called $srcdir.
-@@ -246,6 +255,7 @@
+@@ -246,6 +255,7 @@ EOT
    fi
  
    # A sed script that extracts the value of VARIABLE from a Makefile.
@@ -3422,7 +3446,7 @@ Description: migration to automake 1.13
    sed_x_variable='
  # Test if the hold space is empty.
  x
-@@ -253,9 +263,9 @@
+@@ -253,9 +263,9 @@ s/P/P/
  x
  ta
  # Yes it was empty. Look if we have the expected variable definition.
@@ -3434,7 +3458,7 @@ Description: migration to automake 1.13
    ba
  }
  bd
-@@ -307,7 +317,7 @@
+@@ -307,7 +317,7 @@ changequote([,])dnl
      sed_x_LINGUAS=`$gt_echo "$sed_x_variable" | sed -e '/^ *#/d' -e 's/VARIABLE/LINGUAS/g'`
      ALL_LINGUAS_=`sed -n -e "$sed_x_LINGUAS" < "$ac_file"`
    fi
@@ -3443,7 +3467,7 @@ Description: migration to automake 1.13
    eval 'ALL_LINGUAS''=$ALL_LINGUAS_'
    # Compute POFILES
    # as      $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).po)
-@@ -397,14 +407,15 @@
+@@ -397,14 +407,15 @@ changequote([,])dnl
    fi
  
    sed -e "s|@POTFILES_DEPS@|$POTFILES_DEPS|g" -e "s|@POFILES@|$POFILES|g" -e "s|@UPDATEPOFILES@|$UPDATEPOFILES|g" -e "s|@DUMMYPOFILES@|$DUMMYPOFILES|g" -e "s|@GMOFILES@|$GMOFILES|g" -e "s|@PROPERTIESFILES@|$PROPERTIESFILES|g" -e "s|@CLASSFILES@|$CLASSFILES|g" -e "s|@QMFILES@|$QMFILES|g" -e "s|@MSGFILES@|$MSGFILES|g" -e "s|@RESOURCESDLLFILES@|$RESOURCESDLLFILES|g" -e "s|@CATALOGS@|$CATALOGS|g" -e "s|@JAVACATALOGS@|$JAVACATALOGS|g" -e "s|@QTCATALOGS@|$QTCATALOGS|g" -e "s|@TCLCATALOGS@|$TCLCATALOGS|g" -e "s|@CSHARPCATALOGS@|$CSHARPCATALOGS|g" -e 's,^#distdir:,distdir:,' < "$ac_file" > "$ac_file.tmp"
@@ -3461,7 +3485,7 @@ Description: migration to automake 1.13
  EOF
      done
    fi
-@@ -414,8 +425,8 @@
+@@ -414,8 +425,8 @@ EOF
        frobbedlang=`echo $lang | sed -e 's/_/-/g' -e 's/^sr-CS/sr-SP/' -e 's/@latin$/-Latn/' -e 's/@cyrillic$/-Cyrl/' -e 's/^sr-SP$/sr-SP-Latn/' -e 's/^uz-UZ$/uz-UZ-Latn/'`
        cat >> "$ac_file.tmp" <<EOF
  $frobbedlang/\$(DOMAIN).resources.dll: $lang.po
@@ -3472,7 +3496,7 @@ Description: migration to automake 1.13
  EOF
      done
    fi
-@@ -426,3 +437,16 @@
+@@ -426,3 +437,16 @@ EOF
    fi
    mv "$ac_file.tmp" "$ac_file"
  ])
@@ -3489,8 +3513,10 @@ Description: migration to automake 1.13
 +  AC_REQUIRE([AM_XGETTEXT_OPTION_INIT])
 +  XGETTEXT_EXTRA_OPTIONS="$XGETTEXT_EXTRA_OPTIONS $1"
 +])
---- a/m4/lib-link.m4
-+++ b/m4/lib-link.m4
+Index: partclone-0.2.72/m4/lib-link.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/lib-link.m4
++++ partclone-0.2.72/m4/lib-link.m4
 @@ -1,58 +1,66 @@
 -# lib-link.m4 serial 9 (gettext-0.16)
 -dnl Copyright (C) 2001-2006 Free Software Foundation, Inc.
@@ -3573,7 +3599,7 @@ Description: migration to automake 1.13
  
    dnl Search for lib[]Name and define LIB[]NAME, LTLIB[]NAME and INC[]NAME
    dnl accordingly.
-@@ -66,13 +74,26 @@
+@@ -66,13 +74,26 @@ AC_DEFUN([AC_LIB_HAVE_LINKFLAGS],
  
    AC_CACHE_CHECK([for lib[]$1], [ac_cv_lib[]Name], [
      ac_save_LIBS="$LIBS"
@@ -3603,7 +3629,7 @@ Description: migration to automake 1.13
      AC_MSG_CHECKING([how to link with lib[]$1])
      AC_MSG_RESULT([$LIB[]NAME])
    else
-@@ -82,17 +103,25 @@
+@@ -82,17 +103,25 @@ AC_DEFUN([AC_LIB_HAVE_LINKFLAGS],
      CPPFLAGS="$ac_save_CPPFLAGS"
      LIB[]NAME=
      LTLIB[]NAME=
@@ -3633,7 +3659,7 @@ Description: migration to automake 1.13
  AC_DEFUN([AC_LIB_RPATH],
  [
    dnl Tell automake >= 1.10 to complain if config.rpath is missing.
-@@ -101,7 +130,7 @@
+@@ -101,7 +130,7 @@ AC_DEFUN([AC_LIB_RPATH],
    AC_REQUIRE([AC_LIB_PROG_LD])            dnl we use $LD, $with_gnu_ld
    AC_REQUIRE([AC_CANONICAL_HOST])         dnl we use $host
    AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT]) dnl we use $ac_aux_dir
@@ -3642,7 +3668,7 @@ Description: migration to automake 1.13
      CC="$CC" GCC="$GCC" LDFLAGS="$LDFLAGS" LD="$LD" with_gnu_ld="$with_gnu_ld" \
      ${CONFIG_SHELL-/bin/sh} "$ac_aux_dir/config.rpath" "$host" > conftest.sh
      . ./conftest.sh
-@@ -109,35 +138,66 @@
+@@ -109,35 +138,66 @@ AC_DEFUN([AC_LIB_RPATH],
      acl_cv_rpath=done
    ])
    wl="$acl_cv_wl"
@@ -3721,7 +3747,7 @@ Description: migration to automake 1.13
  [
      if test "X$withval" = "Xno"; then
        use_additional=no
-@@ -150,6 +210,10 @@
+@@ -150,6 +210,10 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
        else
          additional_includedir="$withval/include"
          additional_libdir="$withval/$acl_libdirstem"
@@ -3732,7 +3758,7 @@ Description: migration to automake 1.13
        fi
      fi
  ])
-@@ -158,6 +222,10 @@
+@@ -158,6 +222,10 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
    LIB[]NAME=
    LTLIB[]NAME=
    INC[]NAME=
@@ -3743,7 +3769,7 @@ Description: migration to automake 1.13
    rpathdirs=
    ltrpathdirs=
    names_already_handled=
-@@ -177,7 +245,7 @@
+@@ -177,7 +245,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
          names_already_handled="$names_already_handled $name"
          dnl See if it was already located by an earlier AC_LIB_LINKFLAGS
          dnl or AC_LIB_HAVE_LINKFLAGS call.
@@ -3752,7 +3778,7 @@ Description: migration to automake 1.13
          eval value=\"\$HAVE_LIB$uppername\"
          if test -n "$value"; then
            if test "$value" = yes; then
-@@ -197,27 +265,53 @@
+@@ -197,27 +265,53 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
            found_la=
            found_so=
            found_a=
@@ -3823,7 +3849,7 @@ Description: migration to automake 1.13
                fi
              fi
            fi
-@@ -227,26 +321,44 @@
+@@ -227,26 +321,44 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
                case "$x" in
                  -L*)
                    dir=`echo "X$x" | sed -e 's/^X-L//'`
@@ -3885,7 +3911,7 @@ Description: migration to automake 1.13
                      fi
                    fi
                    ;;
-@@ -263,7 +375,9 @@
+@@ -263,7 +375,9 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
                dnl Linking with a shared library. We attempt to hardcode its
                dnl directory into the executable's runpath, unless it's the
                dnl standard /usr/lib.
@@ -3896,7 +3922,7 @@ Description: migration to automake 1.13
                  dnl No hardcoding is needed.
                  LIB[]NAME="${LIB[]NAME}${LIB[]NAME:+ }$found_so"
                else
-@@ -282,12 +396,12 @@
+@@ -282,12 +396,12 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
                    ltrpathdirs="$ltrpathdirs $found_dir"
                  fi
                  dnl The hardcoding into $LIBNAME is system dependent.
@@ -3911,7 +3937,7 @@ Description: migration to automake 1.13
                      dnl Use an explicit option to hardcode DIR into the resulting
                      dnl binary.
                      LIB[]NAME="${LIB[]NAME}${LIB[]NAME:+ }$found_so"
-@@ -318,13 +432,13 @@
+@@ -318,13 +432,13 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
                      if test -z "$haveit"; then
                        LIB[]NAME="${LIB[]NAME}${LIB[]NAME:+ }-L$found_dir"
                      fi
@@ -3927,7 +3953,7 @@ Description: migration to automake 1.13
                        dnl here, because this doesn't fit in flags passed to the
                        dnl compiler. So give up. No hardcoding. This affects only
                        dnl very old systems.
-@@ -351,6 +465,16 @@
+@@ -351,6 +465,16 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
              case "$found_dir" in
                */$acl_libdirstem | */$acl_libdirstem/)
                  basedir=`echo "X$found_dir" | sed -e 's,^X,,' -e "s,/$acl_libdirstem/"'*$,,'`
@@ -3944,7 +3970,7 @@ Description: migration to automake 1.13
                  additional_includedir="$basedir/include"
                  ;;
              esac
-@@ -411,9 +535,11 @@
+@@ -411,9 +535,11 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
                      dnl   3. if it's already present in $LDFLAGS or the already
                      dnl      constructed $LIBNAME,
                      dnl   4. if it doesn't exist as a directory.
@@ -3958,7 +3984,7 @@ Description: migration to automake 1.13
                          if test -n "$GCC"; then
                            case $host_os in
                              linux* | gnu* | k*bsd*-gnu) haveit=yes;;
-@@ -512,18 +638,18 @@
+@@ -512,18 +638,18 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
      done
    done
    if test "X$rpathdirs" != "X"; then
@@ -3981,7 +4007,7 @@ Description: migration to automake 1.13
        libdir="$acl_save_libdir"
        LIB[]NAME="${LIB[]NAME}${LIB[]NAME:+ }$flag"
      else
-@@ -531,7 +657,7 @@
+@@ -531,7 +657,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
        for found_dir in $rpathdirs; do
          acl_save_libdir="$libdir"
          libdir="$found_dir"
@@ -3990,7 +4016,7 @@ Description: migration to automake 1.13
          libdir="$acl_save_libdir"
          LIB[]NAME="${LIB[]NAME}${LIB[]NAME:+ }$flag"
        done
-@@ -544,6 +670,11 @@
+@@ -544,6 +670,11 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
        LTLIB[]NAME="${LTLIB[]NAME}${LTLIB[]NAME:+ }-R$found_dir"
      done
    fi
@@ -4002,7 +4028,7 @@ Description: migration to automake 1.13
  ])
  
  dnl AC_LIB_APPENDTOVAR(VAR, CONTENTS) appends the elements of CONTENTS to VAR,
-@@ -580,7 +711,7 @@
+@@ -580,7 +711,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
    AC_REQUIRE([AC_LIB_PREPARE_MULTILIB])
    $1=
    if test "$enable_rpath" != no; then
@@ -4011,7 +4037,7 @@ Description: migration to automake 1.13
        dnl Use an explicit option to hardcode directories into the resulting
        dnl binary.
        rpathdirs=
-@@ -589,7 +720,8 @@
+@@ -589,7 +720,8 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
          if test -n "$next"; then
            dir="$next"
            dnl No need to hardcode the standard /usr/lib.
@@ -4021,7 +4047,7 @@ Description: migration to automake 1.13
              rpathdirs="$rpathdirs $dir"
            fi
            next=
-@@ -598,7 +730,8 @@
+@@ -598,7 +730,8 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
              -L) next=yes ;;
              -L*) dir=`echo "X$opt" | sed -e 's,^X-L,,'`
                   dnl No need to hardcode the standard /usr/lib.
@@ -4031,7 +4057,7 @@ Description: migration to automake 1.13
                     rpathdirs="$rpathdirs $dir"
                   fi
                   next= ;;
-@@ -614,16 +747,16 @@
+@@ -614,16 +747,16 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
            done
          else
            dnl The linker is used for linking directly.
@@ -4051,7 +4077,7 @@ Description: migration to automake 1.13
              libdir="$acl_save_libdir"
              $1="$flag"
            else
-@@ -631,7 +764,7 @@
+@@ -631,7 +764,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
              for dir in $rpathdirs; do
                acl_save_libdir="$libdir"
                libdir="$dir"
@@ -4060,8 +4086,10 @@ Description: migration to automake 1.13
                libdir="$acl_save_libdir"
                $1="${$1}${$1:+ }$flag"
              done
---- a/m4/progtest.m4
-+++ b/m4/progtest.m4
+Index: partclone-0.2.72/m4/progtest.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/progtest.m4
++++ partclone-0.2.72/m4/progtest.m4
 @@ -1,5 +1,5 @@
 -# progtest.m4 serial 4 (gettext-0.14.2)
 -dnl Copyright (C) 1996-2003, 2005 Free Software Foundation, Inc.
@@ -4070,7 +4098,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -16,7 +16,7 @@
+@@ -16,7 +16,7 @@ dnl They are *not* in the public domain.
  dnl Authors:
  dnl   Ulrich Drepper <drepper@cygnus.com>, 1996.
  
@@ -4079,7 +4107,7 @@ Description: migration to automake 1.13
  
  # Search path for a program which passes the given test.
  
-@@ -27,15 +27,14 @@
+@@ -27,15 +27,14 @@ AC_DEFUN([AM_PATH_PROG_WITH_TEST],
  # Prepare PATH_SEPARATOR.
  # The user is always right.
  if test "${PATH_SEPARATOR+set}" != set; then
@@ -4103,7 +4131,7 @@ Description: migration to automake 1.13
  fi
  
  # Find out how to test for executable files. Don't use a zero-byte file,
-@@ -55,7 +54,7 @@
+@@ -55,7 +54,7 @@ rm -f conf$$.file
  # Extract the first word of "$2", so it can be a program name with args.
  set dummy $2; ac_word=[$]2
  AC_MSG_CHECKING([for $ac_word])
@@ -4112,7 +4140,7 @@ Description: migration to automake 1.13
  [case "[$]$1" in
    [[\\/]]* | ?:[[\\/]]*)
      ac_cv_path_$1="[$]$1" # Let the user override the test with a path.
-@@ -84,9 +83,9 @@
+@@ -84,9 +83,9 @@ ifelse([$4], , , [  test -z "[$]ac_cv_pa
  esac])dnl
  $1="$ac_cv_path_$1"
  if test ifelse([$4], , [-n "[$]$1"], ["[$]$1" != "$4"]); then
@@ -4125,8 +4153,10 @@ Description: migration to automake 1.13
 -AC_SUBST($1)dnl
 +AC_SUBST([$1])dnl
  ])
---- a/m4/lib-ld.m4
-+++ b/m4/lib-ld.m4
+Index: partclone-0.2.72/m4/lib-ld.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/lib-ld.m4
++++ partclone-0.2.72/m4/lib-ld.m4
 @@ -1,50 +1,56 @@
 -# lib-ld.m4 serial 3 (gettext-0.13)
 -dnl Copyright (C) 1996-2003 Free Software Foundation, Inc.
@@ -4208,7 +4238,7 @@ Description: migration to automake 1.13
    case $host in
    *-*-mingw*)
      # gcc leaves a trailing carriage return which upsets mingw
-@@ -54,12 +60,12 @@
+@@ -54,12 +60,12 @@ if test "$GCC" = yes; then
    esac
    case $ac_prog in
      # Accept absolute paths.
@@ -4227,7 +4257,7 @@ Description: migration to automake 1.13
        done
        test -z "$LD" && LD="$ac_prog"
        ;;
-@@ -77,33 +83,36 @@
+@@ -77,33 +83,36 @@ elif test "$with_gnu_ld" = yes; then
  else
    AC_MSG_CHECKING([for non-GNU ld])
  fi
@@ -4273,8 +4303,10 @@ Description: migration to automake 1.13
  fi
  test -z "$LD" && AC_MSG_ERROR([no acceptable ld found in \$PATH])
  AC_LIB_PROG_LD_GNU
---- a/m4/ChangeLog
-+++ b/m4/ChangeLog
+Index: partclone-0.2.72/m4/ChangeLog
+===================================================================
+--- partclone-0.2.72.orig/m4/ChangeLog
++++ partclone-0.2.72/m4/ChangeLog
 @@ -1,3 +1,14 @@
 +2013-06-24  gettextize  <bug-gnu-gettext@gnu.org>
 +
@@ -4290,8 +4322,10 @@ Description: migration to automake 1.13
  2007-11-01  gettextize  <bug-gnu-gettext@gnu.org>
  
  	* gettext.m4: New file, from gettext-0.16.1.
---- a/m4/lib-prefix.m4
-+++ b/m4/lib-prefix.m4
+Index: partclone-0.2.72/m4/lib-prefix.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/lib-prefix.m4
++++ partclone-0.2.72/m4/lib-prefix.m4
 @@ -1,5 +1,5 @@
 -# lib-prefix.m4 serial 5 (gettext-0.15)
 -dnl Copyright (C) 2001-2005 Free Software Foundation, Inc.
@@ -4300,7 +4334,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -153,33 +153,72 @@
+@@ -153,33 +153,72 @@ AC_DEFUN([AC_LIB_WITH_FINAL_PREFIX],
    prefix="$acl_save_prefix"
  ])
  
@@ -4397,8 +4431,10 @@ Description: migration to automake 1.13
 +  esac
 +  test -n "$acl_libdirstem2" || acl_libdirstem2="$acl_libdirstem"
  ])
---- a/m4/iconv.m4
-+++ b/m4/iconv.m4
+Index: partclone-0.2.72/m4/iconv.m4
+===================================================================
+--- partclone-0.2.72.orig/m4/iconv.m4
++++ partclone-0.2.72/m4/iconv.m4
 @@ -1,5 +1,5 @@
 -# iconv.m4 serial AM4 (gettext-0.11.3)
 -dnl Copyright (C) 2000-2002 Free Software Foundation, Inc.
@@ -4407,7 +4443,7 @@ Description: migration to automake 1.13
  dnl This file is free software; the Free Software Foundation
  dnl gives unlimited permission to copy and/or distribute it,
  dnl with or without modifications, as long as this notice is preserved.
-@@ -21,6 +21,7 @@
+@@ -21,6 +21,7 @@ AC_DEFUN([AM_ICONV_LINK],
  [
    dnl Some systems have iconv in libc, some have it in libiconv (OSF/1 and
    dnl those with the standalone portable GNU libiconv installed).
@@ -4415,7 +4451,7 @@ Description: migration to automake 1.13
  
    dnl Search for libiconv and define LIBICONV, LTLIBICONV and INCICONV
    dnl accordingly.
-@@ -29,34 +30,170 @@
+@@ -29,34 +30,170 @@ AC_DEFUN([AM_ICONV_LINK],
    dnl Add $INCICONV to CPPFLAGS before performing the following checks,
    dnl because if the user has installed libiconv and not disabled its use
    dnl via --without-libiconv-prefix, he wants to use it. The first
@@ -4602,7 +4638,7 @@ Description: migration to automake 1.13
    fi
    if test "$am_cv_lib_iconv" = yes; then
      AC_MSG_CHECKING([how to link with libiconv])
-@@ -68,34 +205,64 @@
+@@ -68,34 +205,64 @@ AC_DEFUN([AM_ICONV_LINK],
      LIBICONV=
      LTLIBICONV=
    fi
@@ -4677,8 +4713,10 @@ Description: migration to automake 1.13
 +      ])
    fi
  ])
---- a/Makefile.am
-+++ b/Makefile.am
+Index: partclone-0.2.72/Makefile.am
+===================================================================
+--- partclone-0.2.72.orig/Makefile.am
++++ partclone-0.2.72/Makefile.am
 @@ -1,4 +1,4 @@
 -SUBDIRS= po src docs tests fail-mbr
 +SUBDIRS= po src docs tests

@@ -1,7 +1,9 @@
 Use xfs.h rather than libxfs.h; 
 see:oss.sgi.com/archives/xfs/2009-05/msg00249.html
---- a/src/xfsclone.c
-+++ b/src/xfsclone.c
+Index: partclone-0.2.72/src/xfsclone.c
+===================================================================
+--- partclone-0.2.72.orig/src/xfsclone.c
++++ partclone-0.2.72/src/xfsclone.c
 @@ -12,7 +12,7 @@
   */
  
@@ -11,14 +13,16 @@ see:oss.sgi.com/archives/xfs/2009-05/msg00249.html
  #include <sys/stat.h>
  #include <stdio.h>
  #include <fcntl.h>
---- a/src/xfsclone.h
-+++ b/src/xfsclone.h
+Index: partclone-0.2.72/src/xfsclone.h
+===================================================================
+--- partclone-0.2.72.orig/src/xfsclone.h
++++ partclone-0.2.72/src/xfsclone.h
 @@ -11,7 +11,7 @@
   * (at your option) any later version.
   */
  
 -#include <xfs/libxfs.h>
 +#include <xfs/xfs.h>
+ #undef crc32
  
  /*
-  * An on-disk allocation group header is composed of 4 structures,
