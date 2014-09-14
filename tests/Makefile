@@ -89,7 +89,8 @@ host_triplet = i686-pc-linux-gnu
 #am__append_5 = hfsplus.test
 #am__append_6 = xfs.test
 #am__append_7 = exfat.test
-#am__append_8 = ntfs.test
+#am__append_8 = f2fs.test
+#am__append_9 = ntfs.test
 
 #if ENABLE_UFS
 #TESTS += ufs.test
@@ -98,10 +99,10 @@ host_triplet = i686-pc-linux-gnu
 #if ENABLE_VMFS
 #TESTS += vmfs.test
 #endif
-#am__append_9 = jfs.test
-#am__append_10 = btrfs.test
-#am__append_11 = exfat.test
-#am__append_12 = ncursesw.test
+#am__append_10 = jfs.test
+#am__append_11 = btrfs.test
+#am__append_12 = exfat.test
+#am__append_13 = ncursesw.test
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/test-driver TODO
@@ -389,10 +390,10 @@ ORIGINAL_CFLAGS = -g -O2
 PACKAGE = partclone
 PACKAGE_BUGREPORT = thomas@nchc.org.tw
 PACKAGE_NAME = Partclone
-PACKAGE_STRING = Partclone 0.2.72
+PACKAGE_STRING = Partclone 0.2.73
 PACKAGE_TARNAME = partclone
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.2.72
+PACKAGE_VERSION = 0.2.73
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -405,7 +406,7 @@ STRIP =
 USE_NLS = yes
 UUID_CFLAGS = -I/usr/include/uuid 
 UUID_LIBS = -luuid 
-VERSION = 0.2.72
+VERSION = 0.2.73
 XGETTEXT = /usr/bin/xgettext
 XGETTEXT_015 = /usr/bin/xgettext
 abs_builddir = /home/thomas/partclone/tests
@@ -461,7 +462,8 @@ top_srcdir = ..
 TESTS = dd.test $(am__append_1) $(am__append_2) $(am__append_3) \
 	$(am__append_4) $(am__append_5) $(am__append_6) \
 	$(am__append_7) $(am__append_8) $(am__append_9) \
-	$(am__append_10) $(am__append_11) $(am__append_12)
+	$(am__append_10) $(am__append_11) $(am__append_12) \
+	$(am__append_13)
 CLEANFILES = floppy*
 all: all-am
 

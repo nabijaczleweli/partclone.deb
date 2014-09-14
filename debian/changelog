@@ -1,3 +1,11 @@
+partclone (0.2.73-1) unstable; urgency=medium
+
+  * upgraded to the newest upstream release
+  * replaced the build-dependency libntfs-dev by ntfs-3g-dev
+    (Closes: #761255)
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sun, 14 Sep 2014 17:16:58 +0200
+
 partclone (0.2.72-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release
