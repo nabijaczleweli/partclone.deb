@@ -19,7 +19,7 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 override_dh_auto_configure:
 	# Add here commands to configure the package.
-	autoreconf
+	autoreconf  --force --install
 	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CPPFLAGS='$(CPPFLAGS)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' --enable-ncursesw --enable-all
 
 override_dh_auto_clean:

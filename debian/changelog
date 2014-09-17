@@ -1,3 +1,10 @@
+partclone (0.2.73-2) unstable; urgency=medium
+
+  * applied Ravindran Arani's patch. Closes: #761664
+  * added a build-dependency on autopoint
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 17 Sep 2014 18:45:14 +0200
+
 partclone (0.2.73-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release
