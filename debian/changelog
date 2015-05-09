@@ -1,3 +1,25 @@
+partclone (0.2.78-1) unstable; urgency=medium
+
+  * upgraded to the newest upstream release
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sat, 09 May 2015 15:13:29 +0200
+
+partclone (0.2.76-1) unstable; urgency=medium
+
+  * upgraded to the newest upstream release
+  * Checked the build-dependency on libtnfs-3g-dev with pbuilder. Closes: #777249
+  * Removed the build-dependency on libreadline, which is a dependency for reiser4-dev
+  * Modified d/rules to skip the test suite
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sun, 08 Feb 2015 19:10:53 +0100
+
+partclone (0.2.73-3) unstable; urgency=medium
+
+  * upgraded Standards-Version to 3.9.6
+  * recompiled the package. Closes: #765674
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 22 Oct 2014 17:14:25 +0200
+
 partclone (0.2.73-2) unstable; urgency=medium
 
   * applied Ravindran Arani's patch. Closes: #761664

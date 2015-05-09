@@ -1,20 +1,9 @@
---- a/fail-mbr/Makefile
-+++ b/fail-mbr/Makefile
-@@ -3,9 +3,11 @@
- ifeq ($(INSTPREFIX),)
- 	INSTPREFIX=/usr/local
- endif
--INSTLIBDIR=     ${INSTPREFIX}/share/partclone
-+#INSTLIBDIR=     ${INSTPREFIX}/share/partclone
-+INSTLIBDIR=     $(DESTDIR)/usr/share/partclone
- INSTALL=        install
- 
-+EXTRAINCLUDE = -I /usr/include/$(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
- 
- all: fail-mbr.bin
- 
-@@ -20,7 +22,7 @@
- 	diff fail-mbr.hex.orig fail-mbr.hex || true
+Index: partclone-0.2.76/fail-mbr/Makefile
+===================================================================
+--- partclone-0.2.76.orig/fail-mbr/Makefile
++++ partclone-0.2.76/fail-mbr/Makefile
+@@ -475,7 +475,7 @@ clean:
+ distclean: clean
  
  %.o: %.S
 -	$(CC) -Wall -Werror -m32 -nostdlib -o $@ $<
@@ -22,14 +11,3 @@
  
  fail-mbr.image: fail-mbr.o
  	$(CC) -Os -Wall -W -Wshadow -Wpointer-arith -Wmissing-prototypes -Wundef -Wstrict-prototypes -g -falign-jumps=1 -falign-loops=1 -falign-functions=1 -mno-mmx -mno-sse -mno-sse2 -mno-3dnow -fno-dwarf2-cfi-asm -fno-asynchronous-unwind-tables -m32 -fno-stack-protector -mno-stack-arg-probe -Werror -Wno-trampolines -DUSE_ASCII_FAILBACK=1 -DHAVE_UNIFONT_WIDTHSPEC=1  -mrtd -mregparm=3       -fno-builtin   -m32 -Wl,--build-id=none   -nostdlib -Wl,-N,-S -Wl,-N -Wl,-Ttext,0x7C00   -o $@ $<
-@@ -30,8 +32,8 @@
- 
- install: fail-mbr.bin
- 	-mkdir -p $(INSTLIBDIR)
--	$(INSTALL) fail-mbr.bin $(INSTLIBDIR)
--	
-+	$(INSTALL) -m 644 fail-mbr.bin $(INSTLIBDIR)
-+
- uninstall:
- 	rm -f  $(INSTLIBDIR)/fail-mbr.bin
- 	rm -d  $(INSTLIBDIR)

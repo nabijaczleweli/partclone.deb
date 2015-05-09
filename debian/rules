@@ -33,6 +33,9 @@ override_dh_auto_clean:
 FAILBOOTDIR = $(CURDIR)/debian/partclone/usr/share/partclone
 MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8
 
+override_dh_auto_test:
+	echo Skipping tests.
+
 override_dh_auto_install:
 	dh_auto_install
 	install -d $(FAILBOOTDIR)

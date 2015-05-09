@@ -1,3 +1,61 @@
+2015-04-09  Thomas Tsai  <thomas@nchc.org.tw>
+
+	ready to release 0.2.78
+
+	set version to 0.2.78
+
+	fix 16T partition issue
+
+2015-04-02  Thomas Tsai  <thomas@nchc.org.tw>
+
+	fix hiuge filesystem issue
+
+2015-03-25  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update ChangeLog and version.h
+
+	release 0.2.77
+
+	remove some check that is duplicate and made error.
+
+2015-01-21  Thomas Tsai  <thomas@nchc.org.tw>
+
+	fix char related issue for bad sectors by Chris Clayton
+	Conflicts:
+		docs/partclone.imager.8
+		src/partclone.c
+		src/version.h
+
+2015-01-16  Thomas Tsai  <thomas@nchc.org.tw>
+
+	fix xfs and release(0.2.76) to test
+
+	 * fix xfs clone issue while set size to backup but bigger then device size and not stop
+
+2014-12-30  Thomas Tsai  <thomas@nchc.org.tw>
+
+	release 0.2.75
+
+2014-12-29  Thomas Tsai  <thomas@nchc.org.tw>
+
+	merge 0.2.74
+
+	test btrfs
+
+	add source of btrfs
+
+	update source of btrfs
+
+	try to fix btrfs
+
+2014-11-05  Thomas Tsai  <thomas@nchc.org.tw>
+
+	hide note: without note option
+
+	update version script
+
+	add --note option to fix issue #56 add fail-mbr/Makefile.am to pass prefix to new makefile which note from Fisiu (https://github.com/Thomas-Tsai/partclone/commit/cc5b6545bccd60f567d49944d7d9c36e0f4fc74b#commitcomment-8413428) fix issue #57 and use PKG_CHECK_MODULES to check version
+
 2014-09-04  Thomas Tsai  <thomas@nchc.org.tw>
 
 	test about exfat and f2fs
