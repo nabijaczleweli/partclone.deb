@@ -1,3 +1,11 @@
+partclone (0.2.78-3) unstable; urgency=medium
+
+  * removed an obsoleted patch
+  * updated d/copyright data
+  * restored two mandatory parameters which configure was missing
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 13 May 2015 16:08:09 +0200
+
 partclone (0.2.78-2) unstable; urgency=medium
 
   * modified the build system to compile fail-mbr.bin only with x86

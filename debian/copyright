@@ -3,9 +3,10 @@ Upstream-Name: partclone
 Source: http://sourceforge.net/projects/partclone/files/testing/partclone_0.2.22.tar.gz/download
 
 Files: *
-Copyright: 2007-2011 Thomas Tsai <thomas@nchc.org.tw>
-           2007-2011 Steven Shiau <steven@nchc.org.tw>
-           2007-2011 Jazz Wang <jazz@nchc.org.tw>
+Copyright: 2007-2015 Thomas Tsai <thomas@clonezilla.org>
+           2007-2015 Steven Shiau <steven@clonezilla.org>
+           2007-2015 Ceasar Sun <ceasar@clonezilla.org>
+           2007-2011 Jazz Wang <jazz@clonezilla.org>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
