@@ -2,9 +2,8 @@ Source: partclone
 Section: admin
 Priority: extra
 Maintainer: Georges Khaznadar <georgesk@debian.org>
-Build-Depends: debhelper (>= 9.0.0), quilt,
- autotools-dev, autoconf (>=2.67), automake (>= 1:1.11.1),
- autopoint, gettext (>=0.18.2.1),
+Build-Depends: debhelper (>= 9.0.0), quilt, dh-autoreconf,
+ gettext (>=0.18.2.1),
  e2fslibs-dev (>= 1.41.3), xfslibs-dev, libreiser4-dev (>=1.0.7-6.2),
  libbsd-dev, libncursesw5-dev, ntfs-3g-dev, vmfs-tools,
  libblkid-dev, pkg-config, xsltproc, docbook-xsl

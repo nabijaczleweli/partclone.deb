@@ -10,28 +10,19 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@ 
-
-CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
-CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
-CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
-LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
-
-override_dh_auto_configure:
-	# Add here commands to configure the package.
-	autoreconf  --force --install
-	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CPPFLAGS='$(CPPFLAGS)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' --enable-ncursesw --enable-all
-
-override_dh_auto_clean:
-	[ ! -f Makefile ] || make distclean
-	rm -f get_lib_version config.h.in config.log
-	rm -f configure Makefile.in aclocal.m4
-	rm -f src/Makefile.in docs/Makefile.in tests/Makefile.in
-	rm -f tests/dd.log tests/dd.trs tests/test-suite.log
-	dh_clean
+	dh $@  --with autoreconf
 
 FAILBOOTDIR = $(CURDIR)/debian/partclone/usr/share/partclone
 MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8
+
+override_dh_clean: # keep the special file fail-mbr/fail-mbr.bin.orig
+	if [ -f fail-mbr/fail-mbr.bin.orig ]; then \
+	  mv fail-mbr/fail-mbr.bin.orig fail-mbr/fail-mbr.bin.orig.keep; \
+	fi
+	dh_clean
+	if [ -f fail-mbr/fail-mbr.bin.orig.keep ]; then \
+	  mv fail-mbr/fail-mbr.bin.orig.keep fail-mbr/fail-mbr.bin.orig;\
+	fi
 
 override_dh_auto_test:
 	echo Skipping tests.

@@ -1,3 +1,16 @@
+partclone (0.2.78-2) unstable; urgency=medium
+
+  * modified the build system to compile fail-mbr.bin only with x86
+    architectures.
+  * the binary file fail-mbr/fail-mbr.bin.orig is no longer removed, it used as
+    a comparison for successful builds, or as a file to copy for non-x86
+    architectures. The file fail-mbr/compile.sh does this job.
+  * documented this peculiarity in debian/README.source; Closes: #784975
+  * simplified d/rules by using "--with autoreconf" and d/control by using the
+    build-dependency on dh-autoreconf
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 13 May 2015 14:05:59 +0200
+
 partclone (0.2.78-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release
