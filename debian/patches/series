@@ -2,4 +2,3 @@ config-stuff.patch
 reiserfsclone.patch
 xfsclone.patch
 remove-some-fs-support.patch
-fail-mbr-makefile-am.patch

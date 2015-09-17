@@ -1,3 +1,11 @@
+partclone (0.2.83-1) unstable; urgency=medium
+
+  * upgraded to the newest upstream release
+  * modified slightly configure.ac to cope with libreiser4 v. 1.1.0
+    Closes: #798937
+
+ -- Georges Khaznadar <georgesk@debian.org>  Thu, 17 Sep 2015 17:54:15 +0200
+
 partclone (0.2.78-3) unstable; urgency=medium
 
   * removed an obsoleted patch
