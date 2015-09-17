@@ -1,8 +1,10 @@
-partclone (0.2.83-1) unstable; urgency=medium
+partclone (0.2.86-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release
   * modified slightly configure.ac to cope with libreiser4 v. 1.1.0
     Closes: #798937
+  * added a build-dependency on nilfs-tools
+  * modified debian/docs (README -> README.md)
 
  -- Georges Khaznadar <georgesk@debian.org>  Thu, 17 Sep 2015 17:54:15 +0200
 

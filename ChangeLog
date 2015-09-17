@@ -1,3 +1,114 @@
+2015-11-12  Thomas Tsai  <thomas@nchc.org.tw>
+
+	release 0.2.86
+
+	update README to README.md in all debian/docs
+
+	release 0.2.86
+
+	release 0.2.86
+
+	release 0.2.86
+
+	add language zh_CN, and ready to release 0.2.86
+
+	Merge branch 'release' of github.com:Thomas-Tsai/partclone into release
+
+	fix fat cluster count
+
+2015-11-09  Thomas Tsai  <thomas@nchc.org.tw>
+
+	add `
+
+	rename README.markdown README.md
+
+	remove ``
+
+2015-11-09  Peter Dave Hello  <PeterDaveHello@users.noreply.github.com>
+
+	Create zh_CN.po
+
+	Update README.markdown
+
+	Update and rename README to README.markdown
+	Use markdown to be rich text!
+
+2015-11-09  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update nilfs mount and mkdir
+
+	Merge branch 'release' of github.com:Thomas-Tsai/partclone into release
+
+	update README
+
+2015-11-05  Thomas Tsai  <thomas@nchc.org.tw>
+
+	release 0.2.85
+
+	update version to 0.2.85
+
+	Merge branch 'release' of github.com:Thomas-Tsai/partclone into release
+
+	fix fat16 clone issue and add test for fat12, fat16 and fat32
+
+2015-10-13  Thomas Tsai  <thomas@nchc.org.tw>
+
+	release 0.2.84
+
+	update control files
+
+	update version
+
+	remove all version test in configure.ac
+
+	update version.h
+
+	update release script
+
+2015-10-12  Thomas Tsai  <thomas@nchc.org.tw>
+
+	set version to 0.2.84 and add nilfs2 test
+
+2015-10-06  Thomas Tsai  <thomas@nchc.org.tw>
+
+	add test for nilfs
+
+2015-10-05  Thomas Tsai  <thomas@nchc.org.tw>
+
+	remove .deps
+
+	add nilfs support
+
+2015-09-24  Thomas Tsai  <thomas@nchc.org.tw>
+
+	Merge branch 'release' of https://github.com/Thomas-Tsai/partclone into release
+
+	add xfs 4.2.0 part of source to partclone
+
+	update release
+
+	release 0.2.83
+
+	fix release
+
+	fix btrfs
+
+2015-09-23  Thomas Tsai  <thomas@nchc.org.tw>
+
+	fix btrfs: disk bytenr larger than device size
+
+2015-09-19  Thomas Tsai  <thomas@nchc.org.tw>
+
+	replace _row_ to _raw_ in all xml files
+
+2015-08-31  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update debian folder
+
+2015-08-25  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update release flow
+
 2015-08-24  Thomas Tsai  <thomas@nchc.org.tw>
 
 	release 0.2.83

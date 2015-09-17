@@ -5,7 +5,7 @@ Maintainer: Georges Khaznadar <georgesk@debian.org>
 Build-Depends: debhelper (>= 9.0.0), quilt, dh-autoreconf,
  gettext (>=0.18.2.1),
  e2fslibs-dev (>= 1.41.3), xfslibs-dev, libreiser4-dev (>=1.0.7-6.2),
- libbsd-dev, libncursesw5-dev, ntfs-3g-dev, vmfs-tools,
+ libbsd-dev, libncursesw5-dev, ntfs-3g-dev, vmfs-tools, nilfs-tools,
  libblkid-dev, pkg-config, xsltproc, docbook-xsl
 Standards-Version: 3.9.6
 Homepage: http://partclone.org/
