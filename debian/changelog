@@ -1,3 +1,10 @@
+partclone (0.2.88-1) unstable; urgency=medium
+
+  * upgraded to the newest upstream release
+  * upgraded Standards-Version to 3.9.7
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sat, 23 Apr 2016 19:21:57 +0200
+
 partclone (0.2.86-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release
