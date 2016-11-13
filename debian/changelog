@@ -1,3 +1,11 @@
+partclone (0.2.89-1) unstable; urgency=medium
+
+  * included Matthias Klose's patch. Closes: #842115
+  * upgraded to the new upstream release, which Closes: #825990
+  * upgraded Standards-Version: 3.9.8
+
+ -- Georges Khaznadar <georgesk@debian.org>  Sun, 13 Nov 2016 12:23:29 +0100
+
 partclone (0.2.88-1) unstable; urgency=medium
 
   * upgraded to the newest upstream release

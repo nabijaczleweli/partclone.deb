@@ -1,7 +1,7 @@
-Index: partclone-0.2.73/configure.ac
+Index: partclone-0.2.89/configure.ac
 ===================================================================
---- partclone-0.2.73.orig/configure.ac
-+++ partclone-0.2.73/configure.ac
+--- partclone-0.2.89.orig/configure.ac
++++ partclone-0.2.89/configure.ac
 @@ -24,17 +24,17 @@ AC_ARG_ENABLE(all,
  )
  AM_CONDITIONAL(ENABLE_ALL, test "$enable_all" = yes)
