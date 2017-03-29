@@ -1,15 +1,8 @@
-partclone (0.2.89-4) unstable; urgency=medium
+partclone (0.2.90-1) experimental; urgency=medium
 
-  * enabled the support for XFS back. Closes: #830535
-  
- -- Georges Khaznadar <georgesk@debian.org>  Thu, 11 May 2017 19:01:09 +0200
+  * New upstream release. Closes: #857966 (CVE-2017-6596)
 
-partclone (0.2.89-3) unstable; urgency=medium
-
-  *  backported some code from the last version. Closes: #857966 (CVE-2017-6596)
-
-
- -- Georges Khaznadar <georgesk@debian.org>  Thu, 06 Apr 2017 20:41:56 +0200
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 29 Mar 2017 17:54:24 +0200
 
 partclone (0.2.89-2) unstable; urgency=medium
 
