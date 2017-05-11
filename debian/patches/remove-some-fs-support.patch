@@ -2,12 +2,9 @@ Index: partclone-0.2.90/configure.ac
 ===================================================================
 --- partclone-0.2.90.orig/configure.ac
 +++ partclone-0.2.90/configure.ac
-@@ -25,17 +25,17 @@ AC_ARG_ENABLE([all],
- )
- AM_CONDITIONAL(ENABLE_ALL, test "$enable_all" = yes)
+@@ -27,15 +27,15 @@ AM_CONDITIONAL(ENABLE_ALL, test "$enable
  if test "$enable_all" = "yes"; then
--enable_xfs="yes"
-+#enable_xfs="yes"
+ enable_xfs="yes"
  enable_extfs="yes"
 -enable_reiserfs="yes"
 +#enable_reiserfs="yes"
