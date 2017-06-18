@@ -16,25 +16,22 @@
 
 extern cmd_opt opt;
 
-/// readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
 	/// initial image bitmap as 1 (all block are used)
-	memset(bitmap, 0xFF, sizeof(unsigned long)*LONGS(image_hdr.totalblock));
+	pc_init_bitmap(bitmap, 0xFF, fs_info.totalblock);
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
 	int src;
 	if ((src = open_source(device, &opt)) == -1) {
 		log_mesg(0, 1, 1, opt.debug, "Error exit\n");
 	}
-	strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-	strncpy(image_hdr->fs, raw_MAGIC, FS_MAGIC_SIZE);
-	image_hdr->block_size  = PART_SECTOR_SIZE;
-	image_hdr->device_size = get_partition_size(&src);
-	image_hdr->totalblock  = image_hdr->device_size / PART_SECTOR_SIZE;
-	image_hdr->usedblocks  = image_hdr->device_size / PART_SECTOR_SIZE;
+	strncpy(fs_info->fs, raw_MAGIC, FS_MAGIC_SIZE);
+	fs_info->block_size  = PART_SECTOR_SIZE;
+	fs_info->device_size = get_partition_size(&src);
+	fs_info->totalblock  = fs_info->device_size / PART_SECTOR_SIZE;
+	fs_info->usedblocks  = fs_info->device_size / PART_SECTOR_SIZE;
 	close(src);
 }

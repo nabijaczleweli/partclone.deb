@@ -542,7 +542,7 @@ static void print_root(struct extent_buffer *leaf, int slot)
 				      &root_item.drop_progress);
 		printf("\t\tdrop ");
 		btrfs_print_key(&root_item.drop_progress);
-		printf(" level %d\n", root_item.drop_level);
+		printf(" level %u\n", root_item.drop_level);
 	}
 }
 
@@ -1115,7 +1115,7 @@ void btrfs_print_tree(struct btrfs_root *root, struct extent_buffer *eb, int fol
 		btrfs_print_leaf(root, eb);
 		return;
 	}
-	printf("node %llu level %d items %d free %u generation %llu owner %llu\n",
+	printf("node %llu level %d items %u free %u generation %llu owner %llu\n",
 	       (unsigned long long)eb->start,
 	        btrfs_header_level(eb), nr,
 		(u32)BTRFS_NODEPTRS_PER_BLOCK(root) - nr,

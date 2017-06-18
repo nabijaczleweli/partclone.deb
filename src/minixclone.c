@@ -34,9 +34,6 @@ char *super_block_buffer;
 int dev;
 int fs_version = 1;
 
-char *EXECNAME = "partclone.minix";
-extern fs_cmd_opt fs_opt;
-
 static inline unsigned long get_max_size(void)
 {
     switch (fs_version) {
@@ -190,7 +187,7 @@ static unsigned long count_used_block(){
 }
 
 
-extern void initial_image_hdr(char* device, image_head* image_hdr){
+void read_super_blocks(char* device, file_system_info* fs_info) {
     fs_open(device);
     if (MAGIC == MINIX_SUPER_MAGIC) {
 	fs_version = 1;
@@ -208,18 +205,17 @@ extern void initial_image_hdr(char* device, image_head* image_hdr){
     log_mesg(0, 0, 0, fs_opt.debug, "%s: get_first_zone %lu\n", __FILE__, get_first_zone());
     log_mesg(0, 0, 0, fs_opt.debug, "%s: get_nzones %lu\n", __FILE__, get_nzones());
     log_mesg(0, 0, 0, fs_opt.debug, "%s: zones map size %lu\n", __FILE__, get_nzmaps());
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, minix_MAGIC, FS_MAGIC_SIZE);
-    image_hdr->block_size  = get_block_size();
-    image_hdr->totalblock  = get_nzones();
-    image_hdr->usedblocks  = count_used_block();
-    image_hdr->device_size = get_nzones()*get_block_size();
+    strncpy(fs_info->fs, minix_MAGIC, FS_MAGIC_SIZE);
+    fs_info->block_size  = get_block_size();
+    fs_info->totalblock  = get_nzones();
+    fs_info->usedblocks  = count_used_block();
+    fs_info->device_size = fs_info->totalblock * fs_info->block_size;
     fs_close();
 }
 
 
 
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui){
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui) {
     unsigned long zones = get_nzones();
     unsigned long imaps = get_nimaps();
     unsigned long zmaps = get_nzmaps();
@@ -264,7 +260,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	    test_zone = 0;
 	if(isset(zone_map,test_zone)){
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: test_block %lu in use\n", __FILE__, test_block);    
-	    pc_set_bit(test_block, bitmap, image_hdr.totalblock);
+	    pc_set_bit(test_block, bitmap, fs_info.totalblock);
 	}else{
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: test_block %lu not use\n", __FILE__, test_block);    
 	}

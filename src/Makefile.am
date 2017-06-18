@@ -1,7 +1,7 @@
-AUTOMAKE_OPTIONS = subdir-objects 
+AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -D_FILE_OFFSET_BITS=64
 LDADD = $(LIBINTL)
-sbin_PROGRAMS=partclone.info partclone.dd partclone.restore partclone.chkimg partclone.imager
+sbin_PROGRAMS=partclone.info partclone.dd partclone.restore partclone.chkimg partclone.imager #partclone.imgfuse #partclone.block
 TOOLBOX = srcdir=$(top_srcdir) builddir=$(top_builddir) $(top_srcdir)/toolbox
 
 BTRFS_SOURCE=\
@@ -42,77 +42,78 @@ endif
 version.h: FORCE
 	$(TOOLBOX) --update-version
 
-partclone_info_SOURCES=info.c partclone.c partclone.h fs_common.h
+main_files=main.c partclone.c progress.c checksum.c partclone.h progress.h gettext.h checksum.h
 
-partclone_restore_SOURCES=main.c partclone.c progress.c ddclone.c ddclone.h partclone.h progress.h gettext.h
+partclone_info_SOURCES=info.c partclone.c checksum.c partclone.h fs_common.h checksum.h
+partclone_restore_SOURCES=$(main_files) ddclone.c ddclone.h
 partclone_restore_CFLAGS=-DRESTORE -DDD
 
-partclone_chkimg_SOURCES=main.c partclone.c progress.c ddclone.c ddclone.h partclone.h progress.h gettext.h
+partclone_chkimg_SOURCES=$(main_files) ddclone.c ddclone.h
 partclone_chkimg_CFLAGS=-DCHKIMG -DDD
 
-partclone_dd_SOURCES=main.c partclone.c progress.c ddclone.c ddclone.h partclone.h progress.h gettext.h
+partclone_dd_SOURCES=$(main_files) ddclone.c ddclone.h
 partclone_dd_CFLAGS=-DDD
 
-partclone_imager_SOURCES=main.c partclone.c progress.c ddclone.c ddclone.h partclone.h progress.h gettext.h
+partclone_imager_SOURCES=$(main_files) ddclone.c ddclone.h
 partclone_imager_CFLAGS=-DIMG
 
 if ENABLE_EXTFS
 sbin_PROGRAMS += partclone.extfs
-partclone_extfs_SOURCES=main.c partclone.c progress.c extfsclone.c extfsclone.h partclone.h progress.h gettext.h
+partclone_extfs_SOURCES=$(main_files) extfsclone.c extfsclone.h
 partclone_extfs_CFLAGS=-DEXTFS
 partclone_extfs_LDADD=-lext2fs -lcom_err -lpthread
 endif
 
 if ENABLE_REISERFS
 sbin_PROGRAMS += partclone.reiserfs
-partclone_reiserfs_SOURCES=main.c partclone.c progress.c reiserfsclone.c reiserfsclone.h partclone.h progress.h gettext.h
+partclone_reiserfs_SOURCES=$(main_files) reiserfsclone.c reiserfsclone.h
 partclone_reiserfs_CFLAGS=-DREISERFS
 partclone_reiserfs_LDADD=-lreiserfs -ldal
 endif
 
 if ENABLE_REISER4
 sbin_PROGRAMS += partclone.reiser4
-partclone_reiser4_SOURCES=main.c partclone.c progress.c reiser4clone.c reiser4clone.h partclone.h progress.h gettext.h
+partclone_reiser4_SOURCES=$(main_files) reiser4clone.c reiser4clone.h
 partclone_reiser4_CFLAGS=-DREISER4
 partclone_reiser4_LDADD=-lreiser4 -laal
 endif
 
 if ENABLE_HFSP
 sbin_PROGRAMS += partclone.hfsp
-partclone_hfsp_SOURCES=main.c partclone.c progress.c hfsplusclone.c hfsplusclone.h partclone.h progress.h gettext.h
+partclone_hfsp_SOURCES=$(main_files) hfsplusclone.c hfsplusclone.h
 partclone_hfsp_CFLAGS=-DHFSPLUS
 endif
 
 if ENABLE_XFS
 sbin_PROGRAMS += partclone.xfs
-partclone_xfs_SOURCES=main.c partclone.c progress.c xfsclone.c xfsclone.h partclone.h progress.h gettext.h $(XFS_SOURCE)
+partclone_xfs_SOURCES=$(main_files) xfsclone.c xfsclone.h $(XFS_SOURCE)
 partclone_xfs_CFLAGS=-DXFS -D_GNU_SOURCE -DNDEBUG $(UUID_CFLAGS) 
 partclone_xfs_LDADD=-lrt -lpthread -luuid
 endif
 
 if ENABLE_EXFAT
 sbin_PROGRAMS += partclone.exfat
-partclone_exfat_SOURCES=main.c partclone.c progress.c exfatclone.c exfatclone.h partclone.h progress.h gettext.h $(EXFATFS_SOURCE)
+partclone_exfat_SOURCES=$(main_files) exfatclone.c exfatclone.h $(EXFATFS_SOURCE)
 partclone_exfat_CFLAGS=-DEXFAT -D_GNU_SOURCE -std=c99
 endif
 
 if ENABLE_F2FS
 sbin_PROGRAMS += partclone.f2fs
-partclone_f2fs_SOURCES=main.c partclone.c progress.c f2fsclone.c f2fsclone.h partclone.h progress.h gettext.h $(F2FS_SOURCE)
+partclone_f2fs_SOURCES=$(main_files) f2fsclone.c f2fsclone.h $(F2FS_SOURCE)
 partclone_f2fs_CFLAGS=-DF2FS
 partclone_f2fs_LDADD=-luuid
 endif
 
 if ENABLE_NILFS2
 sbin_PROGRAMS += partclone.nilfs2
-partclone_nilfs2_SOURCES=main.c partclone.c progress.c nilfsclone.c nilfsclone.h partclone.h progress.h gettext.h
+partclone_nilfs2_SOURCES=$(main_files) nilfsclone.c nilfsclone.h
 partclone_nilfs2_CFLAGS=-DNILFS
 partclone_nilfs2_LDADD=-lnilfs
 endif
 
 if ENABLE_FAT
 sbin_PROGRAMS += partclone.fat
-partclone_fat_SOURCES=main.c partclone.c progress.c fatclone.c fatclone.h partclone.h progress.h gettext.h
+partclone_fat_SOURCES=$(main_files) fatclone.c fatclone.h
 partclone_fat_CFLAGS=-DFAT
 endif
 
@@ -120,7 +121,7 @@ sbin_PROGRAMS += partclone.ntfsfixboot
 partclone_ntfsfixboot_SOURCES=ntfsfixboot.c
 if ENABLE_NTFS
 sbin_PROGRAMS += partclone.ntfs
-partclone_ntfs_SOURCES=main.c partclone.c progress.c ntfsclone-ng.c ntfsclone-ng.h partclone.h progress.h gettext.h
+partclone_ntfs_SOURCES=$(main_files) ntfsclone-ng.c ntfsclone-ng.h
 if ENABLE_NTFS_3G
 partclone_ntfs_CFLAGS=-DNTFS3G
 partclone_ntfs_LDADD=-lntfs-3g
@@ -132,19 +133,19 @@ endif
 
 if ENABLE_UFS
 sbin_PROGRAMS += partclone.ufs
-partclone_ufs_SOURCES=main.c partclone.c progress.c ufsclone.c ufsclone.h partclone.h progress.h gettext.h
+partclone_ufs_SOURCES=$(main_files) ufsclone.c ufsclone.h
 partclone_ufs_CFLAGS=-DUFS -D_GNU_SOURCE
 partclone_ufs_LDADD=-lufs -lbsd
 endif
 
 if ENABLE_VMFS
 sbin_PROGRAMS += partclone.vmfs
-partclone_vmfs_SOURCES=main.c partclone.c progress.c vmfsclone.c vmfsclone.h partclone.h progress.h gettext.h
+partclone_vmfs_SOURCES=$(main_files) vmfsclone.c vmfsclone.h
 partclone_vmfs_CFLAGS=-DVMFS -D_GNU_SOURCE $(UUID_CFLAGS)
 partclone_vmfs_LDADD=-lvmfs -luuid
 
 sbin_PROGRAMS += partclone.vmfs5
-partclone_vmfs5_SOURCES=main.c partclone.c progress.c vmfs5clone.c vmfsclone.h partclone.h progress.h gettext.h
+partclone_vmfs5_SOURCES=$(main_files) vmfs5clone.c vmfsclone.h
 partclone_vmfs5_CFLAGS=-DVMFS -D_GNU_SOURCE $(UUID_CFLAGS)
 partclone_vmfs5_LDADD=-lvmfs -luuid
 
@@ -157,24 +158,34 @@ endif
 
 if ENABLE_JFS
 sbin_PROGRAMS += partclone.jfs
-#partclone_jfs_SOURCES=main.c partclone.c progress.c jfs_devices.c jfs_devices.h jfsclone.c jfsclone.h partclone.h progress.h gettext.h
-partclone_jfs_SOURCES=main.c partclone.c progress.c jfsclone.c jfsclone.h partclone.h progress.h gettext.h
+#partclone_jfs_SOURCES=$(main_files) jfs_devices.c jfs_devices.h jfsclone.c jfsclone.h
+partclone_jfs_SOURCES=$(main_files) jfsclone.c jfsclone.h
 partclone_jfs_CFLAGS=-DJFS
 partclone_jfs_LDADD=-luuid -ljfs
 endif
 
 if ENABLE_BTRFS
 sbin_PROGRAMS += partclone.btrfs
-partclone_btrfs_SOURCES=main.c partclone.c progress.c btrfsclone.c btrfsclone.h partclone.h progress.h gettext.h $(BTRFS_SOURCE)
-partclone_btrfs_CFLAGS=-DBTRFS -DBTRFS_FLAT_INCLUDES -D_XOPEN_SOURCE=700 -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE=1
-partclone_btrfs_LDADD=-luuid -lblkid
+partclone_btrfs_SOURCES=$(main_files) btrfsclone.c btrfsclone.h $(BTRFS_SOURCE)
+partclone_btrfs_CFLAGS=-DBTRFS -DBTRFS_FLAT_INCLUDES -D_XOPEN_SOURCE=700 -D_GNU_SOURCE
+partclone_btrfs_LDADD=-luuid -lblkid 
 endif
 
 if ENABLE_MINIX
 sbin_PROGRAMS += partclone.minix
-partclone_minix_SOURCES=main.c partclone.c progress.c minixclone.c minixclone.h partclone.h progress.h gettext.h
+partclone_minix_SOURCES=$(main_files) minixclone.c minixclone.h
 partclone_minix_CFLAGS=-DMINIX
 endif
+
+if ENABLE_FUSE
+sbin_PROGRAMS+=partclone.imgfuse
+partclone_imgfuse_SOURCES=fuseimg.c partclone.c checksum.c partclone.h fs_common.h checksum.h
+partclone_imgfuse_LDADD=-lfuse
+if ENABLE_STATIC
+partclone_imgfuse_LDADD+=-ldl
+endif
+endif
+
 
 
 # Extra

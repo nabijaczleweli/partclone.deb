@@ -35,8 +35,6 @@
 #endif
 
 ext2_filsys  fs;
-char *EXECNAME = "partclone.extfs";
-extern fs_cmd_opt fs_opt;
 
 /// open device
 static void fs_open(char* device){
@@ -98,13 +96,13 @@ static unsigned long long get_used_blocks(){
     return (unsigned long long)(ext2fs_blocks_count(fs->super) - ext2fs_free_blocks_count(fs->super));
 }
 
-/// readbitmap - cread and heck bitmap, reference dumpe2fs
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui){
+// reference dumpe2fs
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui) {
     errcode_t retval;
     unsigned long group;
     unsigned long long current_block, block;
-    unsigned long long free, gfree;
-    char *block_bitmap=NULL;
+    unsigned long long lfree, gfree;
+    char *block_bitmap = NULL;
     int block_nbytes;
     unsigned long long blk_itr;
     int bg_flags = 0;
@@ -113,7 +111,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     int B_UN_INIT = 0;
     int ext4_gfree_mismatch = 0;
 
-    log_mesg(2, 0, 0, fs_opt.debug, "%s: readbitmap %p\n", __FILE__, bitmap);
+    log_mesg(2, 0, 0, fs_opt.debug, "%s: read_bitmap %p\n", __FILE__, bitmap);
 
     fs_open(device);
     retval = ext2fs_read_bitmaps(fs); /// open extfs bitmap
@@ -125,15 +123,15 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	block_bitmap = malloc(block_nbytes);
 
     /// initial image bitmap as 1 (all block are used)
-    memset(bitmap, 0xFF, sizeof(unsigned long)*LONGS(image_hdr.totalblock));
+    pc_init_bitmap(bitmap, 0xFF, fs_info.totalblock);
 
-    free = 0;
+    lfree = 0;
     current_block = 0;
     blk_itr = fs->super->s_first_data_block;
 
     /// init progress
     progress_bar	prog;		/// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
 
     /// each group
     for (group = 0; group < fs->group_desc_count; group++) {
@@ -162,16 +160,16 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 		    }
 	    }
 	    /// each block in group
-	    for (block = 0; ((block < fs->super->s_blocks_per_group) && (current_block < (image_hdr.totalblock-1))); block++) {
+	    for (block = 0; ((block < fs->super->s_blocks_per_group) && (current_block < (fs_info.totalblock-1))); block++) {
 		current_block = block + blk_itr;
 
 		if (in_use (block_bitmap, block)){
-			pc_set_bit(current_block, bitmap, image_hdr.totalblock);
+			pc_set_bit(current_block, bitmap, fs_info.totalblock);
 			log_mesg(3, 0, 0, fs_opt.debug, "%s: used block %llu at group %lu\n", __FILE__, current_block, group);
 		} else {
-		    free++;
+		    lfree++;
 		    gfree++;
-		    pc_clear_bit(current_block, bitmap, image_hdr.totalblock);
+		    pc_clear_bit(current_block, bitmap, fs_info.totalblock);
 		    log_mesg(3, 0, 0, fs_opt.debug, "%s: free block %llu at group %lu init %i\n", __FILE__, current_block, group, (int)B_UN_INIT);
 		}
 		
@@ -194,16 +192,17 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	}
     }
     /// check all free blocks in partition
-    if (free != ext2fs_free_blocks_count(fs->super)) {
+    if (lfree != ext2fs_free_blocks_count(fs->super)) {
 	if ((fs->super->s_feature_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM) && (ext4_gfree_mismatch))
 	    log_mesg(1, 0, 0, fs_opt.debug, "%s: EXT4 bitmap metadata mismatch\n", __FILE__);
 	else
-	    log_mesg(0, 1, 1, fs_opt.debug, "%s: bitmap free count err, partclone get free:%llu but extfs get %llu\n", __FILE__, free, ext2fs_free_blocks_count(fs->super));
+	    log_mesg(0, 1, 1, fs_opt.debug, "%s: bitmap free count err, partclone get free:%llu but extfs get %llu.\nPlease run fsck to check and repair the file system\n", __FILE__, lfree, ext2fs_free_blocks_count(fs->super));
     }
 
     fs_close();
     /// update progress
     update_pui(&prog, 1, 1, 1);//finish
+    free(block_bitmap);
 }
 
 /// get extfs type
@@ -211,39 +210,39 @@ static int test_extfs_type(char* device){
     int ext2 = 1;
     int ext3 = 2;
     int ext4 = 3;
+    int device_type;
+
     fs_open(device);
     if(fs->super->s_feature_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM){
 	log_mesg(1, 0, 0, fs_opt.debug, "%s: test feature as EXT4\n", __FILE__);
-	return ext4;
+	device_type = ext4;
     } else if (fs->super->s_feature_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL){
 	log_mesg(1, 0, 0, fs_opt.debug, "%s: test feature as EXT3\n", __FILE__);
-	return ext3;
+	device_type = ext3;
     } else {
 	log_mesg(1, 0, 0, fs_opt.debug, "%s: test feature as EXT2\n", __FILE__);
-	return ext2;
+	device_type = ext2;
     }
     fs_close();
-    return 0;
+    return device_type;
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
     int fs_type = 0;
     fs_type = test_extfs_type(device);
     log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs version is %i\n", __FILE__, fs_type);
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, extfs_MAGIC, FS_MAGIC_SIZE);
+    strncpy(fs_info->fs, extfs_MAGIC, FS_MAGIC_SIZE);
     fs_open(device);
-    image_hdr->block_size = (int)block_size();
-    image_hdr->totalblock = (unsigned long long)block_count();
-    image_hdr->usedblocks = (unsigned long long)get_used_blocks();
-    image_hdr->device_size = (unsigned long long)(image_hdr->block_size * image_hdr->totalblock);
+    fs_info->block_size  = block_size();
+    fs_info->totalblock  = block_count();
+    fs_info->usedblocks  = get_used_blocks();
+    fs_info->device_size = fs_info->block_size * fs_info->totalblock;
 
-    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs block_size %i\n", __FILE__, image_hdr->block_size);
-    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs total block %lli\n", __FILE__, image_hdr->totalblock);
-    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs used blocks %lli\n", __FILE__, image_hdr->usedblocks);
-    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs device size %lli\n", __FILE__, image_hdr->device_size);
+    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs block_size %i\n", __FILE__,    fs_info->block_size);
+    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs total block %lli\n", __FILE__, fs_info->totalblock);
+    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs used blocks %lli\n", __FILE__, fs_info->usedblocks);
+    log_mesg(1, 0, 0, fs_opt.debug, "%s: extfs device size %lli\n", __FILE__, fs_info->device_size);
 
     fs_close();
 }

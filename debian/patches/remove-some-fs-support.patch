@@ -1,8 +1,8 @@
-Index: partclone-0.2.90/configure.ac
+Index: partclone-0.3.6/configure.ac
 ===================================================================
---- partclone-0.2.90.orig/configure.ac
-+++ partclone-0.2.90/configure.ac
-@@ -27,15 +27,15 @@ AM_CONDITIONAL(ENABLE_ALL, test "$enable
+--- partclone-0.3.6.orig/configure.ac
++++ partclone-0.3.6/configure.ac
+@@ -28,15 +28,15 @@ AM_CONDITIONAL(ENABLE_ALL, test "$enable
  if test "$enable_all" = "yes"; then
  enable_xfs="yes"
  enable_extfs="yes"

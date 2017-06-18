@@ -1440,6 +1440,14 @@ m4trace:/usr/share/aclocal-1.15/amversion.m4:33: -1- AC_DEFUN([AM_SET_CURRENT_AU
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
 _AM_AUTOCONF_VERSION(m4_defn([AC_AUTOCONF_VERSION]))])
+m4trace:/usr/share/aclocal-1.15/as.m4:11: -1- AC_DEFUN([AM_PROG_AS], [# By default we simply use the C compiler to build assembly code.
+AC_REQUIRE([AC_PROG_CC])
+test "${CCAS+set}" = set || CCAS=$CC
+test "${CCASFLAGS+set}" = set || CCASFLAGS=$CFLAGS
+AC_ARG_VAR([CCAS],      [assembler compiler command (defaults to CC)])
+AC_ARG_VAR([CCASFLAGS], [assembler compiler flags (defaults to CFLAGS)])
+_AM_IF_OPTION([no-dependencies],, [_AM_DEPENDENCIES([CCAS])])dnl
+])
 m4trace:/usr/share/aclocal-1.15/auxdir.m4:47: -1- AC_DEFUN([AM_AUX_DIR_EXPAND], [AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
 # Expand $ac_aux_dir to an absolute path.
 am_aux_dir=`cd "$ac_aux_dir" && pwd`
@@ -1898,27 +1906,6 @@ else
   am_missing_run=
   AC_MSG_WARN(['missing' script is too old or missing])
 fi
-])
-m4trace:/usr/share/aclocal-1.15/mkdirp.m4:11: -1- AC_DEFUN([AM_PROG_MKDIR_P], [AC_PREREQ([2.60])dnl
-AC_REQUIRE([AC_PROG_MKDIR_P])dnl
-dnl FIXME we are no longer going to remove this! adjust warning
-dnl FIXME message accordingly.
-AC_DIAGNOSE([obsolete],
-[$0: this macro is deprecated, and will soon be removed.
-You should use the Autoconf-provided 'AC][_PROG_MKDIR_P' macro instead,
-and use '$(MKDIR_P)' instead of '$(mkdir_p)'in your Makefile.am files.])
-dnl Automake 1.8 to 1.9.6 used to define mkdir_p.  We now use MKDIR_P,
-dnl while keeping a definition of mkdir_p for backward compatibility.
-dnl @MKDIR_P@ is magic: AC_OUTPUT adjusts its value for each Makefile.
-dnl However we cannot define mkdir_p as $(MKDIR_P) for the sake of
-dnl Makefile.ins that do not define MKDIR_P, so we do our own
-dnl adjustment using top_builddir (which is defined more often than
-dnl MKDIR_P).
-AC_SUBST([mkdir_p], ["$MKDIR_P"])dnl
-case $mkdir_p in
-  [[\\/$]]* | ?:[[\\/]]*) ;;
-  */*) mkdir_p="\$(top_builddir)/$mkdir_p" ;;
-esac
 ])
 m4trace:/usr/share/aclocal-1.15/options.m4:11: -1- AC_DEFUN([_AM_MANGLE_OPTION], [[_AM_OPTION_]m4_bpatsubst($1, [[^a-zA-Z0-9_]], [_])])
 m4trace:/usr/share/aclocal-1.15/options.m4:17: -1- AC_DEFUN([_AM_SET_OPTION], [m4_define(_AM_MANGLE_OPTION([$1]), [1])])
@@ -3484,7 +3471,7 @@ m4trace:m4/nls.m4:22: -1- AC_DEFUN([AM_NLS], [
 m4trace:m4/po.m4:23: -1- AC_DEFUN([AM_PO_SUBDIRS], [
   AC_REQUIRE([AC_PROG_MAKE_SET])dnl
   AC_REQUIRE([AC_PROG_INSTALL])dnl
-  AC_REQUIRE([AM_PROG_MKDIR_P])dnl defined by automake
+  AC_REQUIRE([AC_PROG_MKDIR_P])dnl defined by automake
   AC_REQUIRE([AM_NLS])dnl
 
   dnl Perform the following tests also if --disable-nls has been given,
@@ -4090,14 +4077,6 @@ m4trace:configure.ac:3: -1- AM_GNU_GETTEXT_VERSION([0.16.1])
 m4trace:configure.ac:4: -1- AM_GNU_GETTEXT([external])
 m4trace:configure.ac:4: -1- AM_GNU_GETTEXT_NEED([])
 m4trace:configure.ac:4: -1- AM_PO_SUBDIRS
-m4trace:configure.ac:4: -1- AM_PROG_MKDIR_P
-m4trace:configure.ac:4: -1- _m4_warn([obsolete], [AM_PROG_MKDIR_P: this macro is deprecated, and will soon be removed.
-You should use the Autoconf-provided 'AC_PROG_MKDIR_P' macro instead,
-and use '$(MKDIR_P)' instead of '$(mkdir_p)'in your Makefile.am files.], [/usr/share/aclocal-1.15/mkdirp.m4:11: AM_PROG_MKDIR_P is expanded from...
-m4/po.m4:23: AM_PO_SUBDIRS is expanded from...
-m4/gettext.m4:57: AM_GNU_GETTEXT is expanded from...
-configure.ac:4: the top level])
-m4trace:configure.ac:4: -1- m4_pattern_allow([^mkdir_p$])
 m4trace:configure.ac:4: -1- AM_NLS
 m4trace:configure.ac:4: -1- m4_pattern_allow([^USE_NLS$])
 m4trace:configure.ac:4: -1- AM_PATH_PROG_WITH_TEST([MSGFMT], [msgfmt], [$ac_dir/$ac_word --statistics /dev/null >&5 2>&1 &&
@@ -4320,210 +4299,241 @@ m4trace:configure.ac:5: -1- m4_pattern_allow([^am__fastdepCC_FALSE$])
 m4trace:configure.ac:5: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_TRUE])
 m4trace:configure.ac:5: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_FALSE])
 m4trace:configure.ac:6: -1- AM_PROG_CC_C_O
-m4trace:configure.ac:8: -1- m4_pattern_allow([^RM$])
-m4trace:configure.ac:9: -1- m4_pattern_allow([^LN_S$])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^_FILE_OFFSET_BITS$])
-m4trace:configure.ac:12: -1- m4_pattern_allow([^_LARGE_FILES$])
-m4trace:configure.ac:23: -1- AM_CONDITIONAL([ENABLE_ALL], [test "$enable_all" = yes])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^ENABLE_ALL_TRUE$])
-m4trace:configure.ac:23: -1- m4_pattern_allow([^ENABLE_ALL_FALSE$])
-m4trace:configure.ac:23: -1- _AM_SUBST_NOTMAKE([ENABLE_ALL_TRUE])
-m4trace:configure.ac:23: -1- _AM_SUBST_NOTMAKE([ENABLE_ALL_FALSE])
-m4trace:configure.ac:43: -1- m4_pattern_allow([^ORIGINAL_CFLAGS$])
-m4trace:configure.ac:53: -1- PKG_CHECK_MODULES([UUID], [uuid], [], [exit])
-m4trace:configure.ac:53: -1- PKG_PROG_PKG_CONFIG
-m4trace:configure.ac:53: -1- m4_pattern_forbid([^_?PKG_[A-Z_]+$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG_PATH$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^PKG_CONFIG$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^UUID_CFLAGS$])
-m4trace:configure.ac:53: -1- m4_pattern_allow([^UUID_LIBS$])
-m4trace:configure.ac:53: -1- PKG_CHECK_EXISTS([uuid], [pkg_cv_[]UUID_CFLAGS=`$PKG_CONFIG --[]cflags "uuid" 2>/dev/null`
+m4trace:configure.ac:7: -1- AM_PROG_AS
+m4trace:configure.ac:7: -1- m4_pattern_allow([^CCAS$])
+m4trace:configure.ac:7: -1- m4_pattern_allow([^CCASFLAGS$])
+m4trace:configure.ac:7: -1- _AM_IF_OPTION([no-dependencies], [], [_AM_DEPENDENCIES([CCAS])])
+m4trace:configure.ac:7: -2- _AM_MANGLE_OPTION([no-dependencies])
+m4trace:configure.ac:7: -1- _AM_DEPENDENCIES([CCAS])
+m4trace:configure.ac:7: -1- m4_pattern_allow([^CCASDEPMODE$])
+m4trace:configure.ac:7: -1- AM_CONDITIONAL([am__fastdepCCAS], [
+  test "x$enable_dependency_tracking" != xno \
+  && test "$am_cv_CCAS_dependencies_compiler_type" = gcc3])
+m4trace:configure.ac:7: -1- m4_pattern_allow([^am__fastdepCCAS_TRUE$])
+m4trace:configure.ac:7: -1- m4_pattern_allow([^am__fastdepCCAS_FALSE$])
+m4trace:configure.ac:7: -1- _AM_SUBST_NOTMAKE([am__fastdepCCAS_TRUE])
+m4trace:configure.ac:7: -1- _AM_SUBST_NOTMAKE([am__fastdepCCAS_FALSE])
+m4trace:configure.ac:9: -1- m4_pattern_allow([^RM$])
+m4trace:configure.ac:10: -1- m4_pattern_allow([^LN_S$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^_FILE_OFFSET_BITS$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^_LARGE_FILES$])
+m4trace:configure.ac:24: -1- AM_CONDITIONAL([ENABLE_ALL], [test "$enable_all" = yes])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^ENABLE_ALL_TRUE$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^ENABLE_ALL_FALSE$])
+m4trace:configure.ac:24: -1- _AM_SUBST_NOTMAKE([ENABLE_ALL_TRUE])
+m4trace:configure.ac:24: -1- _AM_SUBST_NOTMAKE([ENABLE_ALL_FALSE])
+m4trace:configure.ac:44: -1- m4_pattern_allow([^ORIGINAL_CFLAGS$])
+m4trace:configure.ac:54: -1- PKG_CHECK_MODULES([UUID], [uuid], [], [exit])
+m4trace:configure.ac:54: -1- PKG_PROG_PKG_CONFIG
+m4trace:configure.ac:54: -1- m4_pattern_forbid([^_?PKG_[A-Z_]+$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG_(DISABLE_UNINSTALLED|TOP_BUILD_DIR|DEBUG_SPEW)$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG_PATH$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^PKG_CONFIG$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^UUID_CFLAGS$])
+m4trace:configure.ac:54: -1- m4_pattern_allow([^UUID_LIBS$])
+m4trace:configure.ac:54: -1- PKG_CHECK_EXISTS([uuid], [pkg_cv_[]UUID_CFLAGS=`$PKG_CONFIG --[]cflags "uuid" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:53: -1- PKG_CHECK_EXISTS([uuid], [pkg_cv_[]UUID_LIBS=`$PKG_CONFIG --[]libs "uuid" 2>/dev/null`
+m4trace:configure.ac:54: -1- PKG_CHECK_EXISTS([uuid], [pkg_cv_[]UUID_LIBS=`$PKG_CONFIG --[]libs "uuid" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:53: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:56: -1- m4_pattern_allow([^HAVE_LIBPTHREAD$])
-m4trace:configure.ac:64: -1- AM_CONDITIONAL([ENABLE_EXTFS], [test "$enable_extfs" = yes])
-m4trace:configure.ac:64: -1- m4_pattern_allow([^ENABLE_EXTFS_TRUE$])
-m4trace:configure.ac:64: -1- m4_pattern_allow([^ENABLE_EXTFS_FALSE$])
-m4trace:configure.ac:64: -1- _AM_SUBST_NOTMAKE([ENABLE_EXTFS_TRUE])
-m4trace:configure.ac:64: -1- _AM_SUBST_NOTMAKE([ENABLE_EXTFS_FALSE])
-m4trace:configure.ac:69: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+m4trace:configure.ac:54: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:62: -1- AM_CONDITIONAL([ENABLE_FUSE], [test "$enable_fuse" = yes])
+m4trace:configure.ac:62: -1- m4_pattern_allow([^ENABLE_FUSE_TRUE$])
+m4trace:configure.ac:62: -1- m4_pattern_allow([^ENABLE_FUSE_FALSE$])
+m4trace:configure.ac:62: -1- _AM_SUBST_NOTMAKE([ENABLE_FUSE_TRUE])
+m4trace:configure.ac:62: -1- _AM_SUBST_NOTMAKE([ENABLE_FUSE_FALSE])
+m4trace:configure.ac:64: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:69: the top level])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^GREP$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^EGREP$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^STDC_HEADERS$])
-m4trace:configure.ac:70: -1- m4_pattern_allow([^HAVE_EXT2FS_EXT2FS_H$])
-m4trace:configure.ac:77: -1- PKG_CHECK_MODULES([EXT2FS], [ext2fs], [extfs_version=`pkg-config --modversion ext2fs`], [])
-m4trace:configure.ac:77: -1- m4_pattern_allow([^EXT2FS_CFLAGS$])
-m4trace:configure.ac:77: -1- m4_pattern_allow([^EXT2FS_LIBS$])
-m4trace:configure.ac:77: -1- PKG_CHECK_EXISTS([ext2fs], [pkg_cv_[]EXT2FS_CFLAGS=`$PKG_CONFIG --[]cflags "ext2fs" 2>/dev/null`
+configure.ac:64: the top level])
+m4trace:configure.ac:65: -1- PKG_CHECK_MODULES([FUSE], [fuse], [], [exit])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^FUSE_CFLAGS$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^FUSE_LIBS$])
+m4trace:configure.ac:65: -1- PKG_CHECK_EXISTS([fuse], [pkg_cv_[]FUSE_CFLAGS=`$PKG_CONFIG --[]cflags "fuse" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:77: -1- PKG_CHECK_EXISTS([ext2fs], [pkg_cv_[]EXT2FS_LIBS=`$PKG_CONFIG --[]libs "ext2fs" 2>/dev/null`
+m4trace:configure.ac:65: -1- PKG_CHECK_EXISTS([fuse], [pkg_cv_[]FUSE_LIBS=`$PKG_CONFIG --[]libs "fuse" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:77: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:89: -1- AM_CONDITIONAL([ENABLE_XFS], [test "$enable_xfs" = yes])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^ENABLE_XFS_TRUE$])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^ENABLE_XFS_FALSE$])
-m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([ENABLE_XFS_TRUE])
-m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([ENABLE_XFS_FALSE])
-m4trace:configure.ac:103: -1- AM_CONDITIONAL([ENABLE_REISERFS], [test "$enable_reiserfs" = yes])
-m4trace:configure.ac:103: -1- m4_pattern_allow([^ENABLE_REISERFS_TRUE$])
-m4trace:configure.ac:103: -1- m4_pattern_allow([^ENABLE_REISERFS_FALSE$])
-m4trace:configure.ac:103: -1- _AM_SUBST_NOTMAKE([ENABLE_REISERFS_TRUE])
-m4trace:configure.ac:103: -1- _AM_SUBST_NOTMAKE([ENABLE_REISERFS_FALSE])
-m4trace:configure.ac:108: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+m4trace:configure.ac:65: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:69: -1- m4_pattern_allow([^HAVE_LIBPTHREAD$])
+m4trace:configure.ac:70: -1- m4_pattern_allow([^OBJCOPY$])
+m4trace:configure.ac:78: -1- AM_CONDITIONAL([ENABLE_EXTFS], [test "$enable_extfs" = yes])
+m4trace:configure.ac:78: -1- m4_pattern_allow([^ENABLE_EXTFS_TRUE$])
+m4trace:configure.ac:78: -1- m4_pattern_allow([^ENABLE_EXTFS_FALSE$])
+m4trace:configure.ac:78: -1- _AM_SUBST_NOTMAKE([ENABLE_EXTFS_TRUE])
+m4trace:configure.ac:78: -1- _AM_SUBST_NOTMAKE([ENABLE_EXTFS_FALSE])
+m4trace:configure.ac:83: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:108: the top level])
-m4trace:configure.ac:109: -1- m4_pattern_allow([^HAVE_REISERFS_REISERFS_H$])
-m4trace:configure.ac:129: -1- AM_CONDITIONAL([ENABLE_REISER4], [test "$enable_reiser4" = yes])
-m4trace:configure.ac:129: -1- m4_pattern_allow([^ENABLE_REISER4_TRUE$])
-m4trace:configure.ac:129: -1- m4_pattern_allow([^ENABLE_REISER4_FALSE$])
-m4trace:configure.ac:129: -1- _AM_SUBST_NOTMAKE([ENABLE_REISER4_TRUE])
-m4trace:configure.ac:129: -1- _AM_SUBST_NOTMAKE([ENABLE_REISER4_FALSE])
-m4trace:configure.ac:135: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:135: the top level])
-m4trace:configure.ac:136: -1- m4_pattern_allow([^HAVE_REISER4_LIBREISER4_H$])
-m4trace:configure.ac:152: -1- AM_CONDITIONAL([ENABLE_HFSP], [test "$enable_hfsp" = yes])
-m4trace:configure.ac:152: -1- m4_pattern_allow([^ENABLE_HFSP_TRUE$])
-m4trace:configure.ac:152: -1- m4_pattern_allow([^ENABLE_HFSP_FALSE$])
-m4trace:configure.ac:152: -1- _AM_SUBST_NOTMAKE([ENABLE_HFSP_TRUE])
-m4trace:configure.ac:152: -1- _AM_SUBST_NOTMAKE([ENABLE_HFSP_FALSE])
-m4trace:configure.ac:166: -1- AM_CONDITIONAL([ENABLE_FAT], [test "$enable_fat" = yes])
-m4trace:configure.ac:166: -1- m4_pattern_allow([^ENABLE_FAT_TRUE$])
-m4trace:configure.ac:166: -1- m4_pattern_allow([^ENABLE_FAT_FALSE$])
-m4trace:configure.ac:166: -1- _AM_SUBST_NOTMAKE([ENABLE_FAT_TRUE])
-m4trace:configure.ac:166: -1- _AM_SUBST_NOTMAKE([ENABLE_FAT_FALSE])
-m4trace:configure.ac:180: -1- AM_CONDITIONAL([ENABLE_EXFAT], [test "$enable_exfat" = yes])
-m4trace:configure.ac:180: -1- m4_pattern_allow([^ENABLE_EXFAT_TRUE$])
-m4trace:configure.ac:180: -1- m4_pattern_allow([^ENABLE_EXFAT_FALSE$])
-m4trace:configure.ac:180: -1- _AM_SUBST_NOTMAKE([ENABLE_EXFAT_TRUE])
-m4trace:configure.ac:180: -1- _AM_SUBST_NOTMAKE([ENABLE_EXFAT_FALSE])
-m4trace:configure.ac:194: -1- AM_CONDITIONAL([ENABLE_F2FS], [test "$enable_f2fs" = yes])
-m4trace:configure.ac:194: -1- m4_pattern_allow([^ENABLE_F2FS_TRUE$])
-m4trace:configure.ac:194: -1- m4_pattern_allow([^ENABLE_F2FS_FALSE$])
-m4trace:configure.ac:194: -1- _AM_SUBST_NOTMAKE([ENABLE_F2FS_TRUE])
-m4trace:configure.ac:194: -1- _AM_SUBST_NOTMAKE([ENABLE_F2FS_FALSE])
-m4trace:configure.ac:208: -1- AM_CONDITIONAL([ENABLE_NILFS2], [test "$enable_nilfs2" = yes])
-m4trace:configure.ac:208: -1- m4_pattern_allow([^ENABLE_NILFS2_TRUE$])
-m4trace:configure.ac:208: -1- m4_pattern_allow([^ENABLE_NILFS2_FALSE$])
-m4trace:configure.ac:208: -1- _AM_SUBST_NOTMAKE([ENABLE_NILFS2_TRUE])
-m4trace:configure.ac:208: -1- _AM_SUBST_NOTMAKE([ENABLE_NILFS2_FALSE])
-m4trace:configure.ac:212: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:212: the top level])
-m4trace:configure.ac:217: -1- m4_pattern_allow([^HAVE_NILFS_H$])
-m4trace:configure.ac:244: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:244: the top level])
-m4trace:configure.ac:245: -1- m4_pattern_allow([^HAVE_NTFS_3G_MISC_H$])
-m4trace:configure.ac:251: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:251: the top level])
-m4trace:configure.ac:252: -1- m4_pattern_allow([^HAVE_NTFS_VERSION_H$])
-m4trace:configure.ac:258: -1- AM_CONDITIONAL([ENABLE_NTFS_3G], [test "$ntfs_3g_l" = 1])
-m4trace:configure.ac:258: -1- m4_pattern_allow([^ENABLE_NTFS_3G_TRUE$])
-m4trace:configure.ac:258: -1- m4_pattern_allow([^ENABLE_NTFS_3G_FALSE$])
-m4trace:configure.ac:258: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_3G_TRUE])
-m4trace:configure.ac:258: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_3G_FALSE])
-m4trace:configure.ac:259: -1- AM_CONDITIONAL([ENABLE_NTFS_PROGS], [test "$ntfsprogs_l" = 1])
-m4trace:configure.ac:259: -1- m4_pattern_allow([^ENABLE_NTFS_PROGS_TRUE$])
-m4trace:configure.ac:259: -1- m4_pattern_allow([^ENABLE_NTFS_PROGS_FALSE$])
-m4trace:configure.ac:259: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_PROGS_TRUE])
-m4trace:configure.ac:259: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_PROGS_FALSE])
-m4trace:configure.ac:260: -1- AM_CONDITIONAL([ENABLE_NTFS], [test "$ntfsprogs_l" = 1 -o "$ntfs_3g_l" = 1])
-m4trace:configure.ac:260: -1- m4_pattern_allow([^ENABLE_NTFS_TRUE$])
-m4trace:configure.ac:260: -1- m4_pattern_allow([^ENABLE_NTFS_FALSE$])
-m4trace:configure.ac:260: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_TRUE])
-m4trace:configure.ac:260: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_FALSE])
-m4trace:configure.ac:265: -1- PKG_CHECK_MODULES([NTFS], [libntfs-3g >= 2010], [ntfs_version=`pkg-config --modversion libntfs-3g`])
-m4trace:configure.ac:265: -1- m4_pattern_allow([^NTFS_CFLAGS$])
-m4trace:configure.ac:265: -1- m4_pattern_allow([^NTFS_LIBS$])
-m4trace:configure.ac:265: -1- PKG_CHECK_EXISTS([libntfs-3g >= 2010], [pkg_cv_[]NTFS_CFLAGS=`$PKG_CONFIG --[]cflags "libntfs-3g >= 2010" 2>/dev/null`
+configure.ac:83: the top level])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^CPP$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^CPP$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^GREP$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^EGREP$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^STDC_HEADERS$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^HAVE_EXT2FS_EXT2FS_H$])
+m4trace:configure.ac:91: -1- PKG_CHECK_MODULES([EXT2FS], [ext2fs], [extfs_version=`pkg-config --modversion ext2fs`], [])
+m4trace:configure.ac:91: -1- m4_pattern_allow([^EXT2FS_CFLAGS$])
+m4trace:configure.ac:91: -1- m4_pattern_allow([^EXT2FS_LIBS$])
+m4trace:configure.ac:91: -1- PKG_CHECK_EXISTS([ext2fs], [pkg_cv_[]EXT2FS_CFLAGS=`$PKG_CONFIG --[]cflags "ext2fs" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:265: -1- PKG_CHECK_EXISTS([libntfs-3g >= 2010], [pkg_cv_[]NTFS_LIBS=`$PKG_CONFIG --[]libs "libntfs-3g >= 2010" 2>/dev/null`
+m4trace:configure.ac:91: -1- PKG_CHECK_EXISTS([ext2fs], [pkg_cv_[]EXT2FS_LIBS=`$PKG_CONFIG --[]libs "ext2fs" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:265: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:278: -1- AM_CONDITIONAL([ENABLE_UFS], [test "$enable_ufs" = yes])
-m4trace:configure.ac:278: -1- m4_pattern_allow([^ENABLE_UFS_TRUE$])
-m4trace:configure.ac:278: -1- m4_pattern_allow([^ENABLE_UFS_FALSE$])
-m4trace:configure.ac:278: -1- _AM_SUBST_NOTMAKE([ENABLE_UFS_TRUE])
-m4trace:configure.ac:278: -1- _AM_SUBST_NOTMAKE([ENABLE_UFS_FALSE])
-m4trace:configure.ac:284: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+m4trace:configure.ac:91: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:103: -1- AM_CONDITIONAL([ENABLE_XFS], [test "$enable_xfs" = yes])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^ENABLE_XFS_TRUE$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^ENABLE_XFS_FALSE$])
+m4trace:configure.ac:103: -1- _AM_SUBST_NOTMAKE([ENABLE_XFS_TRUE])
+m4trace:configure.ac:103: -1- _AM_SUBST_NOTMAKE([ENABLE_XFS_FALSE])
+m4trace:configure.ac:117: -1- AM_CONDITIONAL([ENABLE_REISERFS], [test "$enable_reiserfs" = yes])
+m4trace:configure.ac:117: -1- m4_pattern_allow([^ENABLE_REISERFS_TRUE$])
+m4trace:configure.ac:117: -1- m4_pattern_allow([^ENABLE_REISERFS_FALSE$])
+m4trace:configure.ac:117: -1- _AM_SUBST_NOTMAKE([ENABLE_REISERFS_TRUE])
+m4trace:configure.ac:117: -1- _AM_SUBST_NOTMAKE([ENABLE_REISERFS_FALSE])
+m4trace:configure.ac:122: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:284: the top level])
-m4trace:configure.ac:298: -1- AM_CONDITIONAL([ENABLE_VMFS], [test "$enable_vmfs" = yes])
-m4trace:configure.ac:298: -1- m4_pattern_allow([^ENABLE_VMFS_TRUE$])
-m4trace:configure.ac:298: -1- m4_pattern_allow([^ENABLE_VMFS_FALSE$])
-m4trace:configure.ac:298: -1- _AM_SUBST_NOTMAKE([ENABLE_VMFS_TRUE])
-m4trace:configure.ac:298: -1- _AM_SUBST_NOTMAKE([ENABLE_VMFS_FALSE])
-m4trace:configure.ac:307: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+configure.ac:122: the top level])
+m4trace:configure.ac:123: -1- m4_pattern_allow([^HAVE_REISERFS_REISERFS_H$])
+m4trace:configure.ac:143: -1- AM_CONDITIONAL([ENABLE_REISER4], [test "$enable_reiser4" = yes])
+m4trace:configure.ac:143: -1- m4_pattern_allow([^ENABLE_REISER4_TRUE$])
+m4trace:configure.ac:143: -1- m4_pattern_allow([^ENABLE_REISER4_FALSE$])
+m4trace:configure.ac:143: -1- _AM_SUBST_NOTMAKE([ENABLE_REISER4_TRUE])
+m4trace:configure.ac:143: -1- _AM_SUBST_NOTMAKE([ENABLE_REISER4_FALSE])
+m4trace:configure.ac:149: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:307: the top level])
-m4trace:configure.ac:321: -1- AM_CONDITIONAL([ENABLE_JFS], [test "$enable_jfs" = yes])
-m4trace:configure.ac:321: -1- m4_pattern_allow([^ENABLE_JFS_TRUE$])
-m4trace:configure.ac:321: -1- m4_pattern_allow([^ENABLE_JFS_FALSE$])
-m4trace:configure.ac:321: -1- _AM_SUBST_NOTMAKE([ENABLE_JFS_TRUE])
-m4trace:configure.ac:321: -1- _AM_SUBST_NOTMAKE([ENABLE_JFS_FALSE])
-m4trace:configure.ac:330: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+configure.ac:149: the top level])
+m4trace:configure.ac:150: -1- m4_pattern_allow([^HAVE_REISER4_LIBREISER4_H$])
+m4trace:configure.ac:166: -1- AM_CONDITIONAL([ENABLE_HFSP], [test "$enable_hfsp" = yes])
+m4trace:configure.ac:166: -1- m4_pattern_allow([^ENABLE_HFSP_TRUE$])
+m4trace:configure.ac:166: -1- m4_pattern_allow([^ENABLE_HFSP_FALSE$])
+m4trace:configure.ac:166: -1- _AM_SUBST_NOTMAKE([ENABLE_HFSP_TRUE])
+m4trace:configure.ac:166: -1- _AM_SUBST_NOTMAKE([ENABLE_HFSP_FALSE])
+m4trace:configure.ac:180: -1- AM_CONDITIONAL([ENABLE_FAT], [test "$enable_fat" = yes])
+m4trace:configure.ac:180: -1- m4_pattern_allow([^ENABLE_FAT_TRUE$])
+m4trace:configure.ac:180: -1- m4_pattern_allow([^ENABLE_FAT_FALSE$])
+m4trace:configure.ac:180: -1- _AM_SUBST_NOTMAKE([ENABLE_FAT_TRUE])
+m4trace:configure.ac:180: -1- _AM_SUBST_NOTMAKE([ENABLE_FAT_FALSE])
+m4trace:configure.ac:194: -1- AM_CONDITIONAL([ENABLE_EXFAT], [test "$enable_exfat" = yes])
+m4trace:configure.ac:194: -1- m4_pattern_allow([^ENABLE_EXFAT_TRUE$])
+m4trace:configure.ac:194: -1- m4_pattern_allow([^ENABLE_EXFAT_FALSE$])
+m4trace:configure.ac:194: -1- _AM_SUBST_NOTMAKE([ENABLE_EXFAT_TRUE])
+m4trace:configure.ac:194: -1- _AM_SUBST_NOTMAKE([ENABLE_EXFAT_FALSE])
+m4trace:configure.ac:208: -1- AM_CONDITIONAL([ENABLE_F2FS], [test "$enable_f2fs" = yes])
+m4trace:configure.ac:208: -1- m4_pattern_allow([^ENABLE_F2FS_TRUE$])
+m4trace:configure.ac:208: -1- m4_pattern_allow([^ENABLE_F2FS_FALSE$])
+m4trace:configure.ac:208: -1- _AM_SUBST_NOTMAKE([ENABLE_F2FS_TRUE])
+m4trace:configure.ac:208: -1- _AM_SUBST_NOTMAKE([ENABLE_F2FS_FALSE])
+m4trace:configure.ac:222: -1- AM_CONDITIONAL([ENABLE_NILFS2], [test "$enable_nilfs2" = yes])
+m4trace:configure.ac:222: -1- m4_pattern_allow([^ENABLE_NILFS2_TRUE$])
+m4trace:configure.ac:222: -1- m4_pattern_allow([^ENABLE_NILFS2_FALSE$])
+m4trace:configure.ac:222: -1- _AM_SUBST_NOTMAKE([ENABLE_NILFS2_TRUE])
+m4trace:configure.ac:222: -1- _AM_SUBST_NOTMAKE([ENABLE_NILFS2_FALSE])
+m4trace:configure.ac:226: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:330: the top level])
-m4trace:configure.ac:344: -1- AM_CONDITIONAL([ENABLE_BTRFS], [test "$enable_btrfs" = yes])
-m4trace:configure.ac:344: -1- m4_pattern_allow([^ENABLE_BTRFS_TRUE$])
-m4trace:configure.ac:344: -1- m4_pattern_allow([^ENABLE_BTRFS_FALSE$])
-m4trace:configure.ac:344: -1- _AM_SUBST_NOTMAKE([ENABLE_BTRFS_TRUE])
-m4trace:configure.ac:344: -1- _AM_SUBST_NOTMAKE([ENABLE_BTRFS_FALSE])
-m4trace:configure.ac:348: -1- m4_pattern_allow([^HAVE_BLKID_BLKID_H$])
-m4trace:configure.ac:361: -1- AM_CONDITIONAL([ENABLE_MINIX], [test "$enable_minix" = yes])
-m4trace:configure.ac:361: -1- m4_pattern_allow([^ENABLE_MINIX_TRUE$])
-m4trace:configure.ac:361: -1- m4_pattern_allow([^ENABLE_MINIX_FALSE$])
-m4trace:configure.ac:361: -1- _AM_SUBST_NOTMAKE([ENABLE_MINIX_TRUE])
-m4trace:configure.ac:361: -1- _AM_SUBST_NOTMAKE([ENABLE_MINIX_FALSE])
-m4trace:configure.ac:376: -1- AM_CONDITIONAL([ENABLE_NCURSESW], [test "$enable_ncursesw" = yes])
-m4trace:configure.ac:376: -1- m4_pattern_allow([^ENABLE_NCURSESW_TRUE$])
-m4trace:configure.ac:376: -1- m4_pattern_allow([^ENABLE_NCURSESW_FALSE$])
-m4trace:configure.ac:376: -1- _AM_SUBST_NOTMAKE([ENABLE_NCURSESW_TRUE])
-m4trace:configure.ac:376: -1- _AM_SUBST_NOTMAKE([ENABLE_NCURSESW_FALSE])
-m4trace:configure.ac:381: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+configure.ac:226: the top level])
+m4trace:configure.ac:231: -1- m4_pattern_allow([^HAVE_NILFS_H$])
+m4trace:configure.ac:258: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
 You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
-configure.ac:381: the top level])
-m4trace:configure.ac:382: -1- m4_pattern_allow([^HAVE_NCURSES_H$])
-m4trace:configure.ac:385: -1- m4_pattern_allow([^HAVE_LIBNCURSESW$])
-m4trace:configure.ac:396: -1- AM_CONDITIONAL([ENABLE_STATIC], [test "$enable_static" = yes])
-m4trace:configure.ac:396: -1- m4_pattern_allow([^ENABLE_STATIC_TRUE$])
-m4trace:configure.ac:396: -1- m4_pattern_allow([^ENABLE_STATIC_FALSE$])
-m4trace:configure.ac:396: -1- _AM_SUBST_NOTMAKE([ENABLE_STATIC_TRUE])
-m4trace:configure.ac:396: -1- _AM_SUBST_NOTMAKE([ENABLE_STATIC_FALSE])
-m4trace:configure.ac:400: -1- AM_CONDITIONAL([ENABLE_TINFO], [test "$tinfo" = 1])
-m4trace:configure.ac:400: -1- m4_pattern_allow([^ENABLE_TINFO_TRUE$])
-m4trace:configure.ac:400: -1- m4_pattern_allow([^ENABLE_TINFO_FALSE$])
-m4trace:configure.ac:400: -1- _AM_SUBST_NOTMAKE([ENABLE_TINFO_TRUE])
-m4trace:configure.ac:400: -1- _AM_SUBST_NOTMAKE([ENABLE_TINFO_FALSE])
-m4trace:configure.ac:409: -1- AM_CONDITIONAL([ENABLE_MEMTRACE], [test "$enable_memtrace" = yes])
-m4trace:configure.ac:409: -1- m4_pattern_allow([^ENABLE_MEMTRACE_TRUE$])
-m4trace:configure.ac:409: -1- m4_pattern_allow([^ENABLE_MEMTRACE_FALSE$])
-m4trace:configure.ac:409: -1- _AM_SUBST_NOTMAKE([ENABLE_MEMTRACE_TRUE])
-m4trace:configure.ac:409: -1- _AM_SUBST_NOTMAKE([ENABLE_MEMTRACE_FALSE])
-m4trace:configure.ac:418: -1- AM_CONDITIONAL([ENABLE_FS_TEST], [test "$enable_fs_test" = yes])
-m4trace:configure.ac:418: -1- m4_pattern_allow([^ENABLE_FS_TEST_TRUE$])
-m4trace:configure.ac:418: -1- m4_pattern_allow([^ENABLE_FS_TEST_FALSE$])
-m4trace:configure.ac:418: -1- _AM_SUBST_NOTMAKE([ENABLE_FS_TEST_TRUE])
-m4trace:configure.ac:418: -1- _AM_SUBST_NOTMAKE([ENABLE_FS_TEST_FALSE])
-m4trace:configure.ac:429: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:429: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:429: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:429: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:429: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:429: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:429: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:429: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:429: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+configure.ac:258: the top level])
+m4trace:configure.ac:259: -1- m4_pattern_allow([^HAVE_NTFS_3G_MISC_H$])
+m4trace:configure.ac:265: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
+configure.ac:265: the top level])
+m4trace:configure.ac:266: -1- m4_pattern_allow([^HAVE_NTFS_VERSION_H$])
+m4trace:configure.ac:272: -1- AM_CONDITIONAL([ENABLE_NTFS_3G], [test "$ntfs_3g_l" = 1])
+m4trace:configure.ac:272: -1- m4_pattern_allow([^ENABLE_NTFS_3G_TRUE$])
+m4trace:configure.ac:272: -1- m4_pattern_allow([^ENABLE_NTFS_3G_FALSE$])
+m4trace:configure.ac:272: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_3G_TRUE])
+m4trace:configure.ac:272: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_3G_FALSE])
+m4trace:configure.ac:273: -1- AM_CONDITIONAL([ENABLE_NTFS_PROGS], [test "$ntfsprogs_l" = 1])
+m4trace:configure.ac:273: -1- m4_pattern_allow([^ENABLE_NTFS_PROGS_TRUE$])
+m4trace:configure.ac:273: -1- m4_pattern_allow([^ENABLE_NTFS_PROGS_FALSE$])
+m4trace:configure.ac:273: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_PROGS_TRUE])
+m4trace:configure.ac:273: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_PROGS_FALSE])
+m4trace:configure.ac:274: -1- AM_CONDITIONAL([ENABLE_NTFS], [test "$ntfsprogs_l" = 1 -o "$ntfs_3g_l" = 1])
+m4trace:configure.ac:274: -1- m4_pattern_allow([^ENABLE_NTFS_TRUE$])
+m4trace:configure.ac:274: -1- m4_pattern_allow([^ENABLE_NTFS_FALSE$])
+m4trace:configure.ac:274: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_TRUE])
+m4trace:configure.ac:274: -1- _AM_SUBST_NOTMAKE([ENABLE_NTFS_FALSE])
+m4trace:configure.ac:279: -1- PKG_CHECK_MODULES([NTFS], [libntfs-3g >= 2010], [ntfs_version=`pkg-config --modversion libntfs-3g`])
+m4trace:configure.ac:279: -1- m4_pattern_allow([^NTFS_CFLAGS$])
+m4trace:configure.ac:279: -1- m4_pattern_allow([^NTFS_LIBS$])
+m4trace:configure.ac:279: -1- PKG_CHECK_EXISTS([libntfs-3g >= 2010], [pkg_cv_[]NTFS_CFLAGS=`$PKG_CONFIG --[]cflags "libntfs-3g >= 2010" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:279: -1- PKG_CHECK_EXISTS([libntfs-3g >= 2010], [pkg_cv_[]NTFS_LIBS=`$PKG_CONFIG --[]libs "libntfs-3g >= 2010" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:279: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:292: -1- AM_CONDITIONAL([ENABLE_UFS], [test "$enable_ufs" = yes])
+m4trace:configure.ac:292: -1- m4_pattern_allow([^ENABLE_UFS_TRUE$])
+m4trace:configure.ac:292: -1- m4_pattern_allow([^ENABLE_UFS_FALSE$])
+m4trace:configure.ac:292: -1- _AM_SUBST_NOTMAKE([ENABLE_UFS_TRUE])
+m4trace:configure.ac:292: -1- _AM_SUBST_NOTMAKE([ENABLE_UFS_FALSE])
+m4trace:configure.ac:298: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
+configure.ac:298: the top level])
+m4trace:configure.ac:312: -1- AM_CONDITIONAL([ENABLE_VMFS], [test "$enable_vmfs" = yes])
+m4trace:configure.ac:312: -1- m4_pattern_allow([^ENABLE_VMFS_TRUE$])
+m4trace:configure.ac:312: -1- m4_pattern_allow([^ENABLE_VMFS_FALSE$])
+m4trace:configure.ac:312: -1- _AM_SUBST_NOTMAKE([ENABLE_VMFS_TRUE])
+m4trace:configure.ac:312: -1- _AM_SUBST_NOTMAKE([ENABLE_VMFS_FALSE])
+m4trace:configure.ac:321: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
+configure.ac:321: the top level])
+m4trace:configure.ac:335: -1- AM_CONDITIONAL([ENABLE_JFS], [test "$enable_jfs" = yes])
+m4trace:configure.ac:335: -1- m4_pattern_allow([^ENABLE_JFS_TRUE$])
+m4trace:configure.ac:335: -1- m4_pattern_allow([^ENABLE_JFS_FALSE$])
+m4trace:configure.ac:335: -1- _AM_SUBST_NOTMAKE([ENABLE_JFS_TRUE])
+m4trace:configure.ac:335: -1- _AM_SUBST_NOTMAKE([ENABLE_JFS_FALSE])
+m4trace:configure.ac:344: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
+configure.ac:344: the top level])
+m4trace:configure.ac:358: -1- AM_CONDITIONAL([ENABLE_BTRFS], [test "$enable_btrfs" = yes])
+m4trace:configure.ac:358: -1- m4_pattern_allow([^ENABLE_BTRFS_TRUE$])
+m4trace:configure.ac:358: -1- m4_pattern_allow([^ENABLE_BTRFS_FALSE$])
+m4trace:configure.ac:358: -1- _AM_SUBST_NOTMAKE([ENABLE_BTRFS_TRUE])
+m4trace:configure.ac:358: -1- _AM_SUBST_NOTMAKE([ENABLE_BTRFS_FALSE])
+m4trace:configure.ac:362: -1- m4_pattern_allow([^HAVE_BLKID_BLKID_H$])
+m4trace:configure.ac:375: -1- AM_CONDITIONAL([ENABLE_MINIX], [test "$enable_minix" = yes])
+m4trace:configure.ac:375: -1- m4_pattern_allow([^ENABLE_MINIX_TRUE$])
+m4trace:configure.ac:375: -1- m4_pattern_allow([^ENABLE_MINIX_FALSE$])
+m4trace:configure.ac:375: -1- _AM_SUBST_NOTMAKE([ENABLE_MINIX_TRUE])
+m4trace:configure.ac:375: -1- _AM_SUBST_NOTMAKE([ENABLE_MINIX_FALSE])
+m4trace:configure.ac:390: -1- AM_CONDITIONAL([ENABLE_NCURSESW], [test "$enable_ncursesw" = yes])
+m4trace:configure.ac:390: -1- m4_pattern_allow([^ENABLE_NCURSESW_TRUE$])
+m4trace:configure.ac:390: -1- m4_pattern_allow([^ENABLE_NCURSESW_FALSE$])
+m4trace:configure.ac:390: -1- _AM_SUBST_NOTMAKE([ENABLE_NCURSESW_TRUE])
+m4trace:configure.ac:390: -1- _AM_SUBST_NOTMAKE([ENABLE_NCURSESW_FALSE])
+m4trace:configure.ac:395: -1- _m4_warn([obsolete], [The macro `AC_CHECKING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:2277: AC_CHECKING is expanded from...
+configure.ac:395: the top level])
+m4trace:configure.ac:396: -1- m4_pattern_allow([^HAVE_NCURSES_H$])
+m4trace:configure.ac:399: -1- m4_pattern_allow([^HAVE_LIBNCURSESW$])
+m4trace:configure.ac:410: -1- AM_CONDITIONAL([ENABLE_STATIC], [test "$enable_static" = yes])
+m4trace:configure.ac:410: -1- m4_pattern_allow([^ENABLE_STATIC_TRUE$])
+m4trace:configure.ac:410: -1- m4_pattern_allow([^ENABLE_STATIC_FALSE$])
+m4trace:configure.ac:410: -1- _AM_SUBST_NOTMAKE([ENABLE_STATIC_TRUE])
+m4trace:configure.ac:410: -1- _AM_SUBST_NOTMAKE([ENABLE_STATIC_FALSE])
+m4trace:configure.ac:414: -1- AM_CONDITIONAL([ENABLE_TINFO], [test "$tinfo" = 1])
+m4trace:configure.ac:414: -1- m4_pattern_allow([^ENABLE_TINFO_TRUE$])
+m4trace:configure.ac:414: -1- m4_pattern_allow([^ENABLE_TINFO_FALSE$])
+m4trace:configure.ac:414: -1- _AM_SUBST_NOTMAKE([ENABLE_TINFO_TRUE])
+m4trace:configure.ac:414: -1- _AM_SUBST_NOTMAKE([ENABLE_TINFO_FALSE])
+m4trace:configure.ac:423: -1- AM_CONDITIONAL([ENABLE_MEMTRACE], [test "$enable_memtrace" = yes])
+m4trace:configure.ac:423: -1- m4_pattern_allow([^ENABLE_MEMTRACE_TRUE$])
+m4trace:configure.ac:423: -1- m4_pattern_allow([^ENABLE_MEMTRACE_FALSE$])
+m4trace:configure.ac:423: -1- _AM_SUBST_NOTMAKE([ENABLE_MEMTRACE_TRUE])
+m4trace:configure.ac:423: -1- _AM_SUBST_NOTMAKE([ENABLE_MEMTRACE_FALSE])
+m4trace:configure.ac:432: -1- AM_CONDITIONAL([ENABLE_FS_TEST], [test "$enable_fs_test" = yes])
+m4trace:configure.ac:432: -1- m4_pattern_allow([^ENABLE_FS_TEST_TRUE$])
+m4trace:configure.ac:432: -1- m4_pattern_allow([^ENABLE_FS_TEST_FALSE$])
+m4trace:configure.ac:432: -1- _AM_SUBST_NOTMAKE([ENABLE_FS_TEST_TRUE])
+m4trace:configure.ac:432: -1- _AM_SUBST_NOTMAKE([ENABLE_FS_TEST_FALSE])
+m4trace:configure.ac:443: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:443: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:443: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:443: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:443: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:443: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:443: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:443: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:443: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

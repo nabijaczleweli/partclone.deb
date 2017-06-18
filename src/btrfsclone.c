@@ -34,9 +34,6 @@
 #include "progress.h"
 #include "fs_common.h"
 
-char *EXECNAME = "partclone.btrfs";
-extern fs_cmd_opt fs_opt;
-
 struct btrfs_fs_info *info;
 struct btrfs_root *root;
 struct btrfs_path path;
@@ -332,9 +329,9 @@ static void fs_close(){
     close_ctree(root);
 }
 
-/// readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
+
     int ret;
     struct btrfs_root *tree_root_scan;
     struct btrfs_key key;
@@ -345,7 +342,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     int slot;
 
     fs_open(device);
-    dev_size = image_hdr.device_size;
+    dev_size = fs_info.device_size;
     block_size  = btrfs_super_nodesize(info->super_copy);
     u64 bsize = (u64)block_size;
 
@@ -414,24 +411,20 @@ no_node:
     btrfs_release_path(&path);
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {    
     fs_open(device);
 
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, btrfs_MAGIC, FS_MAGIC_SIZE);
+    strncpy(fs_info->fs, btrfs_MAGIC, FS_MAGIC_SIZE);
 
-    image_hdr->block_size  = btrfs_super_nodesize(info->super_copy);
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: block_size = %i\n", __FILE__, image_hdr->block_size);
-    image_hdr->usedblocks  = (btrfs_super_bytes_used(info->super_copy)/image_hdr->block_size);
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: usedblock = %lli\n", __FILE__, image_hdr->usedblocks);
-    image_hdr->device_size = btrfs_super_total_bytes(info->super_copy);
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: device_size = %llu\n", __FILE__, image_hdr->device_size);
-    image_hdr->totalblock  = (uint64_t)(image_hdr->device_size/image_hdr->block_size);
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: totalblock = %lli\n", __FILE__, image_hdr->totalblock);
-    total_block = image_hdr->totalblock;
-
+    fs_info->block_size  = btrfs_super_nodesize(root->fs_info->super_copy);
+    fs_info->usedblocks  = btrfs_super_bytes_used(root->fs_info->super_copy) / fs_info->block_size;
+    fs_info->device_size = btrfs_super_total_bytes(root->fs_info->super_copy);
+    fs_info->totalblock  = fs_info->device_size / fs_info->block_size;
+    log_mesg(0, 0, 0, fs_opt.debug, "block_size = %i\n", fs_info->block_size);
+    log_mesg(0, 0, 0, fs_opt.debug, "usedblock = %lli\n", fs_info->usedblocks);
+    log_mesg(0, 0, 0, fs_opt.debug, "device_size = %llu\n", fs_info->device_size);
+    log_mesg(0, 0, 0, fs_opt.debug, "totalblock = %lli\n", fs_info->totalblock);
 
     fs_close();
     log_mesg(0, 0, 0, fs_opt.debug, "%s: fs_close\n", __FILE__);

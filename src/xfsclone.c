@@ -21,10 +21,7 @@
 #include "progress.h"
 #include "fs_common.h"
 
-
 #undef crc32
-char	*EXECNAME = "partclone.xfs";
-extern  fs_cmd_opt fs_opt;
 int	source_fd = -1;
 int     first_residue;
 progress_bar        prog;
@@ -45,31 +42,35 @@ void *thread_update_bitmap_pui(void *arg);
 
 void get_sb(xfs_sb_t *sbp, xfs_off_t off, int size, xfs_agnumber_t agno)
 {
-        xfs_dsb_t *buf;
+        xfs_dsb_t *buf = NULL;
 	int rval = 0;
 
         buf = memalign(libxfs_device_alignment(), size);
         if (buf == NULL) {
                 log_mesg(0, 1, 1, fs_opt.debug, "%s: error reading superblock %u -- failed to memalign buffer\n", __FILE__, agno);
         }
+        assert(buf == NULL);
         memset(buf, 0, size);
         memset(sbp, 0, sizeof(*sbp));
 
         /* try and read it first */
 
         if (lseek64(source_fd, off, SEEK_SET) != off)  {
-                free(buf);
+                free(buf); buf = NULL;
                 log_mesg(0, 1, 1, fs_opt.debug, "%s: error reading superblock %u -- seek to offset %" PRId64 " failed\n", __FILE__, agno, off);
         }
 
-        if ((rval = read(source_fd, buf, size)) != size)  {
+        if (buf && (rval = read(source_fd, buf, size)) != size)  {
+                free(buf); buf = NULL;
                 log_mesg(0, 1, 1, fs_opt.debug, "%s: superblock read failed, offset %" PRId64 ", size %d, ag %u, rval %d\n", __FILE__, off, size, agno, rval);
         }
-        libxfs_sb_from_disk(sbp, buf);
+        if (buf) {
+            libxfs_sb_from_disk(sbp, buf);
 
-        //rval = verify_sb((char *)buf, sbp, agno == 0);
-        free(buf);
-        //return rval;
+            //rval = verify_sb((char *)buf, sbp, agno == 0);
+            free(buf); buf = NULL;
+            //return rval;
+        }
 }
 
 
@@ -182,7 +183,7 @@ scan_freelist(
 	xfs_agnumber_t	seqno = be32_to_cpu(agf->agf_seqno);
 	xfs_agfl_t	*agfl;
 	xfs_agblock_t	bno;
-	int		i;
+	unsigned int	i;
 	__be32		*agfl_bno;
 	struct xfs_buf	*bp;
 	const struct xfs_buf_ops *ops = NULL;
@@ -342,15 +343,14 @@ static void fs_close()
     log_mesg(0, 0, 0, fs_opt.debug, "%s: fs_close\n", __FILE__);
 }
 
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
     fs_open(device);
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, xfs_MAGIC, FS_MAGIC_SIZE);
-    image_hdr->block_size = mp->m_sb.sb_blocksize;
-    image_hdr->totalblock = mp->m_sb.sb_dblocks;
-    image_hdr->usedblocks = mp->m_sb.sb_dblocks - mp->m_sb.sb_fdblocks;
-    image_hdr->device_size = (image_hdr->totalblock * image_hdr->block_size);
+    strncpy(fs_info->fs, xfs_MAGIC, FS_MAGIC_SIZE);
+    fs_info->block_size  = mp->m_sb.sb_blocksize;
+    fs_info->totalblock  = mp->m_sb.sb_dblocks;
+    fs_info->usedblocks  = mp->m_sb.sb_dblocks - mp->m_sb.sb_fdblocks;
+    fs_info->device_size = fs_info->totalblock * fs_info->block_size;
     log_mesg(1, 0, 0, fs_opt.debug, "%s: blcos size= %i\n", __FILE__, mp->m_sb.sb_blocksize);
     log_mesg(1, 0, 0, fs_opt.debug, "%s: total b= %lli\n", __FILE__, mp->m_sb.sb_dblocks);
     log_mesg(1, 0, 0, fs_opt.debug, "%s: free block= %lli\n", __FILE__, mp->m_sb.sb_fdblocks);
@@ -360,7 +360,7 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
 
 }
 
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
 
     xfs_agnumber_t  agno = 0;
@@ -374,15 +374,15 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     uint64_t bused = 0;
     uint64_t bfree = 0;
     unsigned long long current_block = 0;
-    total_block = image_hdr.totalblock;
+    total_block = fs_info.totalblock;
 
     xfs_bitmap = bitmap;
 
-    for(current_block = 0; current_block < image_hdr.totalblock; current_block++){
-	pc_set_bit(current_block, bitmap, total_block);
+    for(current_block = 0; current_block <= fs_info.totalblock; current_block++){
+	pc_set_bit(current_block, bitmap, fs_info.totalblock);
     }
     /// init progress
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
     checked = 0;
     /**
      * thread to print progress
@@ -391,7 +391,6 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     if(bres){
 	    log_mesg(0, 1, 1, fs_opt.debug, "%s, %i, thread create error\n", __func__, __LINE__);
     }
-
 
     fs_open(device);
 
@@ -402,8 +401,8 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	/* read in first blocks of the ag */
 	scan_ag(agno);
     }
-    for(current_block = 0; current_block < image_hdr.totalblock; current_block++){
-	if(pc_test_bit(current_block, bitmap, total_block))
+    for(current_block = 0; current_block <= fs_info.totalblock; current_block++){
+	if(pc_test_bit(current_block, bitmap, fs_info.totalblock))
 	    bused++;
 	else
 	    bfree++;

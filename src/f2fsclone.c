@@ -20,9 +20,6 @@
 #include "progress.h"
 #include "fs_common.h"
 
-char *EXECNAME = "partclone.f2fs";
-extern fs_cmd_opt fs_opt;
-
 struct f2fs_fsck gfsck = {
     .sbi.fsck = &gfsck,
 };
@@ -64,29 +61,27 @@ static void fs_close(){
 }
 
 ///  readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+extern void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
     off_t block = 0;;
     int start = 0;
     int bit_size = 1;
-    unsigned long long bused, bfree;
 
     fs_open(device);
     struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
 
     /// init progress
     progress_bar   prog;	/// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
 
     /// bitmap test
     log_mesg(1, 0, 0, fs_opt.debug, "%s: start f2fs bitmap dump\n", __FILE__);
     struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
     log_mesg(1, 0, 0, fs_opt.debug, "%s: start fsck sit\n", __FILE__);
     for ( block = 0; block <= sb->main_blkaddr ; block++ ){
-    
+
 	    log_mesg(2, 0, 0, fs_opt.debug, "%s: test SIT bitmap is 0x1. blk_addr[0x%x] %i\n", __FILE__, block, block);
-	    bused++;
-	    pc_set_bit(block, bitmap, image_hdr.totalblock);
+	    pc_set_bit(block, bitmap, fs_info.totalblock);
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap is used %llu", __FILE__, block);
     }
 
@@ -94,13 +89,11 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	log_mesg(3, 0, 0, fs_opt.debug, "%s: block = %i\n", __FILE__, block);
 	if (f2fs_test_bit(BLKOFF_FROM_MAIN(sbi, block), fsck->sit_area_bitmap) == 0x0) {
 	    log_mesg(2, 0, 0, fs_opt.debug, "%s: test SIT bitmap is 0x0. blk_addr[0x%x] %i\n", __FILE__, block, block);
-	    pc_clear_bit(block, bitmap, image_hdr.totalblock);
-	    bfree++;
+	    pc_clear_bit(block, bitmap, fs_info.totalblock);
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap is free %llu", __FILE__, block);
 	}else{
 	    log_mesg(2, 0, 0, fs_opt.debug, "%s: test SIT bitmap is 0x1. blk_addr[0x%x] %i\n", __FILE__, block, block);
-	    bused++;
-	    pc_set_bit(block, bitmap, image_hdr.totalblock);
+	    pc_set_bit(block, bitmap, fs_info.totalblock);
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap is used %llu", __FILE__, block);
 
 	}
@@ -115,7 +108,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 }
 
 /// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+extern void read_super_blocks(char* device, file_system_info* fs_info)
 {
 
     fs_open(device);
@@ -123,13 +116,12 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
     struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
     struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
 
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, f2fs_MAGIC, FS_MAGIC_SIZE);
+    strncpy(fs_info->fs, f2fs_MAGIC, FS_MAGIC_SIZE);
 
-    image_hdr->block_size  = F2FS_BLKSIZE;
-    image_hdr->totalblock  = sb->block_count;
-    image_hdr->usedblocks  = (sb->segment_count-cp->free_segment_count)*DEFAULT_BLOCKS_PER_SEGMENT;
-    image_hdr->device_size = config.total_sectors*config.sector_size;
+    fs_info->block_size  = F2FS_BLKSIZE;
+    fs_info->totalblock  = sb->block_count;
+    fs_info->usedblocks  = (sb->segment_count-cp->free_segment_count)*DEFAULT_BLOCKS_PER_SEGMENT;
+    fs_info->device_size = config.total_sectors*config.sector_size;
     fs_close();
 }
 

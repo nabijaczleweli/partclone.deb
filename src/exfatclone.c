@@ -25,9 +25,6 @@
 
 #define EXFAT_SECTOR_SIZE(sb) (1 << (sb).sector_bits)
 
-char *EXECNAME = "partclone.exfat";
-
-extern fs_cmd_opt fs_opt;
 struct exfat ef;
 
 /// open device
@@ -46,22 +43,25 @@ static void fs_close(){
     log_mesg(2, 0, 0, fs_opt.debug, "%s: exfat_umount done\n", __FILE__);
 }
 
-///  readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
     off_t a = 0, b = 0;
     off_t block = 0;;
     int start = 0;
     int bit_size = 1;
 
+    pc_init_bitmap(bitmap, 0x00, fs_info.totalblock);
+
     fs_open(device);
     /// init progress
     progress_bar   prog;	/// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
+    pc_init_bitmap(bitmap, 0x00, fs_info.totalblock);
+
     while (exfat_find_used_sectors(&ef, &a, &b) == 0){
 	printf("block %" PRId64 " %" PRId64 " \n", a, b);
 	for (block = a; block <= b; block++){
-	    pc_set_bit((uint64_t)block, bitmap, image_hdr.totalblock);
+	    pc_set_bit((uint64_t)block, bitmap, fs_info.totalblock);
 	    log_mesg(3, 0, 0, fs_opt.debug, "%s: used block %" PRId64 " \n", __FILE__, block);
 	    /// update progress
 	    update_pui(&prog, block, block, 0);
@@ -73,8 +73,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     update_pui(&prog, 1, 1, 1);
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
     struct exfat_super_block* sb;
     uint64_t free_sectors, free_clusters;
@@ -84,12 +83,11 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
     free_sectors = (uint64_t) free_clusters << ef.sb->spc_bits;
     sb = ef.sb;
 
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, exfat_MAGIC, FS_MAGIC_SIZE);
-    image_hdr->block_size  = EXFAT_SECTOR_SIZE(*sb);
-    image_hdr->totalblock  = le64_to_cpu(sb->sector_count);
-    image_hdr->usedblocks  = (le64_to_cpu(sb->sector_count) - free_sectors);
-    image_hdr->device_size = (image_hdr->totalblock*image_hdr->block_size);
+    strncpy(fs_info->fs, exfat_MAGIC, FS_MAGIC_SIZE);
+    fs_info->block_size  = EXFAT_SECTOR_SIZE(*sb);
+    fs_info->totalblock  = le64_to_cpu(sb->sector_count);
+    fs_info->usedblocks  = le64_to_cpu(sb->sector_count) - free_sectors;
+    fs_info->device_size = fs_info->totalblock * fs_info->block_size;
     fs_close();
 }
 
