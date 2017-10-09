@@ -7,12 +7,12 @@ Description: migration to automake 1.13
  This patch contains all the modifications which make the package buildable in
  a recent environment.
 
-Index: partclone-0.3.6/configure.ac
+Index: partclone-0.3.8/configure.ac
 ===================================================================
---- partclone-0.3.6.orig/configure.ac
-+++ partclone-0.3.6/configure.ac
+--- partclone-0.3.8.orig/configure.ac
++++ partclone-0.3.8/configure.ac
 @@ -1,6 +1,6 @@
- AC_INIT([Partclone], [0.3.6], [thomas@nchc.org.tw])
+ AC_INIT([Partclone], [0.3.8], [thomas@nchc.org.tw])
  AM_INIT_AUTOMAKE([-Wall foreign])
 -AM_GNU_GETTEXT_VERSION([0.16.1])
 +AM_GNU_GETTEXT_VERSION([0.18.2])
@@ -29,10 +29,10 @@ Index: partclone-0.3.6/configure.ac
  # default value##
  supported_fs=""
  
-Index: partclone-0.3.6/config.rpath
+Index: partclone-0.3.8/config.rpath
 ===================================================================
---- partclone-0.3.6.orig/config.rpath
-+++ partclone-0.3.6/config.rpath
+--- partclone-0.3.8.orig/config.rpath
++++ partclone-0.3.8/config.rpath
 @@ -2,7 +2,7 @@
  # Output a system dependent set of variables, describing how to set the
  # run time search path of shared libraries in an executable.
@@ -526,10 +526,10 @@ Index: partclone-0.3.6/config.rpath
  # Flag to hardcode \$libdir into a binary during linking.
  # This must work even if \$libdir does not exist.
  hardcode_libdir_flag_spec="$escaped_hardcode_libdir_flag_spec"
-Index: partclone-0.3.6/ABOUT-NLS
+Index: partclone-0.3.8/ABOUT-NLS
 ===================================================================
---- partclone-0.3.6.orig/ABOUT-NLS
-+++ partclone-0.3.6/ABOUT-NLS
+--- partclone-0.3.8.orig/ABOUT-NLS
++++ partclone-0.3.8/ABOUT-NLS
 @@ -18,35 +18,7 @@ explain how users should proceed for get
  available translations.  They tell how people wanting to contribute and
  work on translations can contact the appropriate team.
@@ -2659,10 +2659,10 @@ Index: partclone-0.3.6/ABOUT-NLS
 +`coordinator@translationproject.org' to make the `.pot' files available
 +to the translation teams.
  
-Index: partclone-0.3.6/src/Makefile.am
+Index: partclone-0.3.8/src/Makefile.am
 ===================================================================
---- partclone-0.3.6.orig/src/Makefile.am
-+++ partclone-0.3.6/src/Makefile.am
+--- partclone-0.3.8.orig/src/Makefile.am
++++ partclone-0.3.8/src/Makefile.am
 @@ -94,7 +94,7 @@ endif
  if ENABLE_EXFAT
  sbin_PROGRAMS += partclone.exfat
@@ -2672,10 +2672,10 @@ Index: partclone-0.3.6/src/Makefile.am
  endif
  
  if ENABLE_F2FS
-Index: partclone-0.3.6/po/Makevars
+Index: partclone-0.3.8/po/Makevars
 ===================================================================
---- partclone-0.3.6.orig/po/Makevars
-+++ partclone-0.3.6/po/Makevars
+--- partclone-0.3.8.orig/po/Makevars
++++ partclone-0.3.8/po/Makevars
 @@ -39,3 +39,15 @@ MSGID_BUGS_ADDRESS = $(PACKAGE BUGREPORT
  # This is the list of locale categories, beyond LC_MESSAGES, for which the
  # message catalogs shall be used.  It is usually empty.
@@ -2692,10 +2692,10 @@ Index: partclone-0.3.6/po/Makevars
 +#   --previous            to keep previous msgids of translated messages,
 +#   --quiet               to reduce the verbosity.
 +MSGMERGE_OPTIONS =
-Index: partclone-0.3.6/po/Rules-quot
+Index: partclone-0.3.8/po/Rules-quot
 ===================================================================
---- partclone-0.3.6.orig/po/Rules-quot
-+++ partclone-0.3.6/po/Rules-quot
+--- partclone-0.3.8.orig/po/Rules-quot
++++ partclone-0.3.8/po/Rules-quot
 @@ -14,13 +14,13 @@ en@boldquot.po-update: en@boldquot.po-up
  
  .insert-header.po-update-en:
@@ -2712,10 +2712,10 @@ Index: partclone-0.3.6/po/Rules-quot
  	  if cmp $$lang.po $$tmpdir/$$lang.new.po >/dev/null 2>&1; then \
  	    rm -f $$tmpdir/$$lang.new.po; \
  	  else \
-Index: partclone-0.3.6/po/Makefile.in.in
+Index: partclone-0.3.8/po/Makefile.in.in
 ===================================================================
---- partclone-0.3.6.orig/po/Makefile.in.in
-+++ partclone-0.3.6/po/Makefile.in.in
+--- partclone-0.3.8.orig/po/Makefile.in.in
++++ partclone-0.3.8/po/Makefile.in.in
 @@ -1,5 +1,5 @@
  # Makefile for PO directory in any package using GNU gettext.
 -# Copyright (C) 1995-1997, 2000-2006 by Ulrich Drepper <drepper@gnu.ai.mit.edu>
@@ -2882,10 +2882,10 @@ Index: partclone-0.3.6/po/Makefile.in.in
  
  force:
  
-Index: partclone-0.3.6/po/ChangeLog
+Index: partclone-0.3.8/po/ChangeLog
 ===================================================================
---- partclone-0.3.6.orig/po/ChangeLog
-+++ partclone-0.3.6/po/ChangeLog
+--- partclone-0.3.8.orig/po/ChangeLog
++++ partclone-0.3.8/po/ChangeLog
 @@ -1,3 +1,8 @@
 +2013-06-24  gettextize  <bug-gnu-gettext@gnu.org>
 +
@@ -2895,10 +2895,10 @@ Index: partclone-0.3.6/po/ChangeLog
  2007-11-01  gettextize  <bug-gnu-gettext@gnu.org>
  
  	* Makefile.in.in: New file, from gettext-0.16.1.
-Index: partclone-0.3.6/m4/nls.m4
+Index: partclone-0.3.8/m4/nls.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/nls.m4
-+++ partclone-0.3.6/m4/nls.m4
+--- partclone-0.3.8.orig/m4/nls.m4
++++ partclone-0.3.8/m4/nls.m4
 @@ -1,5 +1,6 @@
 -# nls.m4 serial 3 (gettext-0.15)
 -dnl Copyright (C) 1995-2003, 2005-2006 Free Software Foundation, Inc.
@@ -2928,10 +2928,10 @@ Index: partclone-0.3.6/m4/nls.m4
 +  AC_MSG_RESULT([$USE_NLS])
 +  AC_SUBST([USE_NLS])
  ])
-Index: partclone-0.3.6/m4/gettext.m4
+Index: partclone-0.3.8/m4/gettext.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/gettext.m4
-+++ partclone-0.3.6/m4/gettext.m4
+--- partclone-0.3.8.orig/m4/gettext.m4
++++ partclone-0.3.8/m4/gettext.m4
 @@ -1,5 +1,5 @@
 -# gettext.m4 serial 59 (gettext-0.16.1)
 -dnl Copyright (C) 1995-2006 Free Software Foundation, Inc.
@@ -3191,10 +3191,10 @@ Index: partclone-0.3.6/m4/gettext.m4
  ])
  
  
-Index: partclone-0.3.6/m4/po.m4
+Index: partclone-0.3.8/m4/po.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/po.m4
-+++ partclone-0.3.6/m4/po.m4
+--- partclone-0.3.8.orig/m4/po.m4
++++ partclone-0.3.8/m4/po.m4
 @@ -1,5 +1,5 @@
 -# po.m4 serial 13 (gettext-0.15)
 -dnl Copyright (C) 1995-2006 Free Software Foundation, Inc.
@@ -3350,10 +3350,10 @@ Index: partclone-0.3.6/m4/po.m4
 +  AC_REQUIRE([AM_XGETTEXT_OPTION_INIT])
 +  XGETTEXT_EXTRA_OPTIONS="$XGETTEXT_EXTRA_OPTIONS $1"
 +])
-Index: partclone-0.3.6/m4/lib-link.m4
+Index: partclone-0.3.8/m4/lib-link.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/lib-link.m4
-+++ partclone-0.3.6/m4/lib-link.m4
+--- partclone-0.3.8.orig/m4/lib-link.m4
++++ partclone-0.3.8/m4/lib-link.m4
 @@ -1,58 +1,66 @@
 -# lib-link.m4 serial 9 (gettext-0.16)
 -dnl Copyright (C) 2001-2006 Free Software Foundation, Inc.
@@ -3923,10 +3923,10 @@ Index: partclone-0.3.6/m4/lib-link.m4
                libdir="$acl_save_libdir"
                $1="${$1}${$1:+ }$flag"
              done
-Index: partclone-0.3.6/m4/progtest.m4
+Index: partclone-0.3.8/m4/progtest.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/progtest.m4
-+++ partclone-0.3.6/m4/progtest.m4
+--- partclone-0.3.8.orig/m4/progtest.m4
++++ partclone-0.3.8/m4/progtest.m4
 @@ -1,5 +1,5 @@
 -# progtest.m4 serial 4 (gettext-0.14.2)
 -dnl Copyright (C) 1996-2003, 2005 Free Software Foundation, Inc.
@@ -3990,10 +3990,10 @@ Index: partclone-0.3.6/m4/progtest.m4
 -AC_SUBST($1)dnl
 +AC_SUBST([$1])dnl
  ])
-Index: partclone-0.3.6/m4/lib-ld.m4
+Index: partclone-0.3.8/m4/lib-ld.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/lib-ld.m4
-+++ partclone-0.3.6/m4/lib-ld.m4
+--- partclone-0.3.8.orig/m4/lib-ld.m4
++++ partclone-0.3.8/m4/lib-ld.m4
 @@ -1,50 +1,56 @@
 -# lib-ld.m4 serial 3 (gettext-0.13)
 -dnl Copyright (C) 1996-2003 Free Software Foundation, Inc.
@@ -4140,10 +4140,10 @@ Index: partclone-0.3.6/m4/lib-ld.m4
  fi
  test -z "$LD" && AC_MSG_ERROR([no acceptable ld found in \$PATH])
  AC_LIB_PROG_LD_GNU
-Index: partclone-0.3.6/m4/ChangeLog
+Index: partclone-0.3.8/m4/ChangeLog
 ===================================================================
---- partclone-0.3.6.orig/m4/ChangeLog
-+++ partclone-0.3.6/m4/ChangeLog
+--- partclone-0.3.8.orig/m4/ChangeLog
++++ partclone-0.3.8/m4/ChangeLog
 @@ -1,3 +1,14 @@
 +2013-06-24  gettextize  <bug-gnu-gettext@gnu.org>
 +
@@ -4159,10 +4159,10 @@ Index: partclone-0.3.6/m4/ChangeLog
  2007-11-01  gettextize  <bug-gnu-gettext@gnu.org>
  
  	* gettext.m4: New file, from gettext-0.16.1.
-Index: partclone-0.3.6/m4/lib-prefix.m4
+Index: partclone-0.3.8/m4/lib-prefix.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/lib-prefix.m4
-+++ partclone-0.3.6/m4/lib-prefix.m4
+--- partclone-0.3.8.orig/m4/lib-prefix.m4
++++ partclone-0.3.8/m4/lib-prefix.m4
 @@ -1,5 +1,5 @@
 -# lib-prefix.m4 serial 5 (gettext-0.15)
 -dnl Copyright (C) 2001-2005 Free Software Foundation, Inc.
@@ -4268,10 +4268,10 @@ Index: partclone-0.3.6/m4/lib-prefix.m4
 +  esac
 +  test -n "$acl_libdirstem2" || acl_libdirstem2="$acl_libdirstem"
  ])
-Index: partclone-0.3.6/m4/iconv.m4
+Index: partclone-0.3.8/m4/iconv.m4
 ===================================================================
---- partclone-0.3.6.orig/m4/iconv.m4
-+++ partclone-0.3.6/m4/iconv.m4
+--- partclone-0.3.8.orig/m4/iconv.m4
++++ partclone-0.3.8/m4/iconv.m4
 @@ -1,5 +1,5 @@
 -# iconv.m4 serial AM4 (gettext-0.11.3)
 -dnl Copyright (C) 2000-2002 Free Software Foundation, Inc.

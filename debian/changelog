@@ -1,3 +1,9 @@
+partclone (0.3.8-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Georges Khaznadar <georgesk@debian.org>  Mon, 09 Oct 2017 19:41:18 +0200
+
 partclone (0.3.6-2) unstable; urgency=medium
 
   * new build, for sid.
