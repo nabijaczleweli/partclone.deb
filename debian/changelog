@@ -1,3 +1,10 @@
+partclone (0.3.11-1) unstable; urgency=medium
+
+  * New upstream release
+  * Upgraded Standards-Version
+
+ -- Georges Khaznadar <georgesk@debian.org>  Mon, 23 Oct 2017 18:37:29 +0200
+
 partclone (0.3.8-1) unstable; urgency=medium
 
   * New upstream release
