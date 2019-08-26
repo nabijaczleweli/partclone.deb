@@ -46,6 +46,7 @@
 #define minix_MAGIC "MINIX"
 #define f2fs_MAGIC "F2FS"
 #define nilfs_MAGIC "NILFS"
+#define apfs_MAGIC "APFS"
 #define raw_MAGIC "raw"
 
 #define IMAGE_VERSION_SIZE 4
@@ -100,6 +101,7 @@ struct cmd_opt
     int debug;
     char* source;
     char* target;
+    char* compresscmd;
     char* logfile;
     char note[NOTE_SIZE];
     int overwrite;
@@ -111,6 +113,7 @@ struct cmd_opt
     int ignore_crc;
     int quiet;
     int blockfile;
+    int torrent_only;
     int no_block_detail;
     int restore_raw_file;
     int skip_write_error;
@@ -314,6 +317,7 @@ extern void read_bitmap(char* device, file_system_info fs_info, unsigned long* b
  */
 extern int open_source(char* source, cmd_opt* opt);
 extern int open_target(char* target, cmd_opt* opt);
+extern int close_target(int dfw);
 
 /// check partition size
 extern int check_size(int* ret, unsigned long long size);

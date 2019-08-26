@@ -12,7 +12,7 @@ Index: partclone/configure.ac
 --- partclone.orig/configure.ac
 +++ partclone/configure.ac
 @@ -1,6 +1,6 @@
- AC_INIT([Partclone], [0.3.11], [thomas@nchc.org.tw])
+ AC_INIT([Partclone], [0.3.13], [thomas@nchc.org.tw])
  AM_INIT_AUTOMAKE([-Wall foreign])
 -AM_GNU_GETTEXT_VERSION([0.16.1])
 +AM_GNU_GETTEXT_VERSION([0.18.2])
@@ -29,7 +29,7 @@ Index: partclone/configure.ac
  # default value##
  supported_fs=""
  
-@@ -25,15 +28,15 @@ AM_CONDITIONAL(ENABLE_ALL, test "$enable
+@@ -25,16 +28,16 @@ AM_CONDITIONAL(ENABLE_ALL, test "$enable
  if test "$enable_all" = "yes"; then
  enable_xfs="yes"
  enable_extfs="yes"
@@ -37,6 +37,7 @@ Index: partclone/configure.ac
 +enable_reiserfs="no"
  enable_reiser4="yes"
  enable_hfsp="yes"
+ enable_apfs="yes"
  enable_fat="yes"
  enable_exfat="yes"
  enable_ntfs="yes"
@@ -2683,7 +2684,7 @@ Index: partclone/src/Makefile.am
 ===================================================================
 --- partclone.orig/src/Makefile.am
 +++ partclone/src/Makefile.am
-@@ -93,7 +93,7 @@ endif
+@@ -100,7 +100,7 @@ endif
  if ENABLE_EXFAT
  sbin_PROGRAMS += partclone.exfat
  partclone_exfat_SOURCES=$(main_files) exfatclone.c exfatclone.h $(EXFATFS_SOURCE)

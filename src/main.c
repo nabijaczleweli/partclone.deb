@@ -12,6 +12,8 @@
  */
 
 #include <config.h>
+#define _GNU_SOURCE
+#define _LARGEFILE64_SOURCE
 #include <errno.h>
 #include <features.h>
 #include <fcntl.h>
@@ -27,7 +29,11 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <assert.h>
-#include<dirent.h>
+#include <dirent.h>
+#include <limits.h>
+
+// SHA1 for torrent info
+#include "torrent_helper.h"
 
 /**
  * progress.h - only for progress bar
@@ -229,8 +235,10 @@ int main(int argc, char **argv) {
 		log_mesg(2, 0, 0, debug, "check main bitmap pointer %p\n", bitmap);
 		log_mesg(1, 0, 0, debug, "Writing super block and bitmap...\n");
 
-		write_image_desc(&dfw, fs_info, img_opt, &opt);
-		write_image_bitmap(&dfw, fs_info, img_opt, bitmap, &opt);
+		if (opt.blockfile == 0) {
+			write_image_desc(&dfw, fs_info, img_opt, &opt);
+			write_image_bitmap(&dfw, fs_info, img_opt, bitmap, &opt);
+		}
 
 		log_mesg(0, 0, 1, debug, "done!\n");
 
@@ -412,6 +420,10 @@ int main(int argc, char **argv) {
 		unsigned int blocks_in_cs, blocks_per_cs, write_size;
 		char *read_buffer, *write_buffer;
 
+		// SHA1 for torrent info
+		int tinfo = -1;
+		torrent_generator torrent;
+
 		blocks_per_cs = img_opt.blocks_per_checksum;
 
 		log_mesg(1, 0, 0, debug, "#\nBuffer capacity = %u, Blocks per cs = %u\n#\n", buffer_capacity, blocks_per_cs);
@@ -436,6 +448,14 @@ int main(int argc, char **argv) {
 
 		blocks_in_cs = 0;
 		init_checksum(img_opt.checksum_mode, checksum, debug);
+
+		if (opt.blockfile == 1) {
+			char torrent_name[PATH_MAX + 1] = {'\0'};
+			sprintf(torrent_name,"%s/torrent.info", target);
+			tinfo = open(torrent_name, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+
+			torrent_init(&torrent, tinfo);
+		}
 
 		block_id = 0;
 		do {
@@ -480,35 +500,58 @@ int main(int argc, char **argv) {
 					log_mesg(0, 1, 1, debug, "read error: %s\n", strerror(errno));
 			}
 
-			/// calculate checksum
 			log_mesg(2, 0, 0, debug, "blocks_read = %i\n", blocks_read);
-			for (i = 0; i < blocks_read; ++i) {
 
-				memcpy(write_buffer + write_offset,
-					read_buffer + i * block_size, block_size);
+			/// calculate checksum
+			if (opt.blockfile == 0) {
+				for (i = 0; i < blocks_read; ++i) {
 
-				write_offset += block_size;
+					memcpy(write_buffer + write_offset,
+						read_buffer + i * block_size, block_size);
 
-				update_checksum(checksum, read_buffer + i * block_size, block_size);
+					write_offset += block_size;
 
-				if (blocks_per_cs > 0 && ++blocks_in_cs == blocks_per_cs) {
-				    log_mesg(3, 0, 0, debug, "CRC = %x%x%x%x \n", checksum[0], checksum[1], checksum[2], checksum[3]);
+					update_checksum(checksum, read_buffer + i * block_size, block_size);
 
-					memcpy(write_buffer + write_offset, checksum, cs_size);
+					if (blocks_per_cs > 0 && ++blocks_in_cs == blocks_per_cs) {
+					    log_mesg(3, 0, 0, debug, "CRC = %x%x%x%x \n", checksum[0], checksum[1], checksum[2], checksum[3]);
 
-					++cs_added;
-					write_offset += cs_size;
+						memcpy(write_buffer + write_offset, checksum, cs_size);
 
-					blocks_in_cs = 0;
-					if (cs_reseed)
-						init_checksum(img_opt.checksum_mode, checksum, debug);
+						++cs_added;
+						write_offset += cs_size;
+
+						blocks_in_cs = 0;
+						if (cs_reseed)
+							init_checksum(img_opt.checksum_mode, checksum, debug);
+					}
 				}
 			}
 
 			/// write buffer to target
-			w_size = write_all(&dfw, write_buffer, write_offset, &opt);
-			if (w_size != write_offset)
-				log_mesg(0, 1, 1, debug, "image write ERROR:%s\n", strerror(errno));
+			if (opt.blockfile == 1) {
+				// SHA1 for torrent info
+				// Not always bigger or smaller than 16MB
+
+				// first we write out block_id * block_size for filename
+				// because when calling write_block_file
+				// we will create a new file to describe a continuous block (or buffer is full)
+				// and never write to same file again
+				torrent_start_offset(&torrent, block_id * block_size);
+				torrent_end_length(&torrent, blocks_read * block_size);
+
+				torrent_update(&torrent, read_buffer, blocks_read * block_size);
+
+				if (opt.torrent_only == 1) {
+					w_size = blocks_read * block_size;
+				} else {
+					w_size = write_block_file(target, read_buffer, blocks_read * block_size, block_id * block_size, &opt);
+				}
+			} else {
+				w_size = write_all(&dfw, write_buffer, write_offset, &opt);
+				if (w_size != write_offset)
+					log_mesg(0, 1, 1, debug, "image write ERROR:%s\n", strerror(errno));
+			}
 
 			/// count copied block
 			copied += blocks_read;
@@ -523,14 +566,18 @@ int main(int argc, char **argv) {
 
 		} while (1);
 
-		if (blocks_in_cs > 0) {
+		if (opt.blockfile == 1) {
+			torrent_final(&torrent);
+		} else {
+			if (blocks_in_cs > 0) {
 
-			// Write the checksum for the latest blocks
-			log_mesg(1, 0, 0, debug, "Write the checksum for the latest blocks. size = %i\n", cs_size);
-			log_mesg(3, 0, 0, debug, "CRC = %x%x%x%x \n", checksum[0], checksum[1], checksum[2], checksum[3]);
-			w_size = write_all(&dfw, (char*)checksum, cs_size, &opt);
-			if (w_size != cs_size)
-				log_mesg(0, 1, 1, debug, "image write ERROR:%s\n", strerror(errno));
+				// Write the checksum for the latest blocks
+				log_mesg(1, 0, 0, debug, "Write the checksum for the latest blocks. size = %i\n", cs_size);
+				log_mesg(3, 0, 0, debug, "CRC = %x%x%x%x \n", checksum[0], checksum[1], checksum[2], checksum[3]);
+				w_size = write_all(&dfw, (char*)checksum, cs_size, &opt);
+				if (w_size != cs_size)
+					log_mesg(0, 1, 1, debug, "image write ERROR:%s\n", strerror(errno));
+			}
 		}
 
 		free(write_buffer);
@@ -571,6 +618,10 @@ int main(int argc, char **argv) {
 		char *read_buffer, *write_buffer;
 		unsigned long long blocks_used_fix = 0, test_block = 0;
 
+		// SHA1 for torrent info
+		int tinfo = -1;
+		torrent_generator torrent;
+
 		log_mesg(1, 0, 0, debug, "#\nBuffer capacity = %u, Blocks per cs = %u\n#\n", buffer_capacity, blocks_per_cs);
 
 		// fix some super block record incorrect
@@ -590,7 +641,9 @@ int main(int argc, char **argv) {
 			// Allocate more memory in case the image is affected by the 64 bits bug
 			read_buffer = (char*)malloc(buffer_size + buffer_capacity * cs_size);
 		}
-		write_buffer = (char*)malloc(buffer_capacity * block_size);
+		//write_buffer = (char*)malloc(buffer_capacity * block_size);
+		#define BSIZE 512
+		posix_memalign((void**)&write_buffer, BSIZE, buffer_capacity * block_size);
 		if (read_buffer == NULL || write_buffer == NULL) {
 			log_mesg(0, 1, 1, debug, "%s, %i, not enough memory\n", __func__, __LINE__);
 		}
@@ -610,6 +663,15 @@ int main(int argc, char **argv) {
 		blocks_in_cs = 0;
 		if (!opt.ignore_crc)
 			init_checksum(img_opt.checksum_mode, checksum, debug);
+
+		// init SHA1 for torrent info
+		if (opt.blockfile == 1) {
+			char torrent_name[PATH_MAX + 1] = {'\0'};
+			sprintf(torrent_name,"%s/torrent.info", target);
+			tinfo = open(torrent_name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+
+			torrent_init(&torrent, tinfo);
+		}
 
 		block_id = 0;
 		do {
@@ -727,8 +789,24 @@ int main(int argc, char **argv) {
 				// write blocks
 				if (blocks_write > 0) {
 				        if (opt.blockfile == 1){
-					    w_size = write_block_file(target, write_buffer + blocks_written * block_size,
-						    blocks_write * block_size, (block_id*block_size), &opt);
+					    // SHA1 for torrent info
+					    // Not always bigger or smaller than 16MB
+					    
+					    // first we write out block_id * block_size for filename
+					    // because when calling write_block_file
+					    // we will create a new file to describe a continuous block (or buffer is full)
+					    // and never write to same file again
+					    torrent_start_offset(&torrent, block_id * block_size);
+					    torrent_end_length(&torrent, blocks_write * block_size);
+
+					    torrent_update(&torrent, write_buffer, blocks_write * block_size);
+
+					    if (opt.torrent_only == 1) {
+						w_size = blocks_write * block_size;
+					    } else {
+					    	w_size = write_block_file(target, write_buffer + blocks_written * block_size,
+							blocks_write * block_size, (block_id*block_size), &opt);
+					    }
 					}else{
 					    w_size = write_all(&dfw, write_buffer + blocks_written * block_size,
 						    blocks_write * block_size, &opt);
@@ -748,6 +826,12 @@ int main(int argc, char **argv) {
 			} while (blocks_written < blocks_read);
 
 		} while(1);
+
+		// finish SHA1 for torrent info
+		if (opt.blockfile == 1) {
+			torrent_final(&torrent);
+		}
+
 		free(write_buffer);
 		free(read_buffer);
 
@@ -900,6 +984,10 @@ int main(int argc, char **argv) {
 		unsigned long long blocks_total = fs_info.totalblock;
 		int blocks_in_buffer = block_size < opt.buffer_size ? opt.buffer_size / block_size : 1;
 
+		// SHA1 for torrent info
+		int tinfo = -1;
+		torrent_generator torrent;
+
 		buffer = (char*)malloc(blocks_in_buffer * block_size);
 		if (buffer == NULL) {
 			log_mesg(0, 1, 1, debug, "%s, %i, not enough memory\n", __func__, __LINE__);
@@ -907,6 +995,13 @@ int main(int argc, char **argv) {
 
 		block_id = 0;
 
+		// init SHA1 for torrent info
+		if (opt.blockfile == 1) {
+			char torrent_name[PATH_MAX + 1] = {'\0'};
+			sprintf(torrent_name,"%s/torrent.info", target);
+			tinfo = open(torrent_name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+			torrent_init(&torrent, tinfo);
+		}
 
 		log_mesg(0, 0, 0, debug, "Total block %llu\n", blocks_total);
 
@@ -937,7 +1032,27 @@ int main(int argc, char **argv) {
 						log_mesg(0, 1, 1, debug, "%s", bad_sectors_warning_msg);
 				} else if (r_size == 0){ // done for ddd
 				    /// write buffer to target
-				    w_size = write_all(&dfw, buffer, rescue_write_size, &opt);
+                                    if (opt.blockfile == 1){
+				        // SHA1 for torrent info
+				        // Not always bigger or smaller than 16MB
+				        
+				        // first we write out block_id * block_size for filename
+				        // because when calling write_block_file
+				        // we will create a new file to describe a continuous block (or buffer is full)
+				        // and never write to same file again
+					torrent_start_offset(&torrent, copied * block_size);
+					torrent_end_length(&torrent, rescue_write_size);
+                                        
+					torrent_update(&torrent, buffer, rescue_write_size);
+
+					if (opt.torrent_only == 1) {
+						w_size = rescue_write_size;
+					} else {
+                                        	w_size = write_block_file(target, buffer, rescue_write_size, copied*block_size, &opt);
+					}
+                                    } else {
+                                        w_size = write_all(&dfw, buffer, rescue_write_size, &opt);
+                                    }
 				    break;
 				} else
 					log_mesg(0, 1, 1, debug, "source read ERROR %s\n", strerror(errno));
@@ -945,7 +1060,23 @@ int main(int argc, char **argv) {
 
 			/// write buffer to target
 			if (opt.blockfile == 1){
-			    w_size = write_block_file(target, buffer, blocks_read * block_size, copied*block_size, &opt);
+			    // SHA1 for torrent info
+			    // Not always bigger or smaller than 16MB
+			    
+			    // first we write out block_id * block_size for filename
+			    // because when calling write_block_file
+			    // we will create a new file to describe a continuous block (or buffer is full)
+			    // and never write to same file again
+			    torrent_start_offset(&torrent, copied * block_size);
+			    torrent_end_length(&torrent, blocks_read * block_size);
+
+			    torrent_update(&torrent, buffer, blocks_read * block_size);
+
+			    if (opt.torrent_only == 1) {
+				    w_size = blocks_read * block_size;
+			    } else {
+			 	w_size = write_block_file(target, buffer, blocks_read * block_size, copied*block_size, &opt);
+			    }
 			} else {
 			    w_size = write_all(&dfw, buffer, blocks_read * block_size, &opt);
 			}
@@ -970,6 +1101,11 @@ int main(int argc, char **argv) {
 					log_mesg(0, 1, 1, debug, "read and write different\n");
 			}
 		} while (1);
+
+		// finish SHA1 for torrent info
+		if (opt.blockfile == 1) {
+			torrent_final(&torrent);
+		}
 
 		free(buffer);
 
@@ -999,7 +1135,7 @@ int main(int argc, char **argv) {
 	close(dfr);
 	/// close target
 	if (dfw != -1)
-		close(dfw);
+		close_target(dfw);
 	/// free bitmp
 	free(bitmap);
 	close_pui(pui);
