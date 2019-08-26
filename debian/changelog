@@ -1,4 +1,10 @@
-partclone (0.3.11-1) unstable; urgency=medium
+partclone (0.3.11+dfsg-1) unstable; urgency=medium
+
+  * removed the ELF file src/xfs/libxfs/crc32selftest
+
+ -- Georges Khaznadar <georgesk@debian.org>  Mon, 26 Aug 2019 14:13:55 +0200
+
+partclone (0.3.11-1) UNPUBLISHED; urgency=medium
 
   * New upstream release
   * Upgraded Standards-Version

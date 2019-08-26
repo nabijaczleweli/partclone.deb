@@ -1,4 +1,3 @@
 config-stuff.patch
 reiserfsclone.patch
-remove-some-fs-support.patch
 no-pie.patch
