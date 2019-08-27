@@ -1,3 +1,16 @@
+partclone (0.3.13+dfsg-2) unstable; urgency=medium
+
+  [ Helmut Grohne ]
+  * Non-maintainer upload.
+  * Fix FTCBFS:
+    + Let dh_auto_configure pass --host to ./configure.
+    + cross.patch: Don't hard code the build architecture pkg-config
+
+  [ Georges Khaznadar ]
+  * adopted Helmut Grohne's patch, thanks! Closes: #935932
+
+ -- Helmut Grohne <helmut@subdivi.de>  Tue, 27 Aug 2019 20:38:00 +0200
+
 partclone (0.3.13+dfsg-1) unstable; urgency=medium
 
   * New upstream version 0.3.13

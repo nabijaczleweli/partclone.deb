@@ -1,3 +1,4 @@
 config-stuff.patch
 reiserfsclone.patch
 no-pie.patch
+cross.patch
