@@ -12,13 +12,13 @@
 %:
 	dh $@
 
-DESTDIR = $(CURDIR)/debian/partclone
+
 FAILBOOTDIR = $(CURDIR)/debian/partclone/usr/share/partclone
 MAN8DIR = $(CURDIR)/debian/partclone/usr/share/man/man8
 
 override_dh_auto_configure:
 	./autogen
-	dh_auto_configure -- --prefix=$(DESTDIR)/usr --enable-ncursesw --enable-all
+	dh_auto_configure -- --prefix=/usr --enable-ncursesw --enable-all
 
 override_dh_clean: # keep the special file fail-mbr/fail-mbr.bin.orig
 	dh_clean

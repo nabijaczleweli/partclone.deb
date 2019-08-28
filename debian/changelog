@@ -1,3 +1,10 @@
+partclone (0.3.13+dfsg-3) unstable; urgency=medium
+
+  * removed the non-sensic $(DESTDIR) from d/rules, line 21,
+    thanks to Holger Schröder's bug report. Closes: #935932
+
+ -- Georges Khaznadar <georgesk@debian.org>  Wed, 28 Aug 2019 15:17:52 +0200
+
 partclone (0.3.13+dfsg-2) unstable; urgency=medium
 
   [ Helmut Grohne ]
