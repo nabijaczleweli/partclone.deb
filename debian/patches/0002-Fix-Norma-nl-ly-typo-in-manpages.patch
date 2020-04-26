@@ -1,0 +1,219 @@
+From b02b6c8a47df8709d9fdf7a3f0ca09af8196ccde Mon Sep 17 00:00:00 2001
+From: nabijaczleweli <nabijaczleweli@gmail.com>
+Date: Sun, 26 Apr 2020 20:15:14 +0200
+Subject: [PATCH 2/2] Fix Norma[nl]ly typo in manpages
+
+---
+ docs/partclone.8           | 4 ++--
+ docs/partclone.chkimg.8    | 2 +-
+ docs/partclone.chkimg.xml  | 2 +-
+ docs/partclone.dd.8        | 4 ++--
+ docs/partclone.dd.xml      | 4 ++--
+ docs/partclone.imager.8    | 4 ++--
+ docs/partclone.imager.xml  | 4 ++--
+ docs/partclone.restore.8   | 4 ++--
+ docs/partclone.restore.xml | 4 ++--
+ docs/partclone.xml         | 4 ++--
+ 10 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/docs/partclone.8 b/docs/partclone.8
+index 8f98055..10e39be 100644
+--- a/docs/partclone.8
++++ b/docs/partclone.8
+@@ -75,14 +75,14 @@ The program follows the usual GNU command line syntax, with long options startin
+ .PP
+ \fB\-s \fR\fB\fIFILE\fR\fR, \fB\-\-source \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normanly, backup source is device, restore source is image file\&.
++Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normally, backup source is device, restore source is image file\&.
+ .sp
+ Receving data from pipe line is supported ONLY for restoring, just ignore \-s option or use \*(Aq\-\*(Aq means receive data from stdin\&.
+ .RE
+ .PP
+ \fB\-o \fR\fB\fIFILE\fR\fR, \fB\-\-output \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normanly, backup output to image file and restore output to device\&.
++Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normally, backup output to image file and restore output to device\&.
+ .sp
+ Sending data to pipe line is also supported ONLY for back\-up, just ignore \-o option or use \*(Aq\-\*(Aq means send data to stdout\&.
+ .RE
+diff --git a/docs/partclone.chkimg.8 b/docs/partclone.chkimg.8
+index 356cbb3..08dbe1a 100644
+--- a/docs/partclone.chkimg.8
++++ b/docs/partclone.chkimg.8
+@@ -47,7 +47,7 @@ The program follows the usual GNU command line syntax, with long options startin
+ .PP
+ \fB\-s \fR\fB\fIFILE\fR\fR, \fB\-\-source \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normanly, backup source is device, restore source is image file\&.
++Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normally, backup source is device, restore source is image file\&.
+ .sp
+ Receving data from pipe line is supported ONLY for restoring, just ignore \-s option or use \*(Aq\-\*(Aq means receive data from stdin\&.
+ .RE
+diff --git a/docs/partclone.chkimg.xml b/docs/partclone.chkimg.xml
+index 43bcb85..333b730 100644
+--- a/docs/partclone.chkimg.xml
++++ b/docs/partclone.chkimg.xml
+@@ -168,7 +168,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-s <replaceable>FILE</replaceable></option></term>
+         <term><option>--source <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normanly, backup source is device, restore source is image file.</para>
++          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normally, backup source is device, restore source is image file.</para>
+           <para>Receving data from pipe line is supported ONLY for restoring, just ignore -s option or use '-' means receive data from stdin.</para>
+         </listitem>
+       </varlistentry>
+diff --git a/docs/partclone.dd.8 b/docs/partclone.dd.8
+index 7a9f2f6..acd5df1 100644
+--- a/docs/partclone.dd.8
++++ b/docs/partclone.dd.8
+@@ -47,14 +47,14 @@ The program follows the usual GNU command line syntax, with long options startin
+ .PP
+ \fB\-s \fR\fB\fIFILE\fR\fR, \fB\-\-source \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normanly, backup source is device, restore source is image file\&.
++Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normally, backup source is device, restore source is image file\&.
+ .sp
+ Receving data from pipe line is supported ONLY for restoring, just ignore \-s option or use \*(Aq\-\*(Aq means receive data from stdin\&.
+ .RE
+ .PP
+ \fB\-o \fR\fB\fIFILE\fR\fR, \fB\-\-output \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normanly, backup output to image file and restore output to device\&.
++Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normally, backup output to image file and restore output to device\&.
+ .sp
+ Sending data to pipe line is also supported ONLY for back\-up, just ignore \-o option or use \*(Aq\-\*(Aq means send data to stdout\&.
+ .RE
+diff --git a/docs/partclone.dd.xml b/docs/partclone.dd.xml
+index f11008f..43307ae 100644
+--- a/docs/partclone.dd.xml
++++ b/docs/partclone.dd.xml
+@@ -200,7 +200,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-s <replaceable>FILE</replaceable></option></term>
+         <term><option>--source <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normanly, backup source is device, restore source is image file.</para>
++          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normally, backup source is device, restore source is image file.</para>
+           <para>Receving data from pipe line is supported ONLY for restoring, just ignore -s option or use '-' means receive data from stdin.</para>
+         </listitem>
+       </varlistentry>
+@@ -208,7 +208,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-o <replaceable>FILE</replaceable></option></term>
+         <term><option>--output <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normanly, backup output to image file and restore output to device.</para>
++          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normally, backup output to image file and restore output to device.</para>
+ 	  <para>Sending data to pipe line is also supported ONLY for back-up, just ignore -o option or use '-' means send data to stdout.</para>
+         </listitem>
+       </varlistentry>
+diff --git a/docs/partclone.imager.8 b/docs/partclone.imager.8
+index 81c5b07..cb83ad8 100644
+--- a/docs/partclone.imager.8
++++ b/docs/partclone.imager.8
+@@ -47,14 +47,14 @@ The program follows the usual GNU command line syntax, with long options startin
+ .PP
+ \fB\-s \fR\fB\fIFILE\fR\fR, \fB\-\-source \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normanly, backup source is device, restore source is image file\&.
++Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normally, backup source is device, restore source is image file\&.
+ .sp
+ Receving data from pipe line is supported ONLY for restoring, just ignore \-s option or use \*(Aq\-\*(Aq means receive data from stdin\&.
+ .RE
+ .PP
+ \fB\-o \fR\fB\fIFILE\fR\fR, \fB\-\-output \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normanly, backup output to image file and restore output to device\&.
++Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normally, backup output to image file and restore output to device\&.
+ .sp
+ Sending data to pipe line is also supported ONLY for back\-up, just ignore \-o option or use \*(Aq\-\*(Aq means send data to stdout\&.
+ .RE
+diff --git a/docs/partclone.imager.xml b/docs/partclone.imager.xml
+index 5ee7024..a70ad11 100644
+--- a/docs/partclone.imager.xml
++++ b/docs/partclone.imager.xml
+@@ -233,7 +233,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-s <replaceable>FILE</replaceable></option></term>
+         <term><option>--source <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normanly, backup source is device, restore source is image file.</para>
++          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normally, backup source is device, restore source is image file.</para>
+           <para>Receving data from pipe line is supported ONLY for restoring, just ignore -s option or use '-' means receive data from stdin.</para>
+         </listitem>
+       </varlistentry>
+@@ -241,7 +241,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-o <replaceable>FILE</replaceable></option></term>
+         <term><option>--output <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normanly, backup output to image file and restore output to device.</para>
++          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normally, backup output to image file and restore output to device.</para>
+ 	  <para>Sending data to pipe line is also supported ONLY for back-up, just ignore -o option or use '-' means send data to stdout.</para>
+         </listitem>
+       </varlistentry>
+diff --git a/docs/partclone.restore.8 b/docs/partclone.restore.8
+index 29e4a37..465d76a 100644
+--- a/docs/partclone.restore.8
++++ b/docs/partclone.restore.8
+@@ -47,14 +47,14 @@ The program follows the usual GNU command line syntax, with long options startin
+ .PP
+ \fB\-s \fR\fB\fIFILE\fR\fR, \fB\-\-source \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normanly, backup source is device, restore source is image file\&.
++Source FILE\&. The FILE could be a image file(made by partclone) or device depend on your action\&. Normally, backup source is device, restore source is image file\&.
+ .sp
+ Receving data from pipe line is supported ONLY for restoring, just ignore \-s option or use \*(Aq\-\*(Aq means receive data from stdin\&.
+ .RE
+ .PP
+ \fB\-o \fR\fB\fIFILE\fR\fR, \fB\-\-output \fR\fB\fIFILE\fR\fR
+ .RS 4
+-Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normanly, backup output to image file and restore output to device\&.
++Output FILE\&. The FILE could be a image file(partclone will generate) or device depend on your action\&. Normally, backup output to image file and restore output to device\&.
+ .sp
+ Sending data to pipe line is also supported ONLY for back\-up, just ignore \-o option or use \*(Aq\-\*(Aq means send data to stdout\&.
+ .RE
+diff --git a/docs/partclone.restore.xml b/docs/partclone.restore.xml
+index 0ae1ac3..be9528c 100644
+--- a/docs/partclone.restore.xml
++++ b/docs/partclone.restore.xml
+@@ -200,7 +200,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-s <replaceable>FILE</replaceable></option></term>
+         <term><option>--source <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normanly, backup source is device, restore source is image file.</para>
++          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normally, backup source is device, restore source is image file.</para>
+           <para>Receving data from pipe line is supported ONLY for restoring, just ignore -s option or use '-' means receive data from stdin.</para>
+         </listitem>
+       </varlistentry>
+@@ -208,7 +208,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-o <replaceable>FILE</replaceable></option></term>
+         <term><option>--output <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normanly, backup output to image file and restore output to device.</para>
++          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normally, backup output to image file and restore output to device.</para>
+ 	  <para>Sending data to pipe line is also supported ONLY for back-up, just ignore -o option or use '-' means send data to stdout.</para>
+         </listitem>
+       </varlistentry>
+diff --git a/docs/partclone.xml b/docs/partclone.xml
+index 30d2f12..2885f87 100644
+--- a/docs/partclone.xml
++++ b/docs/partclone.xml
+@@ -249,7 +249,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-s <replaceable>FILE</replaceable></option></term>
+         <term><option>--source <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normanly, backup source is device, restore source is image file.</para>
++          <para>Source FILE. The FILE could be a image file(made by partclone) or device depend on your action. Normally, backup source is device, restore source is image file.</para>
+           <para>Receving data from pipe line is supported ONLY for restoring, just ignore -s option or use '-' means receive data from stdin.</para>
+         </listitem>
+       </varlistentry>
+@@ -257,7 +257,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+         <term><option>-o <replaceable>FILE</replaceable></option></term>
+         <term><option>--output <replaceable>FILE</replaceable></option></term>
+         <listitem>
+-          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normanly, backup output to image file and restore output to device.</para>
++          <para>Output FILE. The FILE could be a image file(partclone will generate) or device depend on your action. Normally, backup output to image file and restore output to device.</para>
+ 	  <para>Sending data to pipe line is also supported ONLY for back-up, just ignore -o option or use '-' means send data to stdout.</para>
+         </listitem>
+       </varlistentry>
+-- 
+2.20.1
+

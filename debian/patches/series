@@ -3,3 +3,4 @@ reiserfsclone.patch
 no-pie.patch
 cross.patch
 0001-Fix-exec_name-not-updating-to-argv-0-if-it-contains-.patch
+0002-Fix-Norma-nl-ly-typo-in-manpages.patch
