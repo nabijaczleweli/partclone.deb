@@ -1238,6 +1238,37 @@ unsigned long long get_bitmap_size_on_disk(const file_system_info* fs_info, cons
 	return size;
 }
 
+/// get free space
+unsigned long long get_free_space(char* path){
+
+	unsigned long long dest_size;
+	struct statvfs stvfs;
+	struct stat statP;
+	int debug=1;
+
+	if (statvfs(path, &stvfs) == -1) {
+		printf("WARNING: Unknown free space on the destination: %s\n",
+			strerror(errno));
+		return 0;
+	}
+
+	/* if file is a FIFO there is no point in checking the size */
+	if (!stat(path, &statP)) {
+		if (S_ISFIFO(statP.st_mode))
+			return 0;
+	} else {
+		printf("WARNING: Couldn't get file info because of the following error: %s\n",
+			strerror(errno));
+	}
+
+	dest_size = (unsigned long long)stvfs.f_frsize * stvfs.f_bfree;
+	if (!dest_size)
+		dest_size = (unsigned long long)stvfs.f_bsize * stvfs.f_bfree;
+	log_mesg(0, 0, 0, debug, "Destination have free space: %llu MB \n", print_size(dest_size, MBYTE));
+
+	return dest_size;
+}
+
 /// check free space 
 void check_free_space(char* path, unsigned long long size) {
 
@@ -1521,7 +1552,7 @@ int open_target(char* target, cmd_opt* opt) {
 		else
 		    ddd_block_device = 0;
 	    } else {
-		ddd_block_device = 0;   
+		ddd_block_device = 0;
 	    }
 
 	    log_mesg(1, 0, 0, debug, "ddd target file(0) or device(1) ? %i \n", ddd_block_device);
@@ -1579,7 +1610,7 @@ int open_target(char* target, cmd_opt* opt) {
 			}
 			log_mesg(0, 0, 1, debug, "%s,%s,%i: open %s error(%i)\n", __FILE__, __func__, __LINE__, target, errno);
 		}
-	} else if ((opt->restore) && (opt->blockfile == 1)) {    /// always is folder
+	} else if ((opt->restore || (ddd_block_device == 0)) && (opt->blockfile == 1)) {    /// always is folder
 
 	    if ((stat(target, &st_dev) == -1) || (opt->overwrite)){
 		remove_directory(target);
@@ -1751,7 +1782,10 @@ void print_partclone_info(cmd_opt opt) {
 	else if (opt.domain)
 		log_mesg(0, 0, 1, debug, _("Starting to map device (%s) to domain log (%s)\n"), opt.source, opt.target);
 	else if (opt.ddd)
-		log_mesg(0, 0, 1, debug, _("Starting to clone/restore (%s) to (%s) with dd mode\n"), opt.source, opt.target);
+	        if (opt.blockfile)
+		    log_mesg(0, 0, 1, debug, _("Starting to dd image (%s) to block files (%s)\n"), opt.source, opt.target);
+		else
+		    log_mesg(0, 0, 1, debug, _("Starting to clone/restore (%s) to (%s) with dd mode\n"), opt.source, opt.target);
 	else if (opt.info)
 		log_mesg(0, 0, 1, debug, _("Showing info of image (%s)\n"), opt.source);
 	else
