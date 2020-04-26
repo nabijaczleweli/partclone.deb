@@ -1,3 +1,13 @@
+partclone (0.3.13+dfsg-4.1) unstable; urgency=medium
+
+  [nabijaczleweli]
+  * Non-maintainer upload.
+  * Add patches:
+    + Fix exec_name not updating to argv[0] if it contains no slashes
+    + Fix Norma[nl]ly typo in manpages
+
+ -- nabijaczleweli <nabijaczleweli@gmail.com>  Sun, 26 Apr 2020 20:25:36 +0200
+
 partclone (0.3.13+dfsg-4) unstable; urgency=medium
 
   * This revision is just to make a source upload
