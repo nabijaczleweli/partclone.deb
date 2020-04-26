@@ -13,7 +13,8 @@
  */
 
 #include <stdio.h>
-#include <stdio.h>
+#include <unistd.h>
+#include <inttypes.h>
 #include <vmfs/vmfs.h>
 #include <pthread.h>
 
@@ -149,7 +150,7 @@ vmfs_blk_map_t *vmfs_block_map_get(vmfs_blk_map_t **ht,uint32_t blk_id)
 }
 
 /* print block id pos */
-unsigned long long print_pos_by_id (const vmfs_fs_t *fs, uint32_t blk_id)
+void print_pos_by_id (const vmfs_fs_t *fs, uint32_t blk_id)
 {
     unsigned long long pos = 0;
     uint32_t blk_type = VMFS_BLK_TYPE(blk_id);
@@ -189,7 +190,7 @@ unsigned long long print_pos_by_id (const vmfs_fs_t *fs, uint32_t blk_id)
 	    //fprintf(stderr,"Unsupported block type 0x%2.2x\n",blk_type);
     }
     current = pos/vmfs_fs_get_blocksize(fs);
-    log_mesg(3, 0, 0, fs_opt.debug, "Blockid = 0x%8.8x, Type = 0x%2.2x, Pos: %lli, bitmapid: %lli, c: %lli\n", blk_id, blk_type, pos, current, checked);
+    log_mesg(3, 0, 0, fs_opt.debug, "Blockid = 0x%8.8x, Type = 0x%2.2x, Pos: %llu, bitmapid: %llu, c: %llu\n", blk_id, blk_type, pos, current, checked);
     pc_set_bit(current, blk_bitmap);
 }
 
@@ -232,6 +233,8 @@ static int vmfs_dump_store_inode(const vmfs_fs_t *fs,vmfs_blk_map_t **ht,
 	log_mesg(0, 0, 0, fs_opt.debug, "%s: Block 0x%8.8x is used but not allocated.\n", __FILE__, inode->id);
     } else
 	print_pos_by_id(fs, inode->id);
+
+    return 0;
 }
 
 
@@ -246,7 +249,7 @@ void dump_bitmaps (vmfs_bitmap_t *b,uint32_t addr, void *opt)
     item  = addr % b->bmh.items_per_bitmap_entry;
 
     blk_id = VMFS_BLK_SB_BUILD(entry, item, 0);
-    //fprintf(stderr, "%s %s addr %i blkid %i\n", __FILE__, __func__, addr, blk_id);
+    //fprintf(stderr, "%s %s addr %"PRIu32" blkid %"PRIu32"\n", __FILE__, __func__, addr, blk_id);
 
     print_pos_by_id(fs, blk_id);
 }
@@ -262,10 +265,11 @@ static void vmfs_dump_init(vmfs_dump_info_t *fi)
 
 /// open device
 static void fs_open(char* device){
+#ifndef VMFS5_ZLA_BASE
     vmfs_lvm_t *lvm;
+#endif
     vmfs_flags_t flags;
     char *mdev[] = {device, NULL};
-    char *next = NULL;
 
     vmfs_host_init();
     flags.packed = 0;
@@ -274,7 +278,7 @@ static void fs_open(char* device){
     log_mesg(3, 0, 0, fs_opt.debug, "%s: device %s\n", __FILE__, device);
 
 #ifdef VMFS5_ZLA_BASE
-    if (!(fs=vmfs_fs_open(&mdev, flags))) {
+    if (!(fs=vmfs_fs_open(mdev, flags))) {
 	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open volume.\n", __FILE__);
     }
 #else
@@ -310,9 +314,7 @@ static void fs_close(){
 /// readbitmap - read bitmap
 extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
 {
-    unsigned long long used_block = 0, free_block = 0, err_block = 0, prog_total = 0;
-    uint32_t total = 0;
-    int status = 0;
+    unsigned long long used_block = 0, free_block = 0, err_block = 0;
     int start = 0;
     int bit_size = 1;
 
@@ -335,6 +337,9 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
      * thread to print progress
      */
     bres = pthread_create(&prog_bitmap_thread, NULL, thread_update_bitmap_pui, NULL);
+    if(bres){
+	    log_mesg(0, 1, 1, fs_opt.debug, "%s, %i, thread create error\n", __func__, __LINE__);
+    }
 
     fdc_bmp = &fs->fdc->bmh;
     log_mesg(3, 0, 0, fs_opt.debug, "Scanning %u FDC entries...\n",fdc_bmp->total_items);
@@ -353,20 +358,20 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	vmfs_inode_foreach_block(&inode,vmfs_dump_store_block,dump_info.blk_map);
     }
 
-    log_mesg(3, 0, 0, fs_opt.debug, "fdc checked block %lli\n", checked);
+    log_mesg(3, 0, 0, fs_opt.debug, "fdc checked block %llu\n", checked);
     vmfs_bitmap_foreach(fs->fbb,dump_bitmaps,fs);
-    log_mesg(3, 0, 0, fs_opt.debug, "fbb checked block %lli\n", checked);
+    log_mesg(3, 0, 0, fs_opt.debug, "fbb checked block %llu\n", checked);
     vmfs_bitmap_foreach(fs->sbc,dump_bitmaps,fs);
-    log_mesg(3, 0, 0, fs_opt.debug, "sbc checked block %lli\n", checked);
+    log_mesg(3, 0, 0, fs_opt.debug, "sbc checked block %llu\n", checked);
     vmfs_bitmap_foreach(fs->pbc,dump_bitmaps,fs);
-    log_mesg(3, 0, 0, fs_opt.debug, "pbc checked block %lli\n", checked);
+    log_mesg(3, 0, 0, fs_opt.debug, "pbc checked block %llu\n", checked);
 
     fs_close();
     bitmap_done = 1;
     update_pui(&prog, 1, 1, 1);
 
-    log_mesg(3, 0, 0, fs_opt.debug, "checked block %lli\n", checked);
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: Used:%lld, Free:%lld, Status err:%lld\n", __FILE__, used_block, free_block, err_block);
+    log_mesg(3, 0, 0, fs_opt.debug, "checked block %llu\n", checked);
+    log_mesg(0, 0, 0, fs_opt.debug, "%s: Used:%llu, Free:%llu, Status err:%llu\n", __FILE__, used_block, free_block, err_block);
 
 }
 
@@ -386,10 +391,10 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
     sbc_allocated = vmfs_bitmap_allocated_items(fs->pbc);
     pbc_allocated = vmfs_bitmap_allocated_items(fs->pbc);
     alloc = fdc_allocated + fbb_allocated + sbc_allocated + pbc_allocated;
-    log_mesg(3, 0, 0, fs_opt.debug, "allocated fdc %u\n", fdc_allocated);
-    log_mesg(3, 0, 0, fs_opt.debug, "allocated fbb %u\n", fbb_allocated);
-    log_mesg(3, 0, 0, fs_opt.debug, "allocated sbc %u\n", sbc_allocated);
-    log_mesg(3, 0, 0, fs_opt.debug, "allocated pbc %u\n", pbc_allocated);
+    log_mesg(3, 0, 0, fs_opt.debug, "allocated fdc %"PRIu32"\n", fdc_allocated);
+    log_mesg(3, 0, 0, fs_opt.debug, "allocated fbb %"PRIu32"\n", fbb_allocated);
+    log_mesg(3, 0, 0, fs_opt.debug, "allocated sbc %"PRIu32"\n", sbc_allocated);
+    log_mesg(3, 0, 0, fs_opt.debug, "allocated pbc %"PRIu32"\n", pbc_allocated);
 
     image_hdr->block_size  = vmfs_fs_get_blocksize(fs);
     image_hdr->totalblock  = total;

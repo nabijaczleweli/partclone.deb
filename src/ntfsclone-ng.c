@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <malloc.h>
 #include <stdarg.h>
 #include <getopt.h>
@@ -32,10 +33,12 @@
 #include <ntfs-3g/device.h>
 #include <ntfs-3g/volume.h>
 #include <ntfs-3g/bitmap.h>
+#include <ntfs-3g/misc.h>
 #else
 #include <ntfs/device.h>
 #include <ntfs/volume.h>
 #include <ntfs/bitmap.h>
+#include <ntfs/support.h>
 #endif
 
 #include "partclone.h"
@@ -73,6 +76,7 @@ ntfs_volume *ntfs;
 
 #define BITCOUNT(x) (((BCX(x) + (BCX(x) >> 4)) & 0x0F0F0F0F) % 255)
 
+#ifndef NTFS3G
 static u8 *ntfs_init_lut256(void)
 {
         int i;
@@ -85,7 +89,6 @@ static u8 *ntfs_init_lut256(void)
         return lut;
 }
 
-#ifndef NTFS3G
 static s64 ntfs_attr_get_free_bits(ntfs_attr *na)
 {
         u8 *buf, *lut;
@@ -155,7 +158,7 @@ static void fs_open(char* device){
         }
 
         if (NTFS_MAX_CLUSTER_SIZE < ntfs->cluster_size) {
-            log_mesg(0, 1, 1, fs_opt.debug, "%s: NTFS Cluster size %u is too large!\n", __FILE__, (unsigned int)ntfs->cluster_size);
+            log_mesg(0, 1, 1, fs_opt.debug, "%s: NTFS Cluster size %"PRIu32" is too large!\n", __FILE__, ntfs->cluster_size);
         } else {
             log_mesg(3, 0, 0, fs_opt.debug, "%s: NTFS Cluster size is right!\n", __FILE__);
         }
@@ -173,7 +176,7 @@ static void fs_open(char* device){
         ntfs->free_clusters = ntfs_attr_get_free_bits(ntfs->lcnbmp_na);
 
         if ( ntfs->free_clusters < 0 || ntfs->free_clusters >= ntfs->nr_clusters) {
-            log_mesg(0, 1, 1, fs_opt.debug, "%s: Bad number of free (%lld) or total (%lld) clusters!\n", __FILE__,
+            log_mesg(0, 1, 1, fs_opt.debug, "%s: Bad number of free (%"PRId64") or total (%"PRId64") clusters!\n", __FILE__,
                 ntfs->free_clusters, ntfs->nr_clusters); 
         }
 
@@ -181,7 +184,7 @@ static void fs_open(char* device){
         ntfs->nr_free_clusters = ntfs_attr_get_free_bits(ntfs->lcnbmp_na);
 
         if ( ntfs->nr_free_clusters < 0 || ntfs->nr_free_clusters >= ntfs->nr_clusters) {
-            log_mesg(0, 1, 1, fs_opt.debug, "%s: Bad number of free (%lld) or total (%lld) clusters!\n", __FILE__,
+            log_mesg(0, 1, 1, fs_opt.debug, "%s: Bad number of free (%ld) or total (%"PRId64") clusters!\n", __FILE__,
                 ntfs->nr_free_clusters, ntfs->nr_clusters); 
         }
 
@@ -189,17 +192,17 @@ static void fs_open(char* device){
         device_size = ntfs_device_size_get(ntfs->dev, 1);
         volume_size = ntfs->nr_clusters * ntfs->cluster_size;
 
-        log_mesg(3, 0, 0, fs_opt.debug, "%s: Cluster size\t: %u\n", __FILE__, (unsigned int)ntfs->cluster_size);
-        log_mesg(3, 0, 0, fs_opt.debug, "%s: Volume size\t: %u * %u + 512 = %lli + 512 = %lli\n", __FILE__, 
-                (unsigned int)ntfs->cluster_size,
-                (unsigned int)ntfs->nr_clusters,
+        log_mesg(3, 0, 0, fs_opt.debug, "%s: Cluster size\t: %"PRIu32"\n", __FILE__, ntfs->cluster_size);
+        log_mesg(3, 0, 0, fs_opt.debug, "%s: Volume size\t: %"PRIu32" * %"PRId64" + 512 = %llu + 512 = %llu\n", __FILE__, 
+                ntfs->cluster_size,
+                ntfs->nr_clusters,
                 volume_size,
                 (volume_size+512)
                 );
-        log_mesg(3, 0, 0, fs_opt.debug, "%s: Device size\t: %u\n", __FILE__, device_size);
+        log_mesg(3, 0, 0, fs_opt.debug, "%s: Device size\t: %llu\n", __FILE__, device_size);
 
         if (device_size < volume_size) {
-            log_mesg(0, 1, 1, fs_opt.debug, "%s: Current NTFS volume size is bigger than the device size (%lld)!\nCorrupt partition table or incorrect device partitioning?\n", __FILE__, device_size);
+            log_mesg(0, 1, 1, fs_opt.debug, "%s: Current NTFS volume size is bigger than the device size (%llu)!\nCorrupt partition table or incorrect device partitioning?\n", __FILE__, device_size);
         }
 
     }
@@ -230,7 +233,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     bitmap_size = (ntfs->nr_clusters + 7) / 8;
 
     if (bitmap_size > ntfs->lcnbmp_na->data_size) {
-        log_mesg(0, 1, 1, fs_opt.debug, "%s: calculated bitmap size (%lu) > lcnbmp_na->data_size (%llu)\n", __FILE__, bitmap_size, ntfs->lcnbmp_na->data_size);
+        log_mesg(0, 1, 1, fs_opt.debug, "%s: calculated bitmap size (%lu) > lcnbmp_na->data_size (%"PRId64")\n", __FILE__, bitmap_size, ntfs->lcnbmp_na->data_size);
     }
  
     ntfs_bitmap = (unsigned char*)malloc(bitmap_size);
@@ -281,9 +284,9 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Used Block\t: %llu\n", __FILE__, used_block);
     log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Free Block\t: %llu\n", __FILE__, free_block);
     log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Calculated Bitmap Size\t: %lu\n", __FILE__, bitmap_size);
-    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute data size\t: %llu\n", __FILE__, ntfs->lcnbmp_na->data_size);
-    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute initialized size\t: %llu\n", __FILE__, ntfs->lcnbmp_na->initialized_size);
-    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute allocated size\t: %llu\n", __FILE__, ntfs->lcnbmp_na->allocated_size);
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute data size\t: %"PRId64"\n", __FILE__, ntfs->lcnbmp_na->data_size);
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute initialized size\t: %"PRId64"\n", __FILE__, ntfs->lcnbmp_na->initialized_size);
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Bitmap attribute allocated size\t: %"PRId64"\n", __FILE__, ntfs->lcnbmp_na->allocated_size);
 
     free(ntfs_bitmap);
     log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap alloc free\n", __FILE__);
@@ -306,10 +309,10 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
     image_hdr->block_size  = (int)ntfs->cluster_size;
     image_hdr->totalblock  = (unsigned long long)ntfs->nr_clusters;
 #ifdef NTFS3G
-    log_mesg(3, 0, 0, fs_opt.debug, "%s: ntfs - nr_free:\t: %lld\n", __FILE__, ntfs->free_clusters);
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: ntfs - nr_free:\t: %"PRId64"\n", __FILE__, ntfs->free_clusters);
     image_hdr->usedblocks  = (unsigned long long)(ntfs->nr_clusters - ntfs->free_clusters);
 #else
-    log_mesg(3, 0, 0, fs_opt.debug, "%s: ntfs - nr_free:\t: %lld\n", __FILE__, ntfs->nr_free_clusters);
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: ntfs - nr_free:\t: %ld\n", __FILE__, ntfs->nr_free_clusters);
     image_hdr->usedblocks  = (unsigned long long)(ntfs->nr_clusters - ntfs->nr_free_clusters);
 #endif
     image_hdr->device_size = (unsigned long long)ntfs_device_size_get(ntfs->dev, 1);

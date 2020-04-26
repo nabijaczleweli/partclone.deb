@@ -1,4 +1,4 @@
-AC_INIT([Partclone], [0.2.51], [thomas@nchc.org.tw])
+AC_INIT([Partclone], [0.2.62], [thomas@nchc.org.tw])
 #AC_CONFIG_AUX_DIR([build-aux])
 #AC CONFIG SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
@@ -34,6 +34,17 @@ enable_ufs="yes"
 enable_vmfs="yes"
 enable_jfs="yes"
 enable_btrfs="yes"
+enable_minix="yes"
+fi
+
+ORIGINAL_CFLAGS="$CFLAGS"
+AC_SUBST(ORIGINAL_CFLAGS)
+
+if test "x$GCC" = "xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
 fi
 
 dnl Check for uuid 
@@ -427,6 +438,20 @@ btrfs_version="0.19"
 fi
 #end of check btrfs
 
+##minix##
+AC_ARG_ENABLE(minix,
+	AS_HELP_STRING(--enable-minix,enable minix file system), 
+	enable_minix=yes,
+	enable_minix=no
+)
+AM_CONDITIONAL(ENABLE_MINIX, test "$enable_minix" = yes)
+
+if test "$enable_minix" = "yes"; then
+supported_fs=$supported_fs" minix"
+minix_version="build-in"
+fi
+#end of check minix
+
 
 ##libncursesw##
 AC_ARG_ENABLE(ncursesw,
@@ -466,12 +491,20 @@ AC_ARG_ENABLE(mtrace,
 AM_CONDITIONAL(ENABLE_MEMTRACE, test "$enable_memtrace" = yes)
 
 
+##extra test
+AC_ARG_ENABLE(fs-test,
+        AS_HELP_STRING(--enable-fs-test, enable file system clone/restore test),
+        enable_fs_test=yes,
+)
+AM_CONDITIONAL(ENABLE_FS_TEST, test "$enable_fs_test" = yes)
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	po/Makefile.in
 	docs/Makefile
+	tests/Makefile
 	])
 AC_OUTPUT
 
@@ -489,4 +522,5 @@ echo "ufs .......... $enable_ufs, $ufs_version"
 echo "vmfs ......... $enable_vmfs, $vmfs_version"
 echo "jfs .......... $enable_jfs, $jfs_version"
 echo "btrfs......... $enable_btrfs, $btrfs_version"
+echo "minix......... $enable_minix, $minix_version"
 #echo $supported_fs

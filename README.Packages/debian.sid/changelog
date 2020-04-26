@@ -1,16 +1,183 @@
-partclone (0.2.35) UNRELEASED; urgency=low
+partclone (0.2.52-1) unstable; urgency=low
 
-  * [[[insert-git-dch-commit-message-here]]]
+  * update debian control
+  * update TODO
+  * update ncurses interface.
 
- -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 01 Nov 2011 14:31:03 +0800
+ -- Yu-Chin Tsai <thomas@nchc.org.tw>  Fri, 21 Sep 2012 09:59:32 +0800
 
-partclone (0.2.34) sid; urgency=low
+partclone (0.2.51) unstable; urgency=low
+
+  * update makefile
+  * update supported list
+  * update process for elapsed time over 24hr
+  * update version to 0.2.51
+  * update some docs
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Thu, 20 Sep 2012 17:07:41 +0800
+
+partclone (0.2.50) unstable; urgency=low
+
+  * release 0.2.49
+  * update control
+  * update control
+  * add partclone.btrfs.8
+  * add more detail message in image head output
+  * add exfat
+  * update exfat and add exfat man docs
+  * add test for exfat
+  * update test and size information
+  * version 0.2.50
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 10 Jul 2012 16:39:19 +0800
+
+partclone (0.2.49) unstable; urgency=low
+
+  * release 0.2.48
+  * update TODO
+  * minor update readme
+  * update docs
+  * update docs
+  * update manpage
+  * fix quiet mode issue. The issue make partclone can't stop/finish even action is done. bug report from pille
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 10 Jul 2012 16:35:27 +0800
+
+partclone (0.2.48) unstable; urgency=low
+
+  [ Thomas Tsai ]
+  * update debian control for vmfs-tools
+
+  [ thomas ]
+  * ignore unallocated block for vmfs
+
+  [ Thomas Tsai ]
+  * update bitmap progress
+  * A partclone bug found when it backs up  WindowsServer2008R2 (64bit)
+  * update vmfs for some unallocated block
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 01 May 2012 11:32:47 +0800
+
+partclone (0.2.47) unstable; urgency=low
+
+  * try to fix ID: 3509757 from clonezilla track system
+  * change row to raw, noticed from Vincent van Adrighem
+  * update fresh, add sleep in progress thread to reduce cpu usage, contributed and bug information from http://sourceforge.net/tracker/?func=detail&aid=3509757&group_id=115473&atid=671650
+  * update fresh done
+  * 0.2.47
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 18 Apr 2012 13:41:31 +0800
+
+partclone (0.2.46) unstable; urgency=low
+
+  * accept part of patch from Matthew Booth's review
+  * update partclone.vmfs for version 5
+  * update manpages
+  * update document, some example error. 
+  * update vmfsclone to backup vmfs5 well
+  * accept patch from Rommer to update memory usage
+  * and release 0.2.46
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Mon, 02 Apr 2012 09:14:23 +0800
+
+partclone (0.2.45) unstable; urgency=low
+
+  * print vmfs version from fstype
+  * add compatibility of vmfs3 and vmfs5
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 18 Jan 2012 10:39:22 +0800
+
+partclone (0.2.44) unstable; urgency=low
+
+  * update pui for mode dev-to-dev
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 17 Jan 2012 15:11:30 +0800
+
+partclone (0.2.43) unstable; urgency=low
+
+  * 0.2.43
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 27 Dec 2011 16:25:57 +0800
+
+partclone (0.2.42) unstable; urgency=low
+
+  * add option B to disable block detail; old progress style.
+  * add finish progress to dd
+  * 0.2.42
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 27 Dec 2011 15:58:55 +0800
+
+partclone (0.2.41) unstable; urgency=low
+
+  * add block status
+  * update progress bar
+  * add thread to display progress, draft
+  * add thread to dd, restore and chkimg
+  * 0.2.41
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 27 Dec 2011 00:53:41 +0800
+
+partclone (0.2.40) unstable; urgency=low
+
+  * update progress seeking at 100%
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Fri, 23 Dec 2011 10:25:43 +0800
+
+partclone (0.2.39) unstable; urgency=low
+
+  * 0.2.39
+  * updaet ntfsfixboot to version 1.0
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Mon, 12 Dec 2011 14:49:22 +0800
+
+partclone (0.2.38) unstable; urgency=low
+
+  * update for makefile for ncursesw
+  * update for progress
+  * 0.2.38
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Mon, 12 Dec 2011 14:27:23 +0800
+
+partclone (0.2.37) unstable; urgency=low
+
+  * add -I/usr/include/ncursesw/
+  * release 0.2.37
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 23 Nov 2011 16:32:09 +0800
+
+partclone (0.2.36) unstable; urgency=low
+
+  * update ncurses size
+  * 0.2.36
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 23 Nov 2011 16:31:06 +0800
+
+partclone (0.2.35) unstable; urgency=low
+
+  * move debian folder to README.Packages as sample
+  * update control for debian-sid
+  * save last changelog ($version)
+  * update version script
+  * add debian
+  * re remove debian
+  * update TODO
+  * add debian
+  * remove debian
+  * add debian
+  * move partclone.spec to README.Packages/partclone.spec
+  * update
+  * align version and tag
+  * update toolbox
+
+ -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 02 Nov 2011 01:07:24 +0800
+
+partclone (0.2.34) unstable; urgency=low
 
   * update autoconf and automake for squeeze 
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 01 Nov 2011 11:32:42 +0800
 
-partclone (0.2.33) sid; urgency=low
+partclone (0.2.33) unstable; urgency=low
 
   * update makefile for ncurses static linking 
   * update memory usage
@@ -18,47 +185,47 @@ partclone (0.2.33) sid; urgency=low
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Thu, 27 Oct 2011 22:05:17 +0800
 
-partclone (0.2.32) sid; urgency=low
+partclone (0.2.32) unstable; urgency=low
 
   * accept patch file from Rommer.
   * Attached patch for partclone 0.2.31 reduces memory usage by 4-8 times.  by Rommer.
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 12 Oct 2011 21:27:43 +0800
 
-partclone (0.2.31) sid; urgency=low
+partclone (0.2.31) unstable; urgency=low
 
   * update for vmfs5 
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Wed, 12 Oct 2011 21:27:43 +0800
 
-partclone (0.2.30) sid; urgency=low
+partclone (0.2.30) unstable; urgency=low
 
   * patch for new vmfs-tools
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 11 Oct 2011 21:21:24 +0800
 
-partclone (0.2.29) sid; urgency=low
+partclone (0.2.29) unstable; urgency=low
 
   * fix bugs
   * release 0.2.29
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Mon, 12 Sep 2011 21:21:24 +0800
 
-partclone (0.2.28) sid; urgency=low
+partclone (0.2.28) unstable; urgency=low
 
   * update e2fslibs for squeeze
-  * fix bug for ntfsclone with ncurses on sid
+  * fix bug for ntfsclone with ncurses on unstable
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Thu, 08 Sep 2011 22:58:27 +0800
 
-partclone (0.2.27) sid; urgency=low
+partclone (0.2.27) unstable; urgency=low
 
   * accept patch from Georges about configure, fixIntTypes and typos in manpages
   * try to fix issue for bitmap, suggestion from Paul.
 
  -- Thomas Tsai <thomas@nchc.org.tw>  Tue, 30 Aug 2011 11:45:06 +0800
 
-partclone (0.2.26) sid; urgency=low
+partclone (0.2.26) unstable; urgency=low
 
   * update test script
 
