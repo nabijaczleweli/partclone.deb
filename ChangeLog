@@ -1,3 +1,31 @@
+2012-06-15  Thomas Tsai  <thomas@nchc.org.tw>
+
+	add partclone.btrfs.8
+
+	update control
+
+	update control
+
+	fix quiet mode issue. The issue make partclone can't stop/finish even action is done. bug report from pille
+
+2012-05-30  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update manpage
+
+2012-05-29  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update docs
+
+	update docs
+
+2012-05-18  Thomas Tsai  <thomas@nchc.org.tw>
+
+	minor update readme
+
+2012-05-16  Thomas Tsai  <thomas@nchc.org.tw>
+
+	update TODO
+
 2012-05-01  Thomas Tsai  <thomas@nchc.org.tw>
 
 	Merge branch 'master' of partclone.nchc.org.tw:/home/partclone
