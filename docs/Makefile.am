@@ -28,6 +28,10 @@ if ENABLE_XFS
 man_MANS += partclone.xfs.8
 endif
 
+if ENABLE_EXFAT
+man_MANS += partclone.exfat.8
+endif
+
 if ENABLE_FAT
 man_MANS += partclone.vfat.8
 man_MANS += partclone.fat12.8
@@ -55,6 +59,7 @@ if ENABLE_NTFS
 man_MANS += partclone.ntfs.8
 endif
 
+FORCE:
 partclone.dd.8: partclone.dd.xml
 	-@($(XSLTPROC) --nonet $(MAN_STYLESHEET) partclone.dd.xml)
 partclone.chkimg.8: partclone.chkimg.xml
