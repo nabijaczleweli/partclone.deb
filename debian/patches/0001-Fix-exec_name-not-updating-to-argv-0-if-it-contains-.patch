@@ -1,0 +1,49 @@
+From 941a7e0e904c9a209571f5a45d402e9994a0c85e Mon Sep 17 00:00:00 2001
+From: nabijaczleweli <nabijaczleweli@gmail.com>
+Date: Sun, 26 Apr 2020 19:38:52 +0200
+Subject: [PATCH 1/2] Fix exec_name not updating to argv[0] if it contains no
+ slashes
+
+Before:
+root@tarta:/# /sbin/partclone.fat -N
+partclone.fat v0.3.13 http://partclone.org
+Usage: partclone.fat [OPTIONS]
+    Efficiently clone to an image, device or standard output.
+    <snip>
+root@tarta:/# partclone.fat -N
+unset_name v0.3.13 http://partclone.org
+Usage: unset_name [OPTIONS]
+    Efficiently clone to an image, device or standard output.
+    <snip>
+
+After:
+root@tarta:/# /sbin/partclone.fat -N
+partclone.fat v0.3.13 http://partclone.org
+Usage: partclone.fat [OPTIONS]
+    Efficiently clone to an image, device or standard output.
+    <snip>
+root@tarta:/# partclone.fat -N
+partclone.fat v0.3.13 http://partclone.org
+Usage: partclone.fat [OPTIONS]
+    Efficiently clone to an image, device or standard output.
+    <snip>
+---
+ src/partclone.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/partclone.c b/src/partclone.c
+index 6b83ab7..fd427de 100644
+--- a/src/partclone.c
++++ b/src/partclone.c
+@@ -308,6 +308,8 @@ static void save_program_name(const char* argv0) {
+ 	if (last_slash != 0) {
+ 
+ 		exec_name = last_slash + 1;
++	} else {
++		exec_name = argv0;
+ 	}
+ }
+ 
+-- 
+2.20.1
+
