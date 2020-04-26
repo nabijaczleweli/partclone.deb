@@ -1,4 +1,4 @@
-AC_INIT([Partclone], [0.2.33], [thomas@nchc.org.tw])
+AC_INIT([Partclone], [0.2.38], [thomas@nchc.org.tw])
 #AC_CONFIG_AUX_DIR([build-aux])
 #AC CONFIG SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
@@ -428,6 +428,10 @@ AC_ARG_ENABLE(static,
 	enable_static=yes,
 )
 AM_CONDITIONAL(ENABLE_STATIC, test "$enable_static" = yes)
+
+AC_CHECK_LIB([tinfo], [initscr], tinfo=1,
+    AC_MSG_WARN([*** tinfo library (libtinfo) not found]))
+AM_CONDITIONAL(ENABLE_TINFO, test "$tinfo" = 1)
 
 ##memory tracing##
 AC_ARG_ENABLE(mtrace,
