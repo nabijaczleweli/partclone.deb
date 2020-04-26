@@ -24,10 +24,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-/**
- * partclone.h - include some structures like image_head, opt_cmd, ....
- *               and functions for main used.
- */
 #include "partclone.h"
 
 /// cmd_opt structure defined in partclone.h
@@ -65,6 +61,7 @@ void info_options (int argc, char **argv){
 	memset(&opt, 0, sizeof(cmd_opt));
 	opt.debug = 0;
 	opt.quiet = 0;
+	opt.info  = 1;
 	opt.logfile = "/var/log/partclone.log";
 	opt.target  = 0;
 	opt.clone   = 0;
@@ -112,9 +109,11 @@ void info_options (int argc, char **argv){
  */
 int main(int argc, char **argv){ 
 
-    int		dfr;			/// file descriptor for source and target
-    unsigned long	*bitmap;		/// the point for bitmap data
-    image_head	image_hdr;		/// image_head structure defined in partclone.h
+	int dfr;                  /// file descriptor for source and target
+	unsigned long   *bitmap;  /// the point for bitmap data
+	image_head_v2    img_head;
+	file_system_info fs_info;
+	image_options    img_opt;
 
     if (argc == 2){
 	memset(&opt, 0, sizeof(cmd_opt));
@@ -143,12 +142,10 @@ int main(int argc, char **argv){
     }
 
     /// get image information from image file
-    restore_image_hdr(&dfr, &opt, &image_hdr);
-    if (memcmp(image_hdr.magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE) != 0)
-	log_mesg(0, 1, 1, opt.debug, "The Image magic error. This file is NOT partclone Image\n");
+    load_image_desc(&dfr, &opt, &img_head, &fs_info, &img_opt);
 
     /// alloc a memory to restore bitmap
-    bitmap = (unsigned long*)calloc(sizeof(unsigned long), LONGS(image_hdr.totalblock));
+    bitmap = pc_alloc_bitmap(fs_info.totalblock);
     if (bitmap == NULL)
 	log_mesg(0, 1, 1, opt.debug, "%s, %i, not enough memory\n", __func__, __LINE__);
 
@@ -156,16 +153,17 @@ int main(int argc, char **argv){
     log_mesg(0, 0, 0, opt.debug, "Initial image hdr: read bitmap table\n");
 
     /// read and check bitmap from image file
-    get_image_bitmap(&dfr, opt, image_hdr, bitmap);
+    load_image_bitmap(&dfr, opt, fs_info, img_opt, bitmap);
 
     log_mesg(0, 0, 0, opt.debug, "check main bitmap pointer %p\n", bitmap);
-    log_mesg(0, 0, 0, opt.debug, "print image_head\n");
+    log_mesg(0, 0, 0, opt.debug, "print image information\n");
 
-    /// print image_head
-    print_image_hdr_info(image_hdr, opt);
+    print_file_system_info(fs_info, opt);
+    log_mesg(0, 0, 1, opt.debug, "\n");
+    print_image_info(img_head, img_opt, opt);
 
     close(dfr);     /// close source
-    free(bitmap);   /// free bitmp
+    free(bitmap);   /// free bitmap
     close_log();
     return 0;       /// finish
 }

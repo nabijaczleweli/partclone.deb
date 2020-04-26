@@ -1519,7 +1519,8 @@ u64 btrfs_device_size(int fd, struct stat *st)
 
 static int zero_blocks(int fd, off_t start, size_t len)
 {
-	char *buf = malloc(len);
+	assert(len != 0);
+       char *buf = malloc(len);
 	int ret = 0;
 	ssize_t written;
 
@@ -2463,7 +2464,7 @@ int pretty_size_snprintf(u64 size, char *str, size_t str_size, unsigned unit_mod
 
 	/* Unknown mode */
 	if (!base) {
-		fprintf(stderr, "INTERNAL ERROR: unknown unit base, mode %d\n",
+		fprintf(stderr, "INTERNAL ERROR: unknown unit base, mode %u\n",
 				unit_mode);
 		assert(0);
 		return -1;

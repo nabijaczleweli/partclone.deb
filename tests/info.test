@@ -3,6 +3,11 @@ set -e
 
 . _common
 break_debug=0
+## file system
+normal_fs="ext2"
+featured_fs="$normal_fs"
+extra_fs="$featured_fs"
+
 manual_fs="ext2"
 dd_count=$normal_size
 [ -z $manual_fs ] || test_fs=$manual_fs
@@ -58,6 +63,6 @@ for fs in $test_fs; do
     echo -e "\ninfo test ok\n"
     echo -e "\nclear tmp files $img $raw $logfile $md5\n"
     _ptlbreak
-    rm -f $img $raw $logfile $md5
+#    rm -f $img $raw $logfile $md5
 
 done

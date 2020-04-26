@@ -26,6 +26,10 @@ We made some utilies:
 * partclone.dd
 ...
 
+For more info about partclone, check our website http://partclone.org.
+
+master branch is NOT STABLE, Please check 'release' branch
+
 Basic Usage:
 
  - clone partition to image

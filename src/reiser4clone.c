@@ -37,8 +37,6 @@
 aal_device_t           *fs_device;
 reiser4_fs_t           *fs = NULL;
 reiser4_format_t       *format;
-char *EXECNAME = "partclone.reiser4";
-extern fs_cmd_opt fs_opt;
 
 /// open device
 static void fs_open(char* device){
@@ -92,8 +90,7 @@ static void fs_close(){
     aal_device_close(fs_device);
 }
 
-/// readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
     reiser4_bitmap_t       *fs_bitmap;
     unsigned long long     bit, block, bused = 0, bfree = 0;
@@ -106,17 +103,17 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 
     /// init progress
     progress_bar   prog;	/// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
 
 
     for(bit = 0; bit < reiser4_format_get_len(fs->format); bit++){
         block = bit ;
         if(reiser4_bitmap_test(fs_bitmap, bit)){
             bused++;
-            pc_set_bit(block, bitmap, image_hdr.totalblock);
+            pc_set_bit(block, bitmap, fs_info.totalblock);
             log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap is used %llu", __FILE__, block);
         } else {
-            pc_clear_bit(block, bitmap, image_hdr.totalblock);
+            pc_clear_bit(block, bitmap, fs_info.totalblock);
             bfree++;
             log_mesg(3, 0, 0, fs_opt.debug, "%s: bitmap is free %llu", __FILE__, block);
         }
@@ -133,8 +130,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     update_pui(&prog, 1, 1, 1);
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
     reiser4_bitmap_t       *fs_bitmap;
     unsigned long long free_blocks=0;
@@ -143,12 +139,11 @@ extern void initial_image_hdr(char* device, image_head* image_hdr)
     fs_bitmap = reiser4_bitmap_create(reiser4_format_get_len(fs->format));
     reiser4_alloc_extract(fs->alloc, fs_bitmap);
     free_blocks = reiser4_format_get_free(fs->format);
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, reiser4_MAGIC, FS_MAGIC_SIZE);
-    image_hdr->block_size = (int)get_ms_blksize(SUPER(fs->master));
-    image_hdr->totalblock = (unsigned long long)reiser4_format_get_len(fs->format);
-    image_hdr->usedblocks = (unsigned long long)(reiser4_format_get_len(fs->format) - free_blocks);
-    image_hdr->device_size =(unsigned long long)(image_hdr->block_size * image_hdr->totalblock);
+    strncpy(fs_info->fs, reiser4_MAGIC, FS_MAGIC_SIZE);
+    fs_info->block_size  = get_ms_blksize(SUPER(fs->master));
+    fs_info->totalblock  = reiser4_format_get_len(fs->format);
+    fs_info->usedblocks  = reiser4_format_get_len(fs->format) - free_blocks;
+    fs_info->device_size = fs_info->block_size * fs_info->totalblock;
     fs_close();
 }
 

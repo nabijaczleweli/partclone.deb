@@ -22,8 +22,6 @@
 
 vmfs_fs_t *fs;
 vmfs_dir_t *root_dir;
-char *EXECNAME = "partclone.vmfs";
-extern fs_cmd_opt fs_opt;
 
 /// open device
 static void fs_open(char* device){
@@ -80,8 +78,7 @@ static uint32_t logical_volume_offset(vmfs_fs_t *fs)
     return (VMFS_VOLINFO_BASE + 0x1000000) / vmfs_fs_get_blocksize(fs);
 }
 
-/// readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
+void read_bitmap(char* device, file_system_info fs_info, unsigned long* bitmap, int pui)
 {
     uint32_t offset, total, current;
     uint32_t used_block = 0, free_block = 0, err_block = 0;
@@ -92,14 +89,14 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     fs_open(device);
     /// init progress
     progress_bar   prog;        /// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, image_hdr.totalblock, BITMAP, bit_size);
+    progress_init(&prog, start, fs_info.totalblock, fs_info.totalblock, BITMAP, bit_size);
 
     offset = logical_volume_offset(fs);
     total = fs->fbb->bmh.total_items + offset;
 
     // containing the volume information and the LVM information
     for(current = 0; current < offset; current++){
-        pc_set_bit(current, bitmap, image_hdr.totalblock);
+        pc_set_bit(current, bitmap, fs_info.totalblock);
         used_block++;
         update_pui(&prog, current, current, 0);
     }
@@ -109,13 +106,13 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	status = vmfs_block_get_status(fs, VMFS_BLK_FB_BUILD(current-offset,0));
 	if (status == -1) {
 	    err_block++;
-	    pc_clear_bit(current, bitmap, image_hdr.totalblock);
+	    pc_clear_bit(current, bitmap, fs_info.totalblock);
 	} else if (status == 1){
 	    used_block++;
-	    pc_set_bit(current, bitmap, image_hdr.totalblock);
+	    pc_set_bit(current, bitmap, fs_info.totalblock);
 	} else if (status == 0){
 	    free_block++;
-	    pc_clear_bit(current, bitmap, image_hdr.totalblock);
+	    pc_clear_bit(current, bitmap, fs_info.totalblock);
 	}
 
 	log_mesg(2, 0, 0, fs_opt.debug, "%s: Block 0x%8.8x status: %i\n", __FILE__, current, status);
@@ -129,22 +126,20 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 
 }
 
-/// read super block and write to image head
-extern void initial_image_hdr(char* device, image_head* image_hdr)
+void read_super_blocks(char* device, file_system_info* fs_info)
 {
     uint32_t offset, total, alloc;
 
     fs_open(device);
-    strncpy(image_hdr->magic, IMAGE_MAGIC, IMAGE_MAGIC_SIZE);
-    strncpy(image_hdr->fs, vmfs_MAGIC, FS_MAGIC_SIZE);
+    strncpy(fs_info->fs, vmfs_MAGIC, FS_MAGIC_SIZE);
     offset = logical_volume_offset(fs);
     total = fs->fbb->bmh.total_items + offset;
     alloc = vmfs_bitmap_allocated_items(fs->fbb) + offset;
 
-    image_hdr->block_size  = vmfs_fs_get_blocksize(fs);
-    image_hdr->totalblock  = total;
-    image_hdr->usedblocks  = alloc;
-    image_hdr->device_size = (vmfs_fs_get_blocksize(fs)*total);
+    fs_info->block_size  = vmfs_fs_get_blocksize(fs);
+    fs_info->totalblock  = total;
+    fs_info->usedblocks  = alloc;
+    fs_info->device_size = vmfs_fs_get_blocksize(fs) * total;
     fs_close();
 }
 

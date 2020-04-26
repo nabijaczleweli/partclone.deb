@@ -1,9 +1,10 @@
-AC_INIT([Partclone], [0.2.90], [thomas@nchc.org.tw])
+AC_INIT([Partclone], [0.3.6], [thomas@nchc.org.tw])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AM_GNU_GETTEXT_VERSION([0.16.1])
 AM_GNU_GETTEXT([external])
 AC_PROG_CC
 AM_PROG_CC_C_O
+AM_PROG_AS
 AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm, rm)
 AC_PROG_LN_S
@@ -53,7 +54,20 @@ dnl Check for uuid
 PKG_CHECK_MODULES(UUID, uuid,,exit)
 uuidcfg=`pkg-config --cflags --libs uuid`
 
+AC_ARG_ENABLE([fuse],
+    AS_HELP_STRING(
+        [--enable-fuse],
+        [enable imgfuse, mount image file to block files])
+)
+AM_CONDITIONAL(ENABLE_FUSE, test "$enable_fuse" = yes)
+if test "$enable_fuse" = "yes"; then
+AC_CHECKING([ for FUSE Library and Header files ... ])
+    PKG_CHECK_MODULES([FUSE], [fuse],,exit)
+    uuidcfg=`pkg-config --cflags --libs fuse`
+fi
+
 AC_CHECK_LIB([pthread], [pthread_create], [], AC_MSG_ERROR([*** pthread library (libpthread) not found]))
+AC_PATH_PROG(OBJCOPY, objcopy, ,)
 
 ##ext2/3##
 AC_ARG_ENABLE([extfs],
