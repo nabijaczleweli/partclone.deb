@@ -217,7 +217,7 @@ static void fs_close(){
 }
 
 ///  readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, char* bitmap, int pui)
+extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
 {
     unsigned char	*ntfs_bitmap;
     unsigned long long	current_block, used_block, free_block, pos;
@@ -233,19 +233,22 @@ extern void readbitmap(char* device, image_head image_hdr, char* bitmap, int pui
     }
  
     ntfs_bitmap = (unsigned char*)malloc(bitmap_size);
+    //ntfs_bitmap = (unsigned char*)calloc(sizeof(unsigned char), bitmap_size);
 
     if ((bitmap == NULL) || (ntfs_bitmap == NULL)) {
         log_mesg(0, 1, 1, fs_opt.debug, "%s: bitmap alloc error\n", __FILE__);
     }
-
-    /// init progress
-    progress_bar   prog;	/// progress_bar structure defined in progress.h
-    progress_init(&prog, start, image_hdr.totalblock, bit_size);
+    memset(ntfs_bitmap, 0, bitmap_size);
 
     pos = 0;
     used_block = 0;
     free_block = 0;
     count = ntfs_attr_pread(ntfs->lcnbmp_na, pos, bitmap_size, ntfs_bitmap);
+
+    /// init progress
+    progress_bar   prog;
+    progress_init(&prog, start, image_hdr.totalblock, bit_size);
+
     if (count == -1){					    // On error and nothing has been read
 	log_mesg(0, 1, 1, fs_opt.debug, "%s: read ntfs attr error: %s\n", __FILE__, strerror(errno));
     }
@@ -260,16 +263,19 @@ extern void readbitmap(char* device, image_head image_hdr, char* bitmap, int pui
         if (bit == -1){                                     // Return -1 on error
 	    log_mesg(0, 1, 1, fs_opt.debug, "%s: check bitmap error\n", __FILE__); 
 	}else if(bit == 1){				    // The value of the bit (0 or 1)
-            bitmap[current_block] = 1;
+            pc_set_bit(current_block, bitmap);
             used_block++;
         } else {
-            bitmap[current_block] = 0;
+            pc_clear_bit(current_block, bitmap);
             free_block++;
         }
         /// update progress
         update_pui(&prog, current_block, 0);
 
     }
+
+    /// update progress
+    update_pui(&prog, 1, 1);
 
     log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Used Block\t: %llu\n", __FILE__, used_block);
     log_mesg(3, 0, 0, fs_opt.debug, "%s: [bitmap] Free Block\t: %llu\n", __FILE__, free_block);
@@ -285,11 +291,9 @@ extern void readbitmap(char* device, image_head image_hdr, char* bitmap, int pui
 
     if (used_block != image_hdr.usedblocks) {
         log_mesg(0, 1, 1, fs_opt.debug, "%s: used blocks count mismatch: %llu in header, %llu from readbitmap\n", __FILE__,
-                used_block, image_hdr.usedblocks);
+                image_hdr.usedblocks, used_block);
     }
 
-    /// update progress
-    update_pui(&prog, 1, 1);
 }
 
 /// read super block and write to image head

@@ -29,25 +29,16 @@ extern fs_cmd_opt fs_opt;
 static void fs_open(char* device){
     vmfs_lvm_t *lvm;
     vmfs_flags_t flags;
+    char *mdev[] = {device, NULL};
+    char *next = NULL;
 
     vmfs_host_init();
     flags.packed = 0;
     flags.allow_missing_extents = 1;
 
-    //log_mesg(3, 0, 0, fs_opt.debug, "%s: device %s\n", __FILE__, device);
-    if (!(lvm = vmfs_lvm_create(flags))) {
-	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to create LVM structure\n", __FILE__);
-    }
+    log_mesg(3, 0, 0, fs_opt.debug, "%s: device %s\n", __FILE__, device);
 
-    if (vmfs_lvm_add_extent(lvm, vmfs_vol_open(device, flags)) == -1) {
-	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open device/file \"%s\".\n", __FILE__, device);
-    }
-
-    if (!(fs = vmfs_fs_create(lvm))) {
-	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open filesystem\n", __FILE__);
-    }
-
-    if (vmfs_fs_open(fs) == -1) {
+    if (!(fs=vmfs_fs_open(&mdev, flags))) {
 	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open volume.\n", __FILE__);
     }
 
@@ -64,7 +55,7 @@ static void fs_close(){
 }
 
 /// readbitmap - read bitmap
-extern void readbitmap(char* device, image_head image_hdr, char*bitmap, int pui)
+extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
 {
     uint32_t current, used_block, free_block, err_block, total, alloc;
     int status = 0;
@@ -83,13 +74,13 @@ extern void readbitmap(char* device, image_head image_hdr, char*bitmap, int pui)
 	status = vmfs_block_get_status(fs, VMFS_BLK_FB_BUILD(current));
 	if (status == -1) {
 	    err_block++;
-	    bitmap[current] = 0;
+	    pc_clear_bit(current, bitmap);
 	} else if (status == 1){
 	    used_block++;
-	    bitmap[current] = 1;
+	    pc_set_bit(current, bitmap);
 	} else if (status == 0){
 	    free_block++;
-	    bitmap[current] = 0;
+	    pc_clear_bit(current, bitmap);
 	}
 
 	log_mesg(2, 0, 0, fs_opt.debug, "%s: Block 0x%8.8x status:", __FILE__, current, status);
