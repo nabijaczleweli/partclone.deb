@@ -38,11 +38,27 @@ static void fs_open(char* device){
 
     log_mesg(3, 0, 0, fs_opt.debug, "%s: device %s\n", __FILE__, device);
 
+#ifdef VMFS5_ZLA_BASE
     if (!(fs=vmfs_fs_open(&mdev, flags))) {
+#else
+    if (!(lvm = vmfs_lvm_create(flags))) {
+	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to create LVM structure\n", __FILE__);
+    }
+
+    if (vmfs_lvm_add_extent(lvm, vmfs_vol_open(device, flags)) == -1) {
+	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open device/file \"%s\".\n", __FILE__, device);
+    }
+
+    if (!(fs = vmfs_fs_create(lvm))) {
+	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open filesystem\n", __FILE__);
+    }
+
+    if (vmfs_fs_open(fs) == -1) {
+#endif
 	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open volume.\n", __FILE__);
     }
 
-    if (!(root_dir = vmfs_dir_open_from_blkid(fs,VMFS_BLK_FD_BUILD(0,0)))) {
+    if (!(root_dir = vmfs_dir_open_from_blkid(fs,VMFS_BLK_FD_BUILD(0,0,0)))) {
 	log_mesg(0, 1, 1, fs_opt.debug, "%s: Unable to open root directory\n", __FILE__);
     }
 
@@ -57,7 +73,7 @@ static void fs_close(){
 /// readbitmap - read bitmap
 extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap, int pui)
 {
-    uint32_t current, used_block, free_block, err_block, total, alloc;
+    uint32_t current = 0, used_block = 0, free_block = 0, err_block = 0, total = 0, alloc = 0;
     int status = 0;
     int start = 0;
     int bit_size = 1;
@@ -71,7 +87,7 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
     alloc = vmfs_bitmap_allocated_items(fs->fbb);
 
     for(current = 0; current < total; current++){
-	status = vmfs_block_get_status(fs, VMFS_BLK_FB_BUILD(current));
+	status = vmfs_block_get_status(fs, VMFS_BLK_FB_BUILD(current,0));
 	if (status == -1) {
 	    err_block++;
 	    pc_clear_bit(current, bitmap);
@@ -83,14 +99,14 @@ extern void readbitmap(char* device, image_head image_hdr, unsigned long* bitmap
 	    pc_clear_bit(current, bitmap);
 	}
 
-	log_mesg(2, 0, 0, fs_opt.debug, "%s: Block 0x%8.8x status:", __FILE__, current, status);
+	log_mesg(2, 0, 0, fs_opt.debug, "%s: Block 0x%8.8x status: %i\n", __FILE__, current, status);
 	update_pui(&prog, current, current, 0);
 
     }
     fs_close();
     update_pui(&prog, 1, 1, 1);
 
-    log_mesg(0, 0, 0, fs_opt.debug, "%s: Used:%u, Free:%u, Status err:%u\n", __FILE__, used_block, free_block, err_block);
+    log_mesg(0, 0, 0, fs_opt.debug, "%s: Used:%lld, Free:%lld, Status err:%lld\n", __FILE__, used_block, free_block, err_block);
 
 }
 
